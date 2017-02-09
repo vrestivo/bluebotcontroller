@@ -1,11 +1,11 @@
 package com.example.devbox.bluebotcontroller;
 
-import android.support.v4.app.FragmentManager;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity {
 
     MainFragment mMainFragment;
 
@@ -14,10 +14,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mMainFragment = new MainFragment();
-
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.gui_container, mMainFragment).commit();
-
+        //create the fragment on the first run
+        if (savedInstanceState == null) {
+            mMainFragment = new MainFragment();
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.gui_container, mMainFragment).commit();
+        }
     }
 }
