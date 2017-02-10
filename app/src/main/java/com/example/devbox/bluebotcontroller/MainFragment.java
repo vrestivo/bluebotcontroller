@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 /**
@@ -16,7 +17,14 @@ import android.widget.Toast;
 
 public class MainFragment extends Fragment {
 
+    private Button mBtOn;
+    private Button mBtOff;
+
+
     private static final int REQUEST_ENABLE_BT = 1;
+    private static final int ACTION_STATE_CHAGED = 2;
+    private static final int ACTION_FOUND = 3;
+
 
 
     private BluetoothAdapter mBluetoothAdapter;
@@ -48,7 +56,45 @@ public class MainFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+        mBtOn = (Button) rootView.findViewById(R.id.bt_on);
+        mBtOff = (Button) rootView.findViewById(R.id.bt_off);
+
+        mBtOn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btOn(v);
+            }
+        });
+
+        mBtOff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btOff(v);
+            }
+        });
+
         return rootView;
+    }
+
+    public void btOn(View v){
+        if(!mBluetoothAdapter.isEnabled()){
+            Intent btOnIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(btOnIntent, REQUEST_ENABLE_BT);
+            Toast.makeText(getContext(), getString(R.string.bt_admin_on), Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(getContext(), getString(R.string.bt_admin_already_on), Toast.LENGTH_SHORT);
+        }
+    }
+
+    public void btOff(View v){
+        if(mBluetoothAdapter.isEnabled()){
+            mBluetoothAdapter.disable();
+            Toast.makeText(getContext(), getString(R.string.bt_admin_off), Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(getContext(), getString(R.string.bt_admin_already_off), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -60,6 +106,7 @@ public class MainFragment extends Fragment {
                 startActivityForResult(btEnableIntent, REQUEST_ENABLE_BT);
             } else {
                 //TODO initialization
+                Toast.makeText(getContext(), "TODO: initialization block", Toast.LENGTH_SHORT).show();
             }
         }
 

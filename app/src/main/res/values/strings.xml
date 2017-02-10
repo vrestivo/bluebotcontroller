@@ -1,9 +1,20 @@
 <resources>
     <string name="app_name">BlueBotController</string>
 
+    <!-- button names -->
+    <string name="button_bt_on">Turn ON BT</string>
+    <string name="button_bt_off">Turn OFF BT</string>
+
+
     <!-- bluetooth admin messages -->
 
     <string name="bt_admin_not_available">Bluetooth is not available.</string>
+    <string name="bt_admin_on">Bluetooth On</string>
+    <string name="bt_admin_off">Bluetooth Off</string>
+    <string name="bt_admin_already_on">Bluetooth is already On</string>
+    <string name="bt_admin_already_off">Bluetooth is already Off</string>
+
+
 
 
 
