@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -27,8 +28,11 @@ public class DiscoveryActivity extends AppCompatActivity {
     private ListView mAvailableDevices;
     private Button mScanButton;
     private BluetoothAdapter mBtAdapter;
-    private ArrayList<String> mPaired;
-    private ArrayList<String> mAvailable;
+    private ArrayList<String> mPaired = new ArrayList<>();
+    private ArrayList<String> mAvailable = new ArrayList<>();
+    private ArrayAdapter mAvailableAdapter;
+    private ArrayAdapter mPairedAdapter;
+
 
 
     private final BroadcastReceiver mBtReceiver = new BroadcastReceiver() {
@@ -51,12 +55,16 @@ public class DiscoveryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discovery);
 
-        mPaired = new ArrayList<>();
-        mAvailable = new ArrayList<>();
+        mAvailableAdapter = new ArrayAdapter(this, R.layout.device_list_item, mAvailable);
+
+        mPairedAdapter = new ArrayAdapter(this, R.layout.device_list_item);
 
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
         mPairedDevices = (ListView) findViewById(R.id.devices_paired_lv);
+
         mAvailableDevices = (ListView) findViewById(R.id.devices_available_lv);
+        mAvailableDevices.setAdapter(mAvailableAdapter);
+
         mScanButton = (Button) findViewById(R.id.button_scan);
 
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
