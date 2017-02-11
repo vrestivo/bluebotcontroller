@@ -17,13 +17,16 @@ import android.widget.Toast;
 
 public class MainFragment extends Fragment {
 
-    private Button mBtOn;
-    private Button mBtOff;
+    private Button mButtonBtOn;
+    private Button mButtonoBtOff;
+    private Button mButtonDiscovery;
 
 
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int ACTION_STATE_CHAGED = 2;
     private static final int ACTION_FOUND = 3;
+    private static final int ACTION_DISCOVERY = 4;
+
 
 
     private BluetoothAdapter mBluetoothAdapter;
@@ -55,22 +58,31 @@ public class MainFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        mBtOn = (Button) rootView.findViewById(R.id.bt_on);
-        mBtOff = (Button) rootView.findViewById(R.id.bt_off);
+        mButtonBtOn = (Button) rootView.findViewById(R.id.bt_on);
+        mButtonoBtOff = (Button) rootView.findViewById(R.id.bt_off);
+        mButtonDiscovery = (Button) rootView.findViewById(R.id.bt_discover);
 
-        mBtOn.setOnClickListener(new View.OnClickListener() {
+        mButtonBtOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 btOn(v);
             }
         });
 
-        mBtOff.setOnClickListener(new View.OnClickListener() {
+        mButtonoBtOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 btOff(v);
             }
         });
+
+        mButtonDiscovery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btDiscover(v);
+            }
+        });
+
 
         return rootView;
     }
@@ -98,8 +110,21 @@ public class MainFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //TODO finish implementation
-        if (requestCode == REQUEST_ENABLE_BT) {
-            Toast.makeText(getContext(), String.valueOf(resultCode), Toast.LENGTH_SHORT).show();
+        switch (requestCode) {
+            case REQUEST_ENABLE_BT: {
+                Toast.makeText(getContext(), String.valueOf(resultCode), Toast.LENGTH_SHORT).show();
+                break;
+            }
+            case ACTION_DISCOVERY: {
+                String deviceString = null;
+                if(data.hasExtra(DiscoveryActivity.DEVICE_STRING)){
+                    deviceString = data.getStringExtra(DiscoveryActivity.DEVICE_STRING);
+                }
+                Toast.makeText(getContext(), "device Selected: " + deviceString, Toast.LENGTH_SHORT).show();
+                //TODO initiate pairing
+                break;
+            }
+
         }
     }
 
@@ -128,6 +153,8 @@ public class MainFragment extends Fragment {
 
     public void btDiscover(View v){
         //TODO start Bt discovery activity
+        Intent discoveryIntent = new Intent(getContext(), DiscoveryActivity.class);
+        startActivityForResult(discoveryIntent, ACTION_DISCOVERY);
     }
 
 

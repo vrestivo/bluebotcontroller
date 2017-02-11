@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -54,6 +55,8 @@ public class DiscoveryActivity extends AppCompatActivity {
                 String devName = device.getName();
                 String devAddress = device.getAddress();
                 mAvailable.add(devName + " " + devAddress);
+                mAvailable.notify();
+                mAvailableAdapter.notifyDataSetChanged();
             }
         }
     };
@@ -80,10 +83,11 @@ public class DiscoveryActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mBtReceiver, filter);
 
-        mPairedDevices.setOnClickListener(new View.OnClickListener() {
+
+        mPairedDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                String deviceString = ((TextView) v).getText().toString();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String deviceString = ((TextView) view).getText().toString();
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(DEVICE_STRING, deviceString);
                 setResult(Activity.RESULT_OK, resultIntent);
@@ -91,10 +95,11 @@ public class DiscoveryActivity extends AppCompatActivity {
             }
         });
 
-        mAvailableDevices.setOnClickListener(new View.OnClickListener() {
+
+        mAvailableDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                String deviceString = ((TextView) v).getText().toString();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String deviceString = ((TextView) view).getText().toString();
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(DEVICE_STRING, deviceString);
                 setResult(Activity.RESULT_OK, resultIntent);
