@@ -1,9 +1,18 @@
 <resources>
     <string name="app_name">BlueBotController</string>
 
+    <!-- titles -->
+    <string name="title_paired_devices">Paired devices:</string>
+    <string name="title_available_devices">Available devices:</string>
+
+
     <!-- button names -->
     <string name="button_bt_on">Turn ON BT</string>
     <string name="button_bt_off">Turn OFF BT</string>
+    <string name="button_bt_discover">BT Discovery</string>
+    <string name="button_bt_scan">Scan for Devices</string>
+
+
 
 
     <!-- bluetooth admin messages -->

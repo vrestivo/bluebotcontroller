@@ -26,7 +26,6 @@ public class MainFragment extends Fragment {
     private static final int ACTION_FOUND = 3;
 
 
-
     private BluetoothAdapter mBluetoothAdapter;
 
     @Override
@@ -76,31 +75,11 @@ public class MainFragment extends Fragment {
         return rootView;
     }
 
-    public void btOn(View v){
-        if(!mBluetoothAdapter.isEnabled()){
-            Intent btOnIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(btOnIntent, REQUEST_ENABLE_BT);
-            Toast.makeText(getContext(), getString(R.string.bt_admin_on), Toast.LENGTH_SHORT).show();
-        }
-        else{
-            Toast.makeText(getContext(), getString(R.string.bt_admin_already_on), Toast.LENGTH_SHORT);
-        }
-    }
-
-    public void btOff(View v){
-        if(mBluetoothAdapter.isEnabled()){
-            mBluetoothAdapter.disable();
-            Toast.makeText(getContext(), getString(R.string.bt_admin_off), Toast.LENGTH_SHORT).show();
-        }
-        else{
-            Toast.makeText(getContext(), getString(R.string.bt_admin_already_off), Toast.LENGTH_SHORT).show();
-        }
-    }
 
     @Override
     public void onStart() {
         super.onStart();
-       if (mBluetoothAdapter != null) {
+        if (mBluetoothAdapter != null) {
             if (!mBluetoothAdapter.isEnabled()) {
                 Intent btEnableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(btEnableIntent, REQUEST_ENABLE_BT);
@@ -111,6 +90,44 @@ public class MainFragment extends Fragment {
         }
 
 
+    }
+
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //TODO finish implementation
+        if (requestCode == REQUEST_ENABLE_BT) {
+            Toast.makeText(getContext(), String.valueOf(resultCode), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    /** *** BLUETOOTH OPERATIONS ***  **/
+
+
+    public void btOn(View v) {
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent btOnIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(btOnIntent, REQUEST_ENABLE_BT);
+            Toast.makeText(getContext(), getString(R.string.bt_admin_on), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), getString(R.string.bt_admin_already_on), Toast.LENGTH_SHORT);
+        }
+    }
+
+    public void btOff(View v) {
+        if (mBluetoothAdapter.isEnabled()) {
+            mBluetoothAdapter.disable();
+            Toast.makeText(getContext(), getString(R.string.bt_admin_off), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), getString(R.string.bt_admin_already_off), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void btDiscover(View v){
+        //TODO start Bt discovery activity
     }
 
 
