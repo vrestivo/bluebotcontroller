@@ -1,5 +1,6 @@
 package com.example.devbox.bluebotcontroller;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RemoteViewsService;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -23,6 +26,13 @@ import java.util.List;
  */
 
 public class DiscoveryActivity extends AppCompatActivity {
+
+    //constant definitions
+    public static final String DEVICE_NAME = "DEV_NAME";
+    public static final String DEVICE_ADDRESS = "DEV_ADDR";
+    public static final String DEVICE_STRING = "DEV_STR";
+
+
 
     private ListView mPairedDevices;
     private ListView mAvailableDevices;
@@ -73,14 +83,22 @@ public class DiscoveryActivity extends AppCompatActivity {
         mPairedDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String deviceString = ((TextView) v).getText().toString();
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(DEVICE_STRING, deviceString);
+                setResult(Activity.RESULT_OK, resultIntent);
+                finish();
             }
         });
 
         mAvailableDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String deviceString = ((TextView) v).getText().toString();
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(DEVICE_STRING, deviceString);
+                setResult(Activity.RESULT_OK, resultIntent);
+                finish();
             }
         });
 
@@ -96,16 +114,7 @@ public class DiscoveryActivity extends AppCompatActivity {
         super.onPause();
         unregisterReceiver(mBtReceiver);
     }
-
-
-
-    public void clickPaired(){
-        //TODO connect to paired device
-    }
-
-    public void clickAvailable(){
-        //TODO connect to available device
-    }
+    
 
     public void scan(){
         if(mBtAdapter.isEnabled()){
@@ -124,6 +133,8 @@ public class DiscoveryActivity extends AppCompatActivity {
                     .show();
         }
     }
+
+
 
 
 
