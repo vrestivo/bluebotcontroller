@@ -7,9 +7,13 @@ import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,6 +42,7 @@ public class DiscoveryActivity extends AppCompatActivity {
     public static final String DEVICE_ADDRESS = "DEV_ADDR";
     public static final String DEVICE_STRING = "DEV_STR";
     public static final long SCAN_PERIOD = 10000;
+    public static final int MY_PERMISSION_REQUEST = 777;
 
     //btle stuff
     private BluetoothLeScanner mBtScanner;
@@ -121,24 +126,47 @@ public class DiscoveryActivity extends AppCompatActivity {
         mScanCallback = new BtScanCallback();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED
+                || ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{
+                            android.Manifest.permission.ACCESS_FINE_LOCATION,
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION
+                    }, MY_PERMISSION_REQUEST
+            );
+        }
+    }
 
     @Override
     protected void onPause() {
         super.onPause();
     }
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
     public void scan() {
         if (mBtAdapter.isEnabled()) {
 
-            if(mScanCallback == null) {
+
+            if (mScanCallback == null) {
                 mScanCallback = new BtScanCallback();
             }
-                mScanHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        stopScan();
-                    }
-                }, SCAN_PERIOD);
+            mScanHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    stopScan();
+                }
+            }, SCAN_PERIOD);
 
 
             mBtScanner.startScan(mScanCallback);
@@ -154,7 +182,7 @@ public class DiscoveryActivity extends AppCompatActivity {
         }
     }
 
-    public void stopScan(){
+    public void stopScan() {
         Toast.makeText(getApplicationContext(), "Stopping Scan", Toast.LENGTH_SHORT).show();
 
         mBtScanner.stopScan(mScanCallback);
