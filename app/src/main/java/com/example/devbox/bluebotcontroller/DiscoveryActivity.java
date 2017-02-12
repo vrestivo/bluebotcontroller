@@ -234,6 +234,8 @@ public class DiscoveryActivity extends AppCompatActivity {
             if (device.getAddress() != null && device.getName() != null) {
                 String devString = device.getName() + " " + device.getAddress();
                 deviceTv.setText(devString);
+            } else if (device.getAddress() != null) {
+                deviceTv.setText(device.getAddress());
             } else {
                 //TODO put in strings.xml
                 deviceTv.setText("Unavailable");
@@ -251,13 +253,25 @@ public class DiscoveryActivity extends AppCompatActivity {
             mBtDevArrayList.clear();
         }
 
+        public boolean hasDevice(BluetoothDevice device) {
+            return mBtDevArrayList.contains(device);
+        }
+
     }
 
     public class BtScanCallback extends ScanCallback {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
-            mAvailableAdapter.add(result.getDevice());
+            if (!mAvailableAdapter.hasDevice(result.getDevice())) {
+                mAvailableAdapter.add(result.getDevice());
+                //TODO delete logging
+                Log.v("_BtScanCallback:", "adding device: " + result.getDevice().getAddress());
+            } else {
+                //TODO delete logging
+                Log.v("_BtScanCallback:", "already has device: " + result.getDevice().getAddress());
+            }
+
             mAvailableAdapter.notifyDataSetChanged();
             //TODO delete logging
             Log.v("_ScanCallback:", "available devices: " + mAvailableAdapter.getCount());
@@ -267,7 +281,15 @@ public class DiscoveryActivity extends AppCompatActivity {
         public void onBatchScanResults(List<ScanResult> results) {
             super.onBatchScanResults(results);
             for (ScanResult result : results) {
-                mAvailableAdapter.add(result.getDevice());
+                if (!mAvailableAdapter.hasDevice(result.getDevice())) {
+                    mAvailableAdapter.add(result.getDevice());
+                    //TODO delete logging
+                    Log.v("_BtScanCallback:", "adding device: " + result.getDevice().getAddress());
+                }
+                else {
+                    //TODO delete logging
+                    Log.v("_BtScanCallback:", "already has device: " + result.getDevice().getAddress());
+                }
             }
             mAvailableAdapter.notifyDataSetChanged();
             //TODO delete logging
