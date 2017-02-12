@@ -6,15 +6,11 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +40,7 @@ public class DiscoveryActivity extends AppCompatActivity {
 
     //btle stuff
     private BluetoothLeScanner mBtScanner;
-    private ScanCallback mScanCallback;
+    private BtScanCallback mScanCallback;
 
     private Handler mScanHandler;
     private ListView mPairedDevicesView;
@@ -57,7 +53,6 @@ public class DiscoveryActivity extends AppCompatActivity {
     private ArrayAdapter<String> mPairedAdapter;
 
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,8 +60,6 @@ public class DiscoveryActivity extends AppCompatActivity {
 
 
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
-
-
 
         mBtScanner = mBtAdapter.getBluetoothLeScanner();
 
@@ -124,78 +117,22 @@ public class DiscoveryActivity extends AppCompatActivity {
             }
         });
 
-        mScanCallback = new ScanCallback() {
-            @Override
-            public void onScanResult(int callbackType, ScanResult result) {
-                super.onScanResult(callbackType, result);
-                mAvailableAdapter.add(result.getDevice());
-                mAvailableAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onBatchScanResults(List<ScanResult> results) {
-                super.onBatchScanResults(results);
-                for(ScanResult result: results){
-                    mAvailableAdapter.add(result.getDevice());
-                }
-                mAvailableAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onScanFailed(int errorCode) {
-                super.onScanFailed(errorCode);
-                Toast.makeText(getApplicationContext(),
-                        "Scan Error: " + errorCode,
-                        Toast.LENGTH_SHORT).show();
-            }
-        };
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //TODO delete logging
-        Log.v("_onResume: ", "registering broadcast receiver");
-
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        //LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mBtReceiver, filter);
-
-        this.registerReceiver(mBtReceiver, filter);
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        //TODO delete logging
-        Log.v("_onPause: ", "unregistering broadcast receiver");
-
-        //LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mBtReceiver);
-        this.unregisterReceiver(mBtReceiver);
-
-        //TODO verify needed
-        mBtAdapter.cancelDiscovery();
+        mScanCallback = new BtScanCallback();
     }
 
 
     public void scan() {
         if (mBtAdapter.isEnabled()) {
-            //check if adapter is already discovering
-            //if so cancel the ongoing discovery
-//            if (mBtAdapter.isDiscovering()) {
-//                mBtAdapter.cancelDiscovery();
-//            }
-            //mBtAdapter.startDiscovery();
+
+            mScanHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mBtScanner.stopScan(mScanCallback);
+                }
+            }, SCAN_PERIOD);
+
             mBtScanner.startScan(mScanCallback);
+
 
         } else {
             Toast.makeText(getApplicationContext(),
@@ -244,11 +181,10 @@ public class DiscoveryActivity extends AppCompatActivity {
             }
 
             BluetoothDevice device = mBtDevArrayList.get(position);
-            if(device.getAddress()!= null && device.getName()!=null){
+            if (device.getAddress() != null && device.getName() != null) {
                 String devString = device.getName() + " " + device.getAddress();
                 deviceTv.setText(devString);
-            }
-            else{
+            } else {
                 //TODO put in strings.xml
                 deviceTv.setText("Unavailable");
             }
@@ -267,4 +203,30 @@ public class DiscoveryActivity extends AppCompatActivity {
 
     }
 
+    public class BtScanCallback extends ScanCallback {
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+            super.onScanResult(callbackType, result);
+            mAvailableAdapter.add(result.getDevice());
+            mAvailableAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onBatchScanResults(List<ScanResult> results) {
+            super.onBatchScanResults(results);
+            for (ScanResult result : results) {
+                mAvailableAdapter.add(result.getDevice());
+            }
+            mAvailableAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onScanFailed(int errorCode) {
+            super.onScanFailed(errorCode);
+            Toast.makeText(getApplicationContext(),
+                    "Scan Error: " + errorCode,
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
 }
+
