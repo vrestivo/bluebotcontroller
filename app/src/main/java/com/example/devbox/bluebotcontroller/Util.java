@@ -1,8 +1,10 @@
 package com.example.devbox.bluebotcontroller;
 
 import android.bluetooth.BluetoothDevice;
+import android.icu.lang.UCharacter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 
 /**
@@ -62,6 +64,15 @@ public class Util {
         }
 
         return deviceStrings;
+    }
+
+    public static void fillAdapterFromSet(Set<BluetoothDevice> set, DiscoveryActivity.BtScanAdapter adapter){
+        ArrayList<BluetoothDevice> arrayList = null;
+        if(set!=null && adapter!=null){
+            for(BluetoothDevice device: set){
+                adapter.add(device);
+            }
+        }
     }
 
 }

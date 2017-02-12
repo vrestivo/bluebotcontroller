@@ -20,7 +20,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -41,7 +40,7 @@ public class DiscoveryActivity extends AppCompatActivity {
     public static final String DEVICE_NAME = "DEV_NAME";
     public static final String DEVICE_ADDRESS = "DEV_ADDR";
     public static final String DEVICE_STRING = "DEV_STR";
-    public static final long SCAN_PERIOD = 10000;
+    public static final long SCAN_PERIOD = 15000;
     public static final int MY_PERMISSION_REQUEST = 777;
 
     //btle stuff
@@ -53,10 +52,8 @@ public class DiscoveryActivity extends AppCompatActivity {
     private ListView mAvailableDevicesView;
     private Button mScanButton;
     private BluetoothAdapter mBtAdapter;
-    private ArrayList<String> mPairedArrayList = new ArrayList<>();
-    private ArrayList<String> mAvailableArrayList = new ArrayList<>();
     private BtScanAdapter mAvailableAdapter;
-    private ArrayAdapter<String> mPairedAdapter;
+    private BtScanAdapter mPairedAdapter;
 
 
     @Override
@@ -64,27 +61,18 @@ public class DiscoveryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discovery);
 
-
+        mScanHandler = new Handler();
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
-
         mBtScanner = mBtAdapter.getBluetoothLeScanner();
 
-
-        mScanHandler = new Handler();
-
-
-        //TODO Extract device string and store in array
-        Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
-        mPairedArrayList = Util.extractDeviceString(pairedDevices);
-
+        mScanButton = (Button) findViewById(R.id.button_scan);
         mPairedDevicesView = (ListView) findViewById(R.id.devices_paired_lv);
         mAvailableDevicesView = (ListView) findViewById(R.id.devices_available_lv);
 
-
+        Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
         mAvailableAdapter = new BtScanAdapter();
-        mPairedAdapter = new ArrayAdapter<String>(this, R.layout.device_list_item, mPairedArrayList);
-
-        mScanButton = (Button) findViewById(R.id.button_scan);
+        mPairedAdapter = new BtScanAdapter();
+        Util.fillAdapterFromSet(pairedDevices, mPairedAdapter);
 
         mAvailableDevicesView.setAdapter(mAvailableAdapter);
         mPairedDevicesView.setAdapter(mPairedAdapter);
@@ -93,10 +81,10 @@ public class DiscoveryActivity extends AppCompatActivity {
         mPairedDevicesView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mBtAdapter.cancelDiscovery();
-                String deviceString = ((TextView) view).getText().toString();
+
+                String deviceMac = ((BluetoothDevice) mPairedAdapter.getItem(position)).getAddress();
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra(DEVICE_STRING, deviceString);
+                resultIntent.putExtra(DEVICE_STRING, deviceMac);
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             }
@@ -106,10 +94,9 @@ public class DiscoveryActivity extends AppCompatActivity {
         mAvailableDevicesView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mBtAdapter.cancelDiscovery();
-                String deviceString = ((TextView) view).getText().toString();
+                String deviceMac = ((BluetoothDevice) mPairedAdapter.getItem(position)).getAddress();
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra(DEVICE_STRING, deviceString);
+                resultIntent.putExtra(DEVICE_STRING, deviceMac);
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             }
@@ -118,7 +105,6 @@ public class DiscoveryActivity extends AppCompatActivity {
         mScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mBtAdapter.cancelDiscovery();
                 scan();
             }
         });
@@ -168,6 +154,10 @@ public class DiscoveryActivity extends AppCompatActivity {
                 }
             }, SCAN_PERIOD);
 
+            if (mAvailableAdapter != null) {
+                mAvailableAdapter.clearAll();
+                mAvailableAdapter.notifyDataSetChanged();
+            }
 
             mBtScanner.startScan(mScanCallback);
 
@@ -183,10 +173,12 @@ public class DiscoveryActivity extends AppCompatActivity {
     }
 
     public void stopScan() {
-        Toast.makeText(getApplicationContext(), "Stopping Scan", Toast.LENGTH_SHORT).show();
 
-        mBtScanner.stopScan(mScanCallback);
-        mScanCallback = null;
+        if (mScanCallback != null) {
+            mBtScanner.stopScan(mScanCallback);
+            mScanCallback = null;
+            Toast.makeText(getApplicationContext(), "Stopping Scan", Toast.LENGTH_SHORT).show();
+        }
 
         mAvailableAdapter.notifyDataSetChanged();
 
@@ -285,8 +277,7 @@ public class DiscoveryActivity extends AppCompatActivity {
                     mAvailableAdapter.add(result.getDevice());
                     //TODO delete logging
                     Log.v("_BtScanCallback:", "adding device: " + result.getDevice().getAddress());
-                }
-                else {
+                } else {
                     //TODO delete logging
                     Log.v("_BtScanCallback:", "already has device: " + result.getDevice().getAddress());
                 }
