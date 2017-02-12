@@ -6,7 +6,10 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -43,10 +46,6 @@ public class DiscoveryActivity extends AppCompatActivity {
     public static final long SCAN_PERIOD = 15000;
     public static final int MY_PERMISSION_REQUEST = 777;
 
-    //btle stuff
-    private BluetoothLeScanner mBtScanner;
-    private BtScanCallback mScanCallback;
-
     private Handler mScanHandler;
     private ListView mPairedDevicesView;
     private ListView mAvailableDevicesView;
@@ -54,6 +53,29 @@ public class DiscoveryActivity extends AppCompatActivity {
     private BluetoothAdapter mBtAdapter;
     private BtScanAdapter mAvailableAdapter;
     private BtScanAdapter mPairedAdapter;
+
+    //BT traditional
+    private BroadcastReceiver mBtReceiver;
+    private IntentFilter mIntentFilter;
+
+    public DiscoveryActivity() {
+        super();
+        mBtReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (action.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)) {
+                    mBtAdapter.cancelDiscovery();
+                } else if (action.equals(BluetoothDevice.ACTION_FOUND)) {
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    if (!mAvailableAdapter.hasDevice(device)) {
+                        mAvailableAdapter.add(device);
+                        mAvailableAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        };
+    }
 
 
     @Override
@@ -63,7 +85,6 @@ public class DiscoveryActivity extends AppCompatActivity {
 
         mScanHandler = new Handler();
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
-        mBtScanner = mBtAdapter.getBluetoothLeScanner();
 
         mScanButton = (Button) findViewById(R.id.button_scan);
         mPairedDevicesView = (ListView) findViewById(R.id.devices_paired_lv);
@@ -76,6 +97,11 @@ public class DiscoveryActivity extends AppCompatActivity {
 
         mAvailableDevicesView.setAdapter(mAvailableAdapter);
         mPairedDevicesView.setAdapter(mPairedAdapter);
+
+        //BT Traditional
+        mIntentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        mIntentFilter.addAction(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mBtReceiver, mIntentFilter);
 
 
         mPairedDevicesView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -105,11 +131,11 @@ public class DiscoveryActivity extends AppCompatActivity {
         mScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scan();
+                //scan();
+                discovery();
             }
         });
 
-        mScanCallback = new BtScanCallback();
     }
 
     @Override
@@ -132,6 +158,13 @@ public class DiscoveryActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        //BT Traditional
+        if (mBtReceiver != null) {
+            unregisterReceiver(mBtReceiver);
+        }
+        if (mBtAdapter != null) {
+            mBtAdapter.cancelDiscovery();
+        }
     }
 
 
@@ -140,47 +173,12 @@ public class DiscoveryActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    public void scan() {
-        if (mBtAdapter.isEnabled()) {
-
-
-            if (mScanCallback == null) {
-                mScanCallback = new BtScanCallback();
-            }
-            mScanHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    stopScan();
-                }
-            }, SCAN_PERIOD);
-
-            if (mAvailableAdapter != null) {
-                mAvailableAdapter.clearAll();
-                mAvailableAdapter.notifyDataSetChanged();
-            }
-
-            mBtScanner.startScan(mScanCallback);
-
-            Toast.makeText(getApplicationContext(), "Starting Scan", Toast.LENGTH_SHORT).show();
-
-
-        } else {
-            Toast.makeText(getApplicationContext(),
-                    getString(R.string.bt_error_off),
-                    Toast.LENGTH_SHORT)
-                    .show();
-        }
-    }
-
-    public void stopScan() {
-
-        if (mScanCallback != null) {
-            mBtScanner.stopScan(mScanCallback);
-            mScanCallback = null;
-            Toast.makeText(getApplicationContext(), "Stopping Scan", Toast.LENGTH_SHORT).show();
+    public void discovery() {
+        if (mBtAdapter.isDiscovering()) {
+            mBtAdapter.cancelDiscovery();
         }
 
-        mAvailableAdapter.notifyDataSetChanged();
+        mBtAdapter.startDiscovery();
 
     }
 
@@ -251,51 +249,5 @@ public class DiscoveryActivity extends AppCompatActivity {
 
     }
 
-    public class BtScanCallback extends ScanCallback {
-        @Override
-        public void onScanResult(int callbackType, ScanResult result) {
-            super.onScanResult(callbackType, result);
-            if (!mAvailableAdapter.hasDevice(result.getDevice())) {
-                mAvailableAdapter.add(result.getDevice());
-                //TODO delete logging
-                Log.v("_BtScanCallback:", "adding device: " + result.getDevice().getAddress());
-            } else {
-                //TODO delete logging
-                Log.v("_BtScanCallback:", "already has device: " + result.getDevice().getAddress());
-            }
-
-            mAvailableAdapter.notifyDataSetChanged();
-            //TODO delete logging
-            Log.v("_ScanCallback:", "available devices: " + mAvailableAdapter.getCount());
-        }
-
-        @Override
-        public void onBatchScanResults(List<ScanResult> results) {
-            super.onBatchScanResults(results);
-            for (ScanResult result : results) {
-                if (!mAvailableAdapter.hasDevice(result.getDevice())) {
-                    mAvailableAdapter.add(result.getDevice());
-                    //TODO delete logging
-                    Log.v("_BtScanCallback:", "adding device: " + result.getDevice().getAddress());
-                } else {
-                    //TODO delete logging
-                    Log.v("_BtScanCallback:", "already has device: " + result.getDevice().getAddress());
-                }
-            }
-            mAvailableAdapter.notifyDataSetChanged();
-            //TODO delete logging
-            Log.v("_ScanCallback:", "available devices: " + mAvailableAdapter.getCount());
-        }
-
-        @Override
-        public void onScanFailed(int errorCode) {
-            super.onScanFailed(errorCode);
-            Toast.makeText(getApplicationContext(),
-                    "Scan Error: " + errorCode,
-                    Toast.LENGTH_SHORT).show();
-            //TODO delete logging
-            Log.v("_ScanCallback:", "scan failed: ");
-        }
-    }
 }
 
