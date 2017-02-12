@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -121,17 +122,28 @@ public class DiscoveryActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
     public void scan() {
         if (mBtAdapter.isEnabled()) {
 
-            mScanHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mBtScanner.stopScan(mScanCallback);
-                }
-            }, SCAN_PERIOD);
+            if(mScanCallback == null) {
+                mScanCallback = new BtScanCallback();
+            }
+                mScanHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        stopScan();
+                    }
+                }, SCAN_PERIOD);
+
 
             mBtScanner.startScan(mScanCallback);
+
+            Toast.makeText(getApplicationContext(), "Starting Scan", Toast.LENGTH_SHORT).show();
 
 
         } else {
@@ -140,6 +152,16 @@ public class DiscoveryActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT)
                     .show();
         }
+    }
+
+    public void stopScan(){
+        Toast.makeText(getApplicationContext(), "Stopping Scan", Toast.LENGTH_SHORT).show();
+
+        mBtScanner.stopScan(mScanCallback);
+        mScanCallback = null;
+
+        mAvailableAdapter.notifyDataSetChanged();
+
     }
 
 
@@ -209,6 +231,8 @@ public class DiscoveryActivity extends AppCompatActivity {
             super.onScanResult(callbackType, result);
             mAvailableAdapter.add(result.getDevice());
             mAvailableAdapter.notifyDataSetChanged();
+            //TODO delete logging
+            Log.v("_ScanCallback:", "available devices: " + mAvailableAdapter.getCount());
         }
 
         @Override
@@ -218,6 +242,8 @@ public class DiscoveryActivity extends AppCompatActivity {
                 mAvailableAdapter.add(result.getDevice());
             }
             mAvailableAdapter.notifyDataSetChanged();
+            //TODO delete logging
+            Log.v("_ScanCallback:", "available devices: " + mAvailableAdapter.getCount());
         }
 
         @Override
@@ -226,6 +252,8 @@ public class DiscoveryActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),
                     "Scan Error: " + errorCode,
                     Toast.LENGTH_SHORT).show();
+            //TODO delete logging
+            Log.v("_ScanCallback:", "scan failed: ");
         }
     }
 }
