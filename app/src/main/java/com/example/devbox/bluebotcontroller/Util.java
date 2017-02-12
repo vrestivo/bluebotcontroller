@@ -1,5 +1,10 @@
 package com.example.devbox.bluebotcontroller;
 
+import android.bluetooth.BluetoothDevice;
+
+import java.util.ArrayList;
+import java.util.Set;
+
 /**
  * Utility class for misc coversion operations
  */
@@ -38,5 +43,25 @@ public class Util {
         return null;
     }
 
+    /**
+     * takes a set of bluetooth devices, extracts name and address
+     * of each device and packages it into ArrayList<String>
+     * each string has a format of:
+     * "DeviceName 00:11:22:33:44:55"
+     * @param devices
+     * @return
+     */
+    public static ArrayList<String> extractDeviceString(Set<BluetoothDevice> devices){
+        ArrayList<String> deviceStrings = new ArrayList<>();
+
+        if(!devices.isEmpty()){
+            for(BluetoothDevice device: devices){
+                deviceStrings.add(device.getName() + " " + device.getAddress());
+            }
+            return deviceStrings;
+        }
+
+        return deviceStrings;
+    }
 
 }

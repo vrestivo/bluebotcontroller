@@ -110,21 +110,23 @@ public class MainFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //TODO finish implementation
-        switch (requestCode) {
-            case REQUEST_ENABLE_BT: {
-                Toast.makeText(getContext(), String.valueOf(resultCode), Toast.LENGTH_SHORT).show();
-                break;
-            }
-            case ACTION_DISCOVERY: {
-                String deviceString = null;
-                if(data.hasExtra(DiscoveryActivity.DEVICE_STRING)){
-                    deviceString = data.getStringExtra(DiscoveryActivity.DEVICE_STRING);
+        if(data!=null) {
+            switch (requestCode) {
+                case REQUEST_ENABLE_BT: {
+                    Toast.makeText(getContext(), String.valueOf(resultCode), Toast.LENGTH_SHORT).show();
+                    break;
                 }
-                Toast.makeText(getContext(), "device Selected: " + deviceString, Toast.LENGTH_SHORT).show();
-                //TODO initiate pairing
-                break;
-            }
+                case ACTION_DISCOVERY: {
+                    String deviceString = null;
+                    if (data.hasExtra(DiscoveryActivity.DEVICE_STRING)) {
+                        deviceString = data.getStringExtra(DiscoveryActivity.DEVICE_STRING);
+                    }
+                    Toast.makeText(getContext(), "device Selected: " + deviceString, Toast.LENGTH_SHORT).show();
+                    //TODO initiate pairing
+                    break;
+                }
 
+            }
         }
     }
 
