@@ -3,9 +3,6 @@ package com.example.devbox.bluebotcontroller;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanResult;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +15,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,10 +23,8 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -107,7 +101,9 @@ public class DiscoveryActivity extends AppCompatActivity {
         mPairedDevicesView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                if (mBtAdapter.isDiscovering()) {
+                    mBtAdapter.cancelDiscovery();
+                }
                 String deviceMac = ((BluetoothDevice) mPairedAdapter.getItem(position)).getAddress();
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(DEVICE_STRING, deviceMac);
@@ -120,6 +116,9 @@ public class DiscoveryActivity extends AppCompatActivity {
         mAvailableDevicesView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (mBtAdapter.isDiscovering()) {
+                    mBtAdapter.cancelDiscovery();
+                }
                 String deviceMac = ((BluetoothDevice) mPairedAdapter.getItem(position)).getAddress();
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(DEVICE_STRING, deviceMac);
