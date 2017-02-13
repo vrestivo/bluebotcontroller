@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,8 +60,12 @@ public class DiscoveryActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 if (action.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)) {
+                    //TODO delete logging
+                    Log.v("_inBroadcastRecv", "action_discovery_finished");
                     mBtAdapter.cancelDiscovery();
                 } else if (action.equals(BluetoothDevice.ACTION_FOUND)) {
+                    //TODO delete logging
+                    Log.v("_inBroadcastRecv", "action_found");
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     if (!mAvailableAdapter.hasDevice(device)) {
                         mAvailableAdapter.add(device);
