@@ -40,6 +40,23 @@ public class MainFragment extends Fragment {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             Toast.makeText(getContext(), "on Handler", Toast.LENGTH_SHORT).show();
+            switch (msg.what){
+                case Constants.MESSAGE_CON_STATE_CHANGE:
+                    //TODO implement
+                    Toast.makeText(getContext(), "State Changed", Toast.LENGTH_SHORT).show();
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    //TODO implement
+                    Toast.makeText(getContext(), "just Wrote something", Toast.LENGTH_SHORT).show();
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    if(msg.getData().containsKey(Constants.TOAST_STR)){
+                        Toast.makeText(getActivity(), msg.getData().getString(Constants.TOAST_STR), Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+
+            }
+
         }
     };
 
@@ -142,7 +159,7 @@ public class MainFragment extends Fragment {
                     Toast.makeText(getContext(), "Action Discover: device Selected: " + deviceString, Toast.LENGTH_SHORT).show();
                     //TODO initiate pairing
                     if(data.hasExtra(BluetoothDevice.EXTRA_DEVICE)) {
-                        BTConnectionService connectionService = new BTConnectionService(mHandler);
+                        BTConnectionService connectionService = new BTConnectionService(getContext(), mHandler);
                         Log.v(LOG_TAG, "_staring service for" + deviceString);
                         connectionService.connect(((BluetoothDevice) data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)), true);
                     }

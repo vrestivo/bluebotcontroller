@@ -3,7 +3,11 @@ package com.example.devbox.bluebotcontroller;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.ContentValues;
+import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import java.io.IOException;
@@ -38,9 +42,11 @@ public class BTConnectionService {
     private Handler mHandler;
     private int mState;
     private BluetoothAdapter mBtAdapter;
+    private Context mParentContext;
 
-    public BTConnectionService(Handler handler) {
+    public BTConnectionService(Context context, Handler handler) {
         mHandler = handler;
+        mParentContext = context;
         mState = ST_NONE;
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -80,7 +86,10 @@ public class BTConnectionService {
             try {
                 tmp = device.createInsecureRfcommSocketToServiceRecord(APP_UUID);
             } catch (IOException ioe) {
-                Log.e(LOG_TAG, "failed to establish RFCOMM channel", ioe);
+                String errorMessage = mParentContext.getString(R.string.bt_conn_error_failed_rfcomm);
+                Log.e(LOG_TAG, errorMessage, ioe);
+                sendToastToUi(errorMessage);
+
             }
 
             mmSocket = tmp;
@@ -107,6 +116,7 @@ public class BTConnectionService {
                     Log.e(LOG_TAG, "closing socket failed", ioe2);
                 }
                 Log.e(LOG_TAG, "failed to connect", ioe1);
+                sendToastToUi("failed to connect");
             }
 
 
@@ -147,5 +157,17 @@ public class BTConnectionService {
     private class AcceptThread extends Thread {
 
     }
+
+    void sendToastToUi(String toast){
+        if(toast!=null & !toast.isEmpty()){
+            Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.TOAST_STR, toast);
+            msg.setData(bundle);
+            mHandler.sendMessage(msg);
+        }
+
+    }
+
 
 }
