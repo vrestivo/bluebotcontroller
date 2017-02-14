@@ -1,10 +1,14 @@
 package com.example.devbox.bluebotcontroller;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,15 +25,26 @@ public class MainFragment extends Fragment {
     private Button mButtonoBtOff;
     private Button mButtonDiscovery;
 
+    private final String LOG_TAG = "_MainFragment";
 
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int ACTION_STATE_CHAGED = 2;
     private static final int ACTION_FOUND = 3;
     private static final int ACTION_DISCOVERY = 4;
 
-
-
     private BluetoothAdapter mBluetoothAdapter;
+
+
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Toast.makeText(getContext(), "on Handler", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -109,6 +124,9 @@ public class MainFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //TODO delete when done
+        Log.v(LOG_TAG, "_in onActivityResult");
+
         //TODO finish implementation
         if(data!=null) {
             switch (requestCode) {
@@ -121,8 +139,14 @@ public class MainFragment extends Fragment {
                     if (data.hasExtra(DiscoveryActivity.DEVICE_STRING)) {
                         deviceString = data.getStringExtra(DiscoveryActivity.DEVICE_STRING);
                     }
-                    Toast.makeText(getContext(), "device Selected: " + deviceString, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Action Discover: device Selected: " + deviceString, Toast.LENGTH_SHORT).show();
                     //TODO initiate pairing
+                    if(data.hasExtra(BluetoothDevice.EXTRA_DEVICE)) {
+                        BTConnectionService connectionService = new BTConnectionService(mHandler);
+                        Log.v(LOG_TAG, "_staring service for" + deviceString);
+                        connectionService.connect(((BluetoothDevice) data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)), true);
+                    }
+
                     break;
                 }
 

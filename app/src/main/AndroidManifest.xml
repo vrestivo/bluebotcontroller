@@ -24,9 +24,9 @@
         </activity>
         <activity android:name=".DiscoveryActivity"></activity>
 
-        <service
-            android:name=".BTConnectionService"
-            android:exported="false" />
+        <!--<service-->
+            <!--android:name=".BTConnectionService"-->
+            <!--android:exported="false" />-->
 
     </application>
 

@@ -109,9 +109,11 @@ public class DiscoveryActivity extends AppCompatActivity {
                 if (mBtAdapter.isDiscovering()) {
                     mBtAdapter.cancelDiscovery();
                 }
-                String deviceMac = ((BluetoothDevice) mPairedAdapter.getItem(position)).getAddress();
+                BluetoothDevice btDev =  (BluetoothDevice) mPairedAdapter.getItem(position);
+                String deviceMac = btDev.getAddress();
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(DEVICE_STRING, deviceMac);
+                resultIntent.putExtra(BluetoothDevice.EXTRA_DEVICE, btDev);
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             }
@@ -124,9 +126,11 @@ public class DiscoveryActivity extends AppCompatActivity {
                 if (mBtAdapter.isDiscovering()) {
                     mBtAdapter.cancelDiscovery();
                 }
-                String deviceMac = ((BluetoothDevice) mPairedAdapter.getItem(position)).getAddress();
+                BluetoothDevice btDev =  (BluetoothDevice) mPairedAdapter.getItem(position);
+                String deviceMac = btDev.getAddress();
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(DEVICE_STRING, deviceMac);
+                resultIntent.putExtra(BluetoothDevice.EXTRA_DEVICE, btDev);
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             }
