@@ -3,8 +3,10 @@ package com.example.devbox.bluebotcontroller;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,6 +30,9 @@ public class BTConnectionService {
     //https://developer.android.com/reference/android/bluetooth/BluetoothDevice.html#createRfcommSocketToServiceRecord%28java.util.UUID%29
     private final UUID APP_UUID =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    //                           ^^^^
+    // UUID section marked by a "^" points to the device type, in this case
+    // a serial device
 
     //state constants
     public static final int ST_NONE = 0;
@@ -67,12 +72,32 @@ public class BTConnectionService {
     }
 
 
+    /**
+     * since we are connecting only to one device this thread
+     * will manage connection and communication with the
+     * remote bluetooth device
+     */
     private class ConnectThread extends Thread {
 
         private final BluetoothDevice mmBtDevice;
         private final BluetoothSocket mmSocket;
         private InputStream mmInputStream;
         private OutputStream mmOutputStream;
+        private BluetoothAdapter mmAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        private final BroadcastReceiver mmReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                switch (action){
+                    case mmAdapter.STATE_DISCONNECTED{
+                        sendToastToUi("disconnected");
+                        break;
+                    }
+
+                }
+            }
+        };
 
         public ConnectThread(BluetoothDevice device) {
 
@@ -84,7 +109,8 @@ public class BTConnectionService {
             BluetoothSocket tmp = null;
 
             try {
-                tmp = device.createInsecureRfcommSocketToServiceRecord(APP_UUID);
+                tmp = device.createRfcommSocketToServiceRecord(APP_UUID);
+                //tmp = device.createInsecureRfcommSocketToServiceRecord(APP_UUID);
             } catch (IOException ioe) {
                 String errorMessage = mParentContext.getString(R.string.bt_conn_error_failed_rfcomm);
                 Log.e(LOG_TAG, errorMessage, ioe);
@@ -92,8 +118,8 @@ public class BTConnectionService {
 
             }
 
-            mmSocket = tmp;
 
+            mmSocket = tmp;
             mState = ST_CONNECTING;
 
         }
@@ -104,10 +130,13 @@ public class BTConnectionService {
             //TODO delete logging
             Log.v(LOG_TAG, "starting ConntectThread");
 
+
+            //make sure discovery is disabled
             mBtAdapter.cancelDiscovery();
 
 
             try {
+                //perform SDP
                 mmSocket.connect();
             } catch (IOException ioe1) {
                 try {

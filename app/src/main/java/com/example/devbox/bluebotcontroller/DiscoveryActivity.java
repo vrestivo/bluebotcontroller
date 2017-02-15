@@ -139,7 +139,6 @@ public class DiscoveryActivity extends AppCompatActivity {
         mScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //scan();
                 discovery();
             }
         });
