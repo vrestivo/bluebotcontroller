@@ -3,10 +3,7 @@ package com.example.devbox.bluebotcontroller;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -58,12 +55,12 @@ public class BTConnectionService {
 
     }
 
+
     public synchronized void connect(BluetoothDevice device, boolean secure) {
         //if(mState == ST_CONNECTING){
         if (mConnectThread == null) {
             mConnectThread = new ConnectThread(device);
-        }
-        else{
+        } else {
             mConnectThread.cancel();
         }
         mConnectThread.start();
@@ -85,19 +82,8 @@ public class BTConnectionService {
         private OutputStream mmOutputStream;
         private BluetoothAdapter mmAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        private final BroadcastReceiver mmReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                switch (action){
-                    case mmAdapter.STATE_DISCONNECTED{
-                        sendToastToUi("disconnected");
-                        break;
-                    }
+        private int mmState;
 
-                }
-            }
-        };
 
         public ConnectThread(BluetoothDevice device) {
 
@@ -120,7 +106,7 @@ public class BTConnectionService {
 
 
             mmSocket = tmp;
-            mState = ST_CONNECTING;
+            mState = mmAdapter.getState();
 
         }
 
@@ -130,6 +116,10 @@ public class BTConnectionService {
             //TODO delete logging
             Log.v(LOG_TAG, "starting ConntectThread");
 
+            byte[] inArray;
+            byte[] outArray;
+            int bytesAvailable;
+
 
             //make sure discovery is disabled
             mBtAdapter.cancelDiscovery();
@@ -138,6 +128,7 @@ public class BTConnectionService {
             try {
                 //perform SDP
                 mmSocket.connect();
+                mmAdapter.getState();
             } catch (IOException ioe1) {
                 try {
                     mmSocket.close();
@@ -148,19 +139,26 @@ public class BTConnectionService {
                 sendToastToUi("failed to connect");
             }
 
+            //open output and input streams
+            switchOutputStream(mmOutputStream, mmSocket, true);
+            switchInputStream(mmInputStream, mmSocket, true);
 
-            try {
-                mmOutputStream = mmSocket.getOutputStream();
-            } catch (IOException ioe) {
-                Log.e(LOG_TAG, "failed to get OutputStream. connection not ready", ioe);
+
+
+
+            while (mmState == mmAdapter.STATE_CONNECTED) {
+
+
+                outArray = "OK".getBytes();
+
+
+                write(testMsg);
+
+
             }
 
-
-            byte[] testMsg = "TESTING".getBytes();
-
-            write(testMsg);
-
             cancel();
+
 
             synchronized (BTConnectionService.this) {
                 mConnectThread = null;
@@ -169,6 +167,17 @@ public class BTConnectionService {
         }
 
         public void cancel() {
+                switchOutputStream(mmOutputStream, mmSocket, false);
+                switchInputStream(mmInputStream, mmSocket, false);
+
+                //close socket
+                try {
+                    mmSocket.close();
+                } catch (IOException ioe2) {
+                    Log.e(LOG_TAG, "closing socket failed", ioe2);
+                }
+
+            mmState = mmAdapter.getState();
 
         }
 
@@ -181,14 +190,52 @@ public class BTConnectionService {
         }
 
 
+        public void switchInputStream(InputStream stream, BluetoothSocket socket, boolean open) {
+            if (socket != null && stream != null) {
+                try {
+                    if (open) {
+                        stream = socket.getInputStream();
+                    } else {
+                        stream.close();
+                    }
+                } catch (IOException ioe) {
+                    if (open) {
+                        Log.e(LOG_TAG, "failed to get InputStream.", ioe);
+                    } else {
+                        Log.e(LOG_TAG, "failed to close InputStream.", ioe);
+                    }
+                }
+            }
+        }
+
+
+        public void switchOutputStream(OutputStream stream, BluetoothSocket socket, boolean open) {
+            if (socket != null && stream != null) {
+                try {
+                    if (open) {
+                        stream = socket.getOutputStream();
+                    } else {
+                        stream.close();
+                    }
+                } catch (IOException ioe) {
+                    if (open) {
+                        Log.e(LOG_TAG, "failed to get InputStream.", ioe);
+                    } else {
+                        Log.e(LOG_TAG, "failed to close InputStream", ioe);
+
+                    }
+                }
+
+            }
+
+
+        }
+
     }
 
-    private class AcceptThread extends Thread {
 
-    }
-
-    void sendToastToUi(String toast){
-        if(toast!=null & !toast.isEmpty()){
+    void sendToastToUi(String toast) {
+        if (toast != null & !toast.isEmpty()) {
             Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
             Bundle bundle = new Bundle();
             bundle.putString(Constants.TOAST_STR, toast);
