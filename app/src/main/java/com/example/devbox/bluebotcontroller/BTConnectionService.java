@@ -84,6 +84,13 @@ public class BTConnectionService {
 
         private int mmState;
 
+        private byte[] mmATComand = "AT".getBytes();
+        private String mmOkResponse = "OK";
+
+        byte[] mmInArray;
+        byte[] mmOutArray;
+        int mmBytesAvailable;
+
 
         public ConnectThread(BluetoothDevice device) {
 
@@ -116,11 +123,6 @@ public class BTConnectionService {
             //TODO delete logging
             Log.v(LOG_TAG, "starting ConntectThread");
 
-            byte[] inArray;
-            byte[] outArray;
-            int bytesAvailable;
-
-
             //make sure discovery is disabled
             mBtAdapter.cancelDiscovery();
 
@@ -147,13 +149,6 @@ public class BTConnectionService {
 
 
             while (mmState == mmAdapter.STATE_CONNECTED) {
-
-
-                outArray = "OK".getBytes();
-
-
-                write(testMsg);
-
 
             }
 
@@ -228,7 +223,38 @@ public class BTConnectionService {
 
             }
 
+        }
 
+        public boolean isConnected(){
+            String LOG_TAG = "_isConnected";
+            byte[] response = null;
+
+            //TODO test this
+            boolean connected = false;
+            if(mmSocket.isConnected()){
+                if(mmInputStream!=null && mmOutputStream!=null){
+                    try {
+                        mmOutputStream.write(mmATComand);
+                    }
+                    catch (IOException ioe){
+                        Log.e(LOG_TAG, "failed to write to OutputStream", ioe);
+                    }
+                    try{
+                        if(mmInputStream.available()>0){
+                            mmInputStream.read(response);
+                            if(response.toString().equals(mmOkResponse)){
+                                connected = true;
+                            }
+                        }
+                    }
+                    catch (IOException ioe){
+                        Log.e(LOG_TAG, "failed to read from InputStream", ioe);
+
+                    }
+                }
+
+            }
+            return connected;
         }
 
     }
