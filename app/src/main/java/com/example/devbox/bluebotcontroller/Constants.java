@@ -9,6 +9,7 @@ public class Constants {
     public static final int MESSAGE_WRITE = 2;
     public static final int MESSAGE_READ = 3;
     public static final int MESSAGE_TOAST = 4;
+    public static final int MESSAGE_FROM_REMOTE_DEVICE = 5;
 
     public static final String TOAST_STR = "toast";
 

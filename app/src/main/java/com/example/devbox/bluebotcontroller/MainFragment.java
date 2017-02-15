@@ -24,6 +24,7 @@ public class MainFragment extends Fragment {
     private Button mButtonBtOn;
     private Button mButtonoBtOff;
     private Button mButtonDiscovery;
+    private Button mSendMessage;
 
     private final String LOG_TAG = "_MainFragment";
 
@@ -54,6 +55,12 @@ public class MainFragment extends Fragment {
                         Toast.makeText(getActivity(), msg.getData().getString(Constants.TOAST_STR), Toast.LENGTH_SHORT).show();
                     }
                     break;
+                case Constants.MESSAGE_FROM_REMOTE_DEVICE:{
+                    //TODO print message in the colsole view when ready
+
+
+                    break;
+                }
 
             }
 
@@ -200,5 +207,8 @@ public class MainFragment extends Fragment {
         startActivityForResult(discoveryIntent, ACTION_DISCOVERY);
     }
 
+    public void sendMessageToRemoteBtDevice(String message){
+
+    }
 
 }

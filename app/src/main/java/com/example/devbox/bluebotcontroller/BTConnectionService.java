@@ -57,15 +57,15 @@ public class BTConnectionService {
 
 
     public synchronized void connect(BluetoothDevice device, boolean secure) {
-        //if(mState == ST_CONNECTING){
-        if (mConnectThread == null) {
-            mConnectThread = new ConnectThread(device);
-        } else {
-            mConnectThread.cancel();
-        }
-        mConnectThread.start();
+        if (mState == mBtAdapter.STATE_CONNECTED) {
+            if (mConnectThread == null) {
+                mConnectThread = new ConnectThread(device, mHandler);
+            } else {
+                mConnectThread.cancel();
+            }
+            mConnectThread.start();
 
-        //}
+        }
     }
 
 
@@ -90,13 +90,18 @@ public class BTConnectionService {
         byte[] mmInArray;
         byte[] mmOutArray;
         int mmBytesAvailable;
+        int mmBytesReceived;
+        Handler mmHancler;
+        Message mmMessage;
 
 
-        public ConnectThread(BluetoothDevice device) {
+        public ConnectThread(BluetoothDevice device, Handler handler) {
 
             mmBtDevice = device;
             mmInputStream = null;
             mmOutputStream = null;
+            mmBytesReceived = 0;
+            mmHancler = handler;
 
 
             BluetoothSocket tmp = null;
@@ -111,19 +116,10 @@ public class BTConnectionService {
 
             }
 
-
             mmSocket = tmp;
             mState = mmAdapter.getState();
 
-        }
-
-
-        @Override
-        public void run() {
-            //TODO delete logging
-            Log.v(LOG_TAG, "starting ConntectThread");
-
-            //make sure discovery is disabled
+            //making sure discovery is disabled
             mBtAdapter.cancelDiscovery();
 
 
@@ -145,15 +141,28 @@ public class BTConnectionService {
             switchOutputStream(mmOutputStream, mmSocket, true);
             switchInputStream(mmInputStream, mmSocket, true);
 
+        }
 
 
+        @Override
+        public void run() {
+            String inputStreamError = "starting error reading InputStream";
+            //TODO delete logging
+
+            Log.v(LOG_TAG, "starting ConntectThread");
 
             while (mmState == mmAdapter.STATE_CONNECTED) {
-
+                try {
+                    mmBytesReceived = mmInputStream.read(mmInArray);
+                    mmState = mmAdapter.getState();
+                    mHandler.obtainMessage().sendToTarget(Constants.);
+                } catch (IOException ioe) {
+                    Log.v(LOG_TAG, "starting error reading InputStream");
+                    break;
+                }
             }
 
             cancel();
-
 
             synchronized (BTConnectionService.this) {
                 mConnectThread = null;
@@ -161,16 +170,22 @@ public class BTConnectionService {
 
         }
 
+        /**
+         * this smehod terminates the connectionn by
+         * closing input and output streams,
+         * closing bluettooth socket,
+         * and upates the conection status
+         */
         public void cancel() {
-                switchOutputStream(mmOutputStream, mmSocket, false);
-                switchInputStream(mmInputStream, mmSocket, false);
+            switchOutputStream(mmOutputStream, mmSocket, false);
+            switchInputStream(mmInputStream, mmSocket, false);
 
-                //close socket
-                try {
-                    mmSocket.close();
-                } catch (IOException ioe2) {
-                    Log.e(LOG_TAG, "closing socket failed", ioe2);
-                }
+            //close socket
+            try {
+                mmSocket.close();
+            } catch (IOException ioe2) {
+                Log.e(LOG_TAG, "closing socket failed", ioe2);
+            }
 
             mmState = mmAdapter.getState();
 
@@ -181,10 +196,17 @@ public class BTConnectionService {
                 mmOutputStream.write(writeBytes);
             } catch (IOException ioe) {
                 Log.e(LOG_TAG, "failed to write to socked", ioe);
+                mmState = mmAdapter.getState();
             }
         }
 
 
+        /**
+         * this method opens or closes InputStream
+         * @param stream stream to open or close
+         * @param socket socket to get the stream from
+         * @param open action true for open, false for close
+         */
         public void switchInputStream(InputStream stream, BluetoothSocket socket, boolean open) {
             if (socket != null && stream != null) {
                 try {
@@ -204,6 +226,12 @@ public class BTConnectionService {
         }
 
 
+        /**
+         * this method opens or closes OutputStream
+         * @param stream stream to open or close
+         * @param socket socket to get the stream from
+         * @param open action true for open, false for close
+         */
         public void switchOutputStream(OutputStream stream, BluetoothSocket socket, boolean open) {
             if (socket != null && stream != null) {
                 try {
@@ -225,29 +253,36 @@ public class BTConnectionService {
 
         }
 
-        public boolean isConnected(){
+
+        /**
+         * this method validates connection with a remote bluetooth device
+         * it sends an "AT" commamd to a remote device
+         * if remote device responsd with "OK"
+         * (typical behavior for a seiral bluetoodh module)
+         * then connection works as expected
+         * @return
+         */
+        public boolean isConnected() {
             String LOG_TAG = "_isConnected";
             byte[] response = null;
 
             //TODO test this
             boolean connected = false;
-            if(mmSocket.isConnected()){
-                if(mmInputStream!=null && mmOutputStream!=null){
+            if (mmSocket.isConnected()) {
+                if (mmInputStream != null && mmOutputStream != null) {
                     try {
                         mmOutputStream.write(mmATComand);
-                    }
-                    catch (IOException ioe){
+                    } catch (IOException ioe) {
                         Log.e(LOG_TAG, "failed to write to OutputStream", ioe);
                     }
-                    try{
-                        if(mmInputStream.available()>0){
+                    try {
+                        if (mmInputStream.available() > 0) {
                             mmInputStream.read(response);
-                            if(response.toString().equals(mmOkResponse)){
+                            if (response.toString().equals(mmOkResponse)) {
                                 connected = true;
                             }
                         }
-                    }
-                    catch (IOException ioe){
+                    } catch (IOException ioe) {
                         Log.e(LOG_TAG, "failed to read from InputStream", ioe);
 
                     }
@@ -259,8 +294,11 @@ public class BTConnectionService {
 
     }
 
-
-    void sendToastToUi(String toast) {
+    /**
+     * this method send a toast message to the UI thread
+     * @param toast
+     */
+    private void sendToastToUi(String toast) {
         if (toast != null & !toast.isEmpty()) {
             Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
             Bundle bundle = new Bundle();
@@ -271,5 +309,23 @@ public class BTConnectionService {
 
     }
 
+    /**
+     * send a message to a remote bluetooth device
+     * @param message message in string form;
+     */
+    public void sendToRemoteBt(String message){
+        ConnectThread thread;
+
+        synchronized (this){
+            if(mBtAdapter.getState() != BluetoothAdapter.STATE_CONNECTED){
+                return;
+            }
+            thread = mConnectThread;
+        }
+
+        if(message!=null & !message.isEmpty()){
+            thread.write(message.getBytes());
+        }
+    }
 
 }
