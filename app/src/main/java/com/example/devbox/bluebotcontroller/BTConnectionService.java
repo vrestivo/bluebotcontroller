@@ -14,8 +14,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import static com.example.devbox.bluebotcontroller.Constants.ST_CONNECTED;
+import static com.example.devbox.bluebotcontroller.Constants.ST_DISCONNECTED;
+import static com.example.devbox.bluebotcontroller.Constants.ST_ERROR;
+import static com.example.devbox.bluebotcontroller.Constants.ST_NONE;
+
 /**
- * Created by devbox on 2/13/17.
+ * this class sets up and facilitates communication
+ * with a remote Bluetooth device
  */
 
 public class BTConnectionService {
@@ -31,18 +37,12 @@ public class BTConnectionService {
     // UUID section marked by a "^" points to the device type, in this case
     // a serial device
 
-    //state constants
-    public static final int ST_NONE = 0;
-    public static final int ST_LISTEN = 0;
-    public static final int ST_CONNECTING = 0;
-    public static final int ST_CONNECTED = 0;
 
-
-    //TODO declare class variables
 
     private ConnectThread mConnectThread;
     private Handler mHandler;
     private int mState;
+    private boolean mIsConnected;
     private BluetoothAdapter mBtAdapter;
     private Context mParentContext;
 
@@ -51,22 +51,55 @@ public class BTConnectionService {
         mParentContext = context;
         mState = ST_NONE;
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
-
-
     }
 
 
     public synchronized void connect(BluetoothDevice device, boolean secure) {
-        if (mState == mBtAdapter.STATE_CONNECTED) {
             if (mConnectThread == null) {
                 mConnectThread = new ConnectThread(device, mHandler);
             } else {
                 mConnectThread.cancel();
             }
             mConnectThread.start();
+    }
 
+
+    /**
+     * this method send a toast message to the UI thread
+     * @param toast
+     */
+    private void sendToastToUi(String toast) {
+        if (toast != null & !toast.isEmpty()) {
+            Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.TOAST_STR, toast);
+            msg.setData(bundle);
+            mHandler.sendMessage(msg);
+        }
+
+    }
+
+    /**
+     * send a message to a remote bluetooth device
+     * @param message message in string form;
+     */
+    public void sendToRemoteBt(String message){
+        ConnectThread thread;
+
+        synchronized (this){
+            if(mState == ST_CONNECTED){
+                return;
+            }
+            thread = mConnectThread;
+        }
+
+        if(message!=null & !message.isEmpty()){
+            thread.write(message.getBytes());
         }
     }
+
+
+
 
 
     /**
@@ -124,14 +157,15 @@ public class BTConnectionService {
 
 
             try {
-                //perform SDP
                 mmSocket.connect();
-                mmAdapter.getState();
+                mState = ST_CONNECTED;
             } catch (IOException ioe1) {
                 try {
                     mmSocket.close();
+                    mState = ST_ERROR;
                 } catch (IOException ioe2) {
                     Log.e(LOG_TAG, "closing socket failed", ioe2);
+                    mState = ST_ERROR;
                 }
                 Log.e(LOG_TAG, "failed to connect", ioe1);
                 sendToastToUi("failed to connect");
@@ -151,13 +185,14 @@ public class BTConnectionService {
 
             Log.v(LOG_TAG, "starting ConntectThread");
 
-            while (mmState == mmAdapter.STATE_CONNECTED) {
+            while (mState == mmAdapter.STATE_CONNECTED) {
                 try {
                     mmBytesReceived = mmInputStream.read(mmInArray);
                     mmState = mmAdapter.getState();
                     mHandler.obtainMessage().sendToTarget(Constants.);
                 } catch (IOException ioe) {
                     Log.v(LOG_TAG, "starting error reading InputStream");
+                    mState = ST_ERROR;
                     break;
                 }
             }
@@ -167,7 +202,6 @@ public class BTConnectionService {
             synchronized (BTConnectionService.this) {
                 mConnectThread = null;
             }
-
         }
 
         /**
@@ -187,7 +221,7 @@ public class BTConnectionService {
                 Log.e(LOG_TAG, "closing socket failed", ioe2);
             }
 
-            mmState = mmAdapter.getState();
+            mState = ST_DISCONNECTED;
 
         }
 
@@ -196,7 +230,7 @@ public class BTConnectionService {
                 mmOutputStream.write(writeBytes);
             } catch (IOException ioe) {
                 Log.e(LOG_TAG, "failed to write to socked", ioe);
-                mmState = mmAdapter.getState();
+                mState = ST_ERROR;
             }
         }
 
@@ -294,38 +328,5 @@ public class BTConnectionService {
 
     }
 
-    /**
-     * this method send a toast message to the UI thread
-     * @param toast
-     */
-    private void sendToastToUi(String toast) {
-        if (toast != null & !toast.isEmpty()) {
-            Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
-            Bundle bundle = new Bundle();
-            bundle.putString(Constants.TOAST_STR, toast);
-            msg.setData(bundle);
-            mHandler.sendMessage(msg);
-        }
-
-    }
-
-    /**
-     * send a message to a remote bluetooth device
-     * @param message message in string form;
-     */
-    public void sendToRemoteBt(String message){
-        ConnectThread thread;
-
-        synchronized (this){
-            if(mBtAdapter.getState() != BluetoothAdapter.STATE_CONNECTED){
-                return;
-            }
-            thread = mConnectThread;
-        }
-
-        if(message!=null & !message.isEmpty()){
-            thread.write(message.getBytes());
-        }
-    }
 
 }

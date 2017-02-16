@@ -13,6 +13,14 @@ public class Constants {
 
     public static final String TOAST_STR = "toast";
 
+    //state constants
+    public static final int ST_ERROR = -1;
+    public static final int ST_NONE = 0;
+    public static final int ST_LISTEN = 1;
+    public static final int ST_CONNECTING = 2;
+    public static final int ST_CONNECTED = 3;
+    public static final int ST_DISCONNECTED = 4;
+
 
 
 
