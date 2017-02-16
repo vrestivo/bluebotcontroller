@@ -25,6 +25,10 @@ public class MainFragment extends Fragment {
     private Button mButtonoBtOff;
     private Button mButtonDiscovery;
     private Button mSendMessage;
+    private Button mButtonForward;
+    private Button mButtonReverse;
+    private Button mButtonLeft;
+    private Button mButtonRight;
 
     private final String LOG_TAG = "_MainFragment";
 
@@ -100,6 +104,14 @@ public class MainFragment extends Fragment {
         mButtonBtOn = (Button) rootView.findViewById(R.id.bt_on);
         mButtonoBtOff = (Button) rootView.findViewById(R.id.bt_off);
         mButtonDiscovery = (Button) rootView.findViewById(R.id.bt_discover);
+
+        //directional controls
+        mButtonForward = (Button) rootView.findViewById(R.id.button_fwd);
+        mButtonReverse = (Button) rootView.findViewById(R.id.button_reverse);
+        mButtonLeft = (Button) rootView.findViewById(R.id.button_left);
+        mButtonRight = (Button) rootView.findViewById(R.id.button_right);
+
+
 
         mButtonBtOn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,7 +220,26 @@ public class MainFragment extends Fragment {
     }
 
     public void sendMessageToRemoteBtDevice(String message){
-
+        //TODO implement
     }
+
+    public void forward(){
+    //TODO implement
+    }
+
+    public void reverse(){
+        //TODO implement
+    }
+
+    public void turnLeft(){
+        //TODO implement
+    }
+
+    public void turnRight(){
+        //TODO implement
+    }
+
+
+
 
 }

@@ -99,9 +99,6 @@ public class BTConnectionService {
     }
 
 
-
-
-
     /**
      * since we are connecting only to one device this thread
      * will manage connection and communication with the
@@ -185,7 +182,8 @@ public class BTConnectionService {
 
             Log.v(LOG_TAG, "starting ConntectThread");
 
-            while (mState == mmAdapter.STATE_CONNECTED) {
+            //TODO add reconnection attempts
+            while (mState == ST_CONNECTED) {
                 try {
                     mmBytesReceived = mmInputStream.read(mmInArray);
                     mmState = mmAdapter.getState();
