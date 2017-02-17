@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.ContentLoadingProgressBar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import static com.example.devbox.bluebotcontroller.Constants.DEV_INFO_STR;
+import static com.example.devbox.bluebotcontroller.Constants.STATE_STR;
 import static com.example.devbox.bluebotcontroller.Constants.STR_CONNECTED;
 import static com.example.devbox.bluebotcontroller.Constants.STR_CONNECTING;
 import static com.example.devbox.bluebotcontroller.Constants.STR_DISCONNECTED;
@@ -68,6 +68,8 @@ public class MainFragment extends Fragment {
     private BluetoothAdapter mBluetoothAdapter;
     private BTConnectionService mBtService;
     private boolean mOn;
+    private int mConState;
+    private String mDevInfo;
 
 
     private final Handler mHandler = new Handler() {
@@ -79,14 +81,15 @@ public class MainFragment extends Fragment {
                 case Constants.MESSAGE_CON_STATE_CHANGE:
                     //TODO finish
                     //FIXME pass the device address if connected
-                    int stateCode = msg.arg1;
-                    if (stateCode == ST_CONNECTED && msg.getData().containsKey(DEV_INFO_STR)) {
-                        String devinfo = msg.getData().getString(DEV_INFO_STR);
-                        updateStatusIndicator(stateCode, devinfo);
+                    int mConState = msg.arg1;
+                    if (mConState == ST_CONNECTED && msg.getData().containsKey(DEV_INFO_STR)) {
+                        mDevInfo = msg.getData().getString(DEV_INFO_STR);
+                        updateStatusIndicator(mConState, mDevInfo);
                     } else {
-                        updateStatusIndicator(stateCode, null);
+                        mDevInfo = null;
+                        updateStatusIndicator(mConState, mDevInfo);
                     }
-                    Toast.makeText(getContext(), pickState(stateCode), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), pickState(mConState), Toast.LENGTH_SHORT).show();
                     break;
                 case Constants.MESSAGE_WRITE:
                     //TODO implement
@@ -110,6 +113,15 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        //TODO delete logging
+        Log.v(LOG_TAG, "_in_onCreate()");
+        if(savedInstanceState==null){
+            mConState = ST_NONE;
+        }else{
+            mConState = savedInstanceState.getInt(STATE_STR);
+            //TODO delete logging
+            Log.v(LOG_TAG, "in onCreate, mConState: " + mConState);
+        }
         super.onCreate(savedInstanceState);
 
         //retain state on config changes
@@ -135,6 +147,8 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
+
+
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -164,6 +178,7 @@ public class MainFragment extends Fragment {
 
         //status indicator
         mConStatus = (TextView) rootView.findViewById(R.id.con_status);
+        updateStatusIndicator(mConState, null);
 
 
         mButtonBtOn.setOnClickListener(new View.OnClickListener() {
@@ -444,6 +459,8 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onStart() {
+        //TODO delete logging
+        Log.v(LOG_TAG, "_in_onStart()");
         super.onStart();
         if (mBluetoothAdapter != null) {
             if (!mBluetoothAdapter.isEnabled()) {
@@ -460,8 +477,12 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onResume() {
+        //TODO delete logging
+        Log.v(LOG_TAG, "_in_onResume()" + mConState + " " + mDevInfo);
         super.onResume();
+
         mOn = mBluetoothAdapter.isEnabled();
+        updateStatusIndicator(mConState, mDevInfo);
 
         if (mOn) {
             mButtonBtOn.setText(getString(R.string.button_bt_off));
@@ -473,15 +494,31 @@ public class MainFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        //TODO delete logging
+        Log.v(LOG_TAG, "_in_onStop()");
+        super.onStop();
+
+    }
+
+    @Override
     public void onDestroy() {
-        super.onDestroy();
         //TODO delete logging
         Log.v(LOG_TAG, "_in_onDestroy()");
         //terminate connection
-        if(mBtService!=null){
+        if(mBtService!=null && mConState == ST_DISCONNECTED_BY_USR){
             mBtService.disconnect();
             mConStatus.setText(STR_DISCONNECTED);
         }
+        super.onDestroy();
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(STATE_STR, mConState);
+        super.onSaveInstanceState(outState);
+
     }
 
     @Override
@@ -599,18 +636,26 @@ public class MainFragment extends Fragment {
             case ST_CONNECTED: {
                 //TODO update status
                 if (devinfo != null) {
-                    String statusMessage = mBluetoothAdapter.getName() + " " + devinfo;
-                    mConStatus.setText(devinfo);
+                    mDevInfo = mBluetoothAdapter.getName() + " " + devinfo;
+
+                    mConStatus.setText(mDevInfo);
                 } else {
                     mConStatus.setText(STR_CONNECTED);
+                    mDevInfo=null;
                 }
                 break;
             }
             case ST_DISCONNECTED_BY_USR:
                 mConStatus.setText(STR_DISCONNECTED_BY_USR);
+                mDevInfo = null;
                 break;
+
             case ST_ERROR:
                 mConStatus.setText(STR_ERROR);
+                break;
+            case ST_NONE:
+                mDevInfo = null;
+                mConStatus.setText(getString(R.string.status_default));
                 break;
         }
     }
