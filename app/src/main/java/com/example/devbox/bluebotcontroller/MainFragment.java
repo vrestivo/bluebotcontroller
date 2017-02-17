@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 /**
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 public class MainFragment extends Fragment {
 
+    //buttons
     private Button mButtonBtOn;
     private Button mButtonoBtOff;
     private Button mButtonDiscovery;
@@ -29,6 +31,10 @@ public class MainFragment extends Fragment {
     private Button mButtonReverse;
     private Button mButtonLeft;
     private Button mButtonRight;
+
+    //text field
+    private EditText mEditText;
+
 
     private final String LOG_TAG = "_MainFragment";
 
