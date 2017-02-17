@@ -34,6 +34,8 @@ import java.util.Set;
 
 public class DiscoveryActivity extends AppCompatActivity {
 
+    private String LOG_TAG = "DiscoveryActivity";
+
     //constant definitions
     public static final String DEVICE_NAME = "DEV_NAME";
     public static final String DEVICE_ADDRESS = "DEV_ADDR";
@@ -167,7 +169,12 @@ public class DiscoveryActivity extends AppCompatActivity {
         super.onPause();
         //BT Traditional
         if (mBtReceiver != null) {
-            unregisterReceiver(mBtReceiver);
+            try {
+                unregisterReceiver(mBtReceiver);
+            }
+            catch (IllegalArgumentException e){
+                Log.e(LOG_TAG, "mBtReceiver is not registered", e);
+            }
         }
         if (mBtAdapter != null) {
             mBtAdapter.cancelDiscovery();

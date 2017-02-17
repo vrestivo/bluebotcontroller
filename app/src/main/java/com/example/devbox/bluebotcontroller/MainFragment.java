@@ -44,7 +44,7 @@ public class MainFragment extends Fragment {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            Toast.makeText(getContext(), "on Handler", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "on Handler", Toast.LENGTH_SHORT).show();
             switch (msg.what){
                 case Constants.MESSAGE_CON_STATE_CHANGE:
                     //TODO implement
@@ -60,7 +60,7 @@ public class MainFragment extends Fragment {
                     }
                     break;
                 case Constants.MESSAGE_FROM_REMOTE_DEVICE:{
-                    //TODO print message in the colsole view when ready
+                    //TODO print message in the console view when ready
 
 
                     break;
@@ -77,6 +77,9 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //retain state on config changes
+        setRetainInstance(true);
 
         //TODO setHasOptionsMenu(true); when ready
 
@@ -185,7 +188,6 @@ public class MainFragment extends Fragment {
 
                     break;
                 }
-
             }
         }
     }
