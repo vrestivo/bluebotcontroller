@@ -151,13 +151,17 @@ public class MainFragment extends Fragment {
                 mOn = mBluetoothAdapter.isEnabled();
                 if(mOn) {
                     btOff(v);
+                    enableButtons(false);
+
                 }
                 else {
                     btOn(v);
+                    enableButtons(true);
+
                 }
             }
         });
-        
+
 
         mButtonDiscovery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,6 +188,8 @@ public class MainFragment extends Fragment {
             }
         });
 
+
+        //TODO delete below
         //Directional button listeners setup
 //        mButtonForward.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -439,10 +445,11 @@ public class MainFragment extends Fragment {
 
         if(mOn){
             mButtonBtOn.setText(getString(R.string.button_bt_off));
+            enableButtons(mOn);
         }
         else {
             mButtonBtOn.setText(getString(R.string.button_bt_on));
-
+            enableButtons(mOn);
         }
     }
 
@@ -521,20 +528,21 @@ public class MainFragment extends Fragment {
         }
     }
 
-    public void forward(){
-    //TODO implement
-    }
-
-    public void reverse(){
-        //TODO implement
-    }
-
-    public void turnLeft(){
-        //TODO implement
-    }
-
-    public void turnRight(){
-        //TODO implement
+    public void enableButtons(boolean flag){
+        if(flag){
+            mButtonSend.setEnabled(flag);
+            mButtonForward.setEnabled(flag);
+            mButtonReverse.setEnabled(flag);
+            mButtonLeft.setEnabled(flag);
+            mButtonRight.setEnabled(flag);
+        }
+        else {
+            mButtonSend.setEnabled(flag);
+            mButtonForward.setEnabled(flag);
+            mButtonReverse.setEnabled(flag);
+            mButtonLeft.setEnabled(flag);
+            mButtonRight.setEnabled(flag);
+        }
     }
 
 
