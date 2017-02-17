@@ -22,6 +22,14 @@ public class Constants {
     public static final int ST_DISCONNECTED = 4;
 
 
+    //directional bytes
+    public static final String BT_FWD = "W";
+    public static final String BT_REV = "S";
+    public static final String BT_LFT = "A";
+    public static final String BT_RGT = "F";
+
+
+
 
 
 }

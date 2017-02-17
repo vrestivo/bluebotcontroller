@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -166,6 +167,32 @@ public class MainFragment extends Fragment {
                 }
             }
         });
+
+        //Directional button listeners setup
+        mButtonForward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO delete
+                //Toast.makeText(getContext(), "forward pressed", Toast.LENGTH_SHORT).show();
+                if(mBtService!=null){
+                    mBtService.sendToRemoteBt(Constants.BT_FWD);
+                    //TODO delete when done
+                    Log.v(LOG_TAG, "fwd passed to thread");
+                }else{
+                    Toast.makeText(getContext(), "Service not started.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        mButtonForward.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                //TODO delete logging
+                Log.v(LOG_TAG, "fwd long click");
+                return false;
+            }
+        });
+
 
 
         return rootView;
