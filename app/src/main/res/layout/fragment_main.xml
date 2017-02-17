@@ -93,7 +93,9 @@
             android:layout_height="wrap_content"
             android:layout_column="2"
             android:layout_row="1"
-            android:text="Forward" />
+            android:text="Forward"
+            android:longClickable="false"
+            />
 
         <Button
             android:id="@+id/button_reverse"

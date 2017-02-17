@@ -11,11 +11,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import javax.net.ssl.HandshakeCompletedListener;
 
 /**
  * Created by devbox on 2/9/17.
@@ -169,31 +172,97 @@ public class MainFragment extends Fragment {
         });
 
         //Directional button listeners setup
-        mButtonForward.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO delete
-                //Toast.makeText(getContext(), "forward pressed", Toast.LENGTH_SHORT).show();
-                if(mBtService!=null){
-                    mBtService.sendToRemoteBt(Constants.BT_FWD);
-                    //TODO delete when done
-                    Log.v(LOG_TAG, "fwd passed to thread");
-                }else{
-                    Toast.makeText(getContext(), "Service not started.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+//        mButtonForward.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //TODO delete
+//                //Toast.makeText(getContext(), "forward pressed", Toast.LENGTH_SHORT).show();
+//                if(mBtService!=null){
+//                    mBtService.sendToRemoteBt(Constants.BT_FWD);
+//                    //TODO delete when done
+//                    Log.v(LOG_TAG, "fwd passed to thread");
+//                }else{
+//                    Toast.makeText(getContext(), "Service not started.", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
 
-        mButtonForward.setOnLongClickListener(new View.OnLongClickListener() {
+//        mButtonForward.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                //TODO delete logging
+//                Log.v(LOG_TAG, "fwd long click");
+//                return false;
+//            }
+//        });
+
+
+        /**
+         * last working on touch listener
+         */
+//        mButtonForward.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                //TODO delete logging
+//                Log.v(LOG_TAG, "fwd on touch listener");
+//                if(mBtService!=null){
+//                    mBtService.sendToRemoteBt(Constants.BT_FWD);
+//                    //TODO delete when done
+//                    Log.v(LOG_TAG, "fwd passed to thread");
+//                }else{
+//                    //Toast.makeText(getContext(), "Service not started.", Toast.LENGTH_SHORT).show();
+//                    Log.v(LOG_TAG, "service not started");
+//
+//                }
+//
+//                return false;
+//            }
+//        });
+
+
+        /**
+         * new repeat action on touch listener
+         * implemented according to the following guidance
+         * http://stackoverflow.com/questions/10511423/android-repeat-action-on-pressing-and-holding-a-button
+         *
+         */
+        mButtonForward.setOnTouchListener(new View.OnTouchListener() {
+
+            private Handler mmRepeatHandler;
+
             @Override
-            public boolean onLongClick(View v) {
-                //TODO delete logging
-                Log.v(LOG_TAG, "fwd long click");
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:{
+                        if(mmRepeatHandler!=null){
+                            return true;
+                        }
+                        mmRepeatHandler = new Handler();
+                        mmRepeatHandler.postDelayed(mmRunRepeatedAction, 45);
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        if(mmRepeatHandler == null){
+                            return true;
+                        }
+                        mmRepeatHandler.removeCallbacks(mmRunRepeatedAction);
+                        mmRepeatHandler = null;
+                        break;
+                    }
+
+                }
                 return false;
             }
+
+            Runnable mmRunRepeatedAction = new Runnable() {
+                @Override
+                public void run() {
+                    sendMessage(Constants.BT_FWD);
+                    mmRepeatHandler.postDelayed(this, 45);
+                }
+            };
+
         });
-
-
 
         return rootView;
     }
@@ -280,6 +349,12 @@ public class MainFragment extends Fragment {
 
     public void sendMessage(String message){
         //TODO implement
+        if(mBtService!=null && message!=null){
+            mBtService.sendToRemoteBt(message);
+        }
+        else{
+            Log.v(LOG_TAG, "cant sent message");
+        }
     }
 
     public void forward(){
