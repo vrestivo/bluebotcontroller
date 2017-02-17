@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.ContentLoadingProgressBar;
+import android.support.v7.widget.ButtonBarLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -48,9 +49,10 @@ public class MainFragment extends Fragment {
     private static final int ACTION_FOUND = 3;
     private static final int ACTION_DISCOVERY = 4;
 
+    //bluetooth stuff
     private BluetoothAdapter mBluetoothAdapter;
-
     private BTConnectionService mBtService;
+    private boolean mOn;
 
 
     private final Handler mHandler = new Handler() {
@@ -98,7 +100,6 @@ public class MainFragment extends Fragment {
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-
         if (mBluetoothAdapter == null) {
             //TODO see if need to call getAdapter();
             MainActivity mainActivity = (MainActivity) getActivity();
@@ -117,8 +118,20 @@ public class MainFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+
+
         mButtonBtOn = (Button) rootView.findViewById(R.id.bt_on);
-        mButtonoBtOff = (Button) rootView.findViewById(R.id.bt_off);
+
+        mOn = mBluetoothAdapter.isEnabled();
+
+        if(mOn){
+            mButtonBtOn.setText(getString(R.string.button_bt_off));
+        }
+        else {
+            mButtonBtOn.setText(getString(R.string.button_bt_on));
+
+        }
+
         mButtonDiscovery = (Button) rootView.findViewById(R.id.bt_discover);
         mButtonSend = (Button) rootView.findViewById(R.id.bt_send);
 
@@ -135,16 +148,16 @@ public class MainFragment extends Fragment {
         mButtonBtOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btOn(v);
+                mOn = mBluetoothAdapter.isEnabled();
+                if(mOn) {
+                    btOff(v);
+                }
+                else {
+                    btOn(v);
+                }
             }
         });
-
-        mButtonoBtOff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btOff(v);
-            }
-        });
+        
 
         mButtonDiscovery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -419,7 +432,19 @@ public class MainFragment extends Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mOn = mBluetoothAdapter.isEnabled();
 
+        if(mOn){
+            mButtonBtOn.setText(getString(R.string.button_bt_off));
+        }
+        else {
+            mButtonBtOn.setText(getString(R.string.button_bt_on));
+
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -461,6 +486,8 @@ public class MainFragment extends Fragment {
         if (!mBluetoothAdapter.isEnabled()) {
             Intent btOnIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(btOnIntent, REQUEST_ENABLE_BT);
+            mButtonBtOn.setText(getString(R.string.button_bt_off));
+            //mOn = mBluetoothAdapter.isEnabled();
             Toast.makeText(getContext(), getString(R.string.bt_admin_on), Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getContext(), getString(R.string.bt_admin_already_on), Toast.LENGTH_SHORT);
@@ -470,6 +497,8 @@ public class MainFragment extends Fragment {
     public void btOff(View v) {
         if (mBluetoothAdapter.isEnabled()) {
             mBluetoothAdapter.disable();
+            mButtonBtOn.setText(getString(R.string.button_bt_on));
+            //mOn = mBluetoothAdapter.isEnabled();
             Toast.makeText(getContext(), getString(R.string.bt_admin_off), Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getContext(), getString(R.string.bt_admin_already_off), Toast.LENGTH_SHORT).show();
