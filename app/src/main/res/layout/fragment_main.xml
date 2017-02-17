@@ -13,20 +13,21 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/fragment_main_tv"
+            android:id="@+id/con_status_title"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:text="Status Title: "
+            android:text="@string/status_title"
             android:layout_column="1"
             android:layout_row="1"
             />
 
         <TextView
-            android:id="@+id/connection_status"
+            android:id="@+id/con_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Status"
-            android:layout_column="3"
+            android:text="@string/status_default"
+            android:layout_column="2"
+            android:layout_columnSpan="2"
             android:layout_row="1"
             />
 

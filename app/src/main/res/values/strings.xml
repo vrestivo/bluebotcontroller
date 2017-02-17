@@ -5,6 +5,10 @@
     <string name="title_paired_devices">Paired devices:</string>
     <string name="title_available_devices">Available devices:</string>
 
+    <!-- status indicator strings -->
+    <string name="status_title">Connection:</string>
+    <string name="status_default">Not Connected</string>
+
 
     <!-- button names -->
     <string name="button_bt_on">Turn ON BT</string>
@@ -17,7 +21,6 @@
 
 
     <!-- bluetooth admin messages -->
-
     <string name="bt_admin_not_available">Bluetooth is not available.</string>
     <string name="bt_admin_on">Bluetooth On</string>
     <string name="bt_admin_off">Bluetooth Off</string>

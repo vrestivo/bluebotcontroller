@@ -7,7 +7,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.renderscript.ScriptGroup;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.IOException;
@@ -15,7 +15,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import static com.example.devbox.bluebotcontroller.Constants.MESSAGE_CON_STATE_CHANGE;
 import static com.example.devbox.bluebotcontroller.Constants.ST_CONNECTED;
+import static com.example.devbox.bluebotcontroller.Constants.ST_CONNECTING;
 import static com.example.devbox.bluebotcontroller.Constants.ST_DISCONNECTED;
 import static com.example.devbox.bluebotcontroller.Constants.ST_ERROR;
 import static com.example.devbox.bluebotcontroller.Constants.ST_NONE;
@@ -39,7 +41,6 @@ public class BTConnectionService {
     // a serial device
 
 
-
     private ConnectThread mConnectThread;
     private Handler mHandler;
     private int mState;
@@ -56,17 +57,25 @@ public class BTConnectionService {
 
 
     public synchronized void connect(BluetoothDevice device, boolean secure) {
-            if (mConnectThread == null) {
-                mConnectThread = new ConnectThread(device, mHandler);
-            } else {
-                mConnectThread.cancel();
-            }
-            mConnectThread.start();
+        if (mConnectThread == null) {
+            mConnectThread = new ConnectThread(device, mHandler);
+        } else {
+            mConnectThread.cancel();
+        }
+        mConnectThread.start();
     }
 
 
     /**
+     * @return returns connection state
+     */
+    public int getState() {
+        return mState;
+    }
+
+    /**
      * this method send a toast message to the UI thread
+     *
      * @param toast
      */
     private void sendToastToUi(String toast) {
@@ -82,23 +91,50 @@ public class BTConnectionService {
 
     /**
      * send a message to a remote bluetooth device
+     *
      * @param message message in string form;
      */
-    public void sendToRemoteBt(String message){
+    public void sendToRemoteBt(String message) {
         ConnectThread thread;
 
-        synchronized (this){
-            if(mState != ST_CONNECTED){
+        synchronized (this) {
+            if (mState != ST_CONNECTED) {
                 return;
             }
             thread = mConnectThread;
         }
 
-        if(message!=null & !message.isEmpty()){
+        if (message != null & !message.isEmpty()) {
             //TODO delete logging
             Log.v(LOG_TAG, "sending message");
             thread.write(message.getBytes());
         }
+    }
+
+
+    /**
+     * this method send message to UI handler
+     */
+    private void handleToUI(int msgWhat, @Nullable BluetoothDevice device) {
+        switch (msgWhat) {
+            case MESSAGE_CON_STATE_CHANGE: {
+                if (mState == ST_CONNECTED && device != null) {
+                    String devinfo = device.getName() + " " + device.getAddress();
+                    Message msg = mHandler.obtainMessage(msgWhat, mState, -1);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constants.DEV_INFO_STR, devinfo);
+                    msg.setData(bundle);
+                    mHandler.sendMessage(msg);
+                }
+                else
+                {
+                    Message msg = mHandler.obtainMessage(msgWhat, mState, -1);
+                    mHandler.sendMessage(msg);
+                }
+                break;
+            }
+        }
+
     }
 
 
@@ -115,7 +151,6 @@ public class BTConnectionService {
         private OutputStream mmOutputStream;
         private BluetoothAdapter mmAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        private int mmState;
 
         private byte[] mmATComand = "AT".getBytes();
         private String mmOkResponse = "OK";
@@ -142,6 +177,7 @@ public class BTConnectionService {
             try {
                 tmp = device.createRfcommSocketToServiceRecord(APP_UUID);
                 //tmp = device.createInsecureRfcommSocketToServiceRecord(APP_UUID);
+                mState = ST_CONNECTING;
             } catch (IOException ioe) {
                 String errorMessage = mParentContext.getString(R.string.bt_conn_error_failed_rfcomm);
                 Log.e(LOG_TAG, errorMessage, ioe);
@@ -150,12 +186,11 @@ public class BTConnectionService {
             }
 
             mmSocket = tmp;
-            mState = mmAdapter.getState();
 
             //making sure discovery is disabled
             mBtAdapter.cancelDiscovery();
 
-
+            //TODO handle error for already connected socket
             try {
                 mmSocket.connect();
                 mState = ST_CONNECTED;
@@ -171,25 +206,20 @@ public class BTConnectionService {
                 sendToastToUi("failed to connect");
             }
 
-            //open input stream
-//            try{
-//                mmInputStream = mmSocket.getInputStream();
-//            }
-//            catch (IOException ioe){
-//                Log.v(LOG_TAG, "starting error getting InputStream");
-//            }
 
             mmInputStream = switchInputStream(mmInputStream, mmSocket, true);
 
+            //TODO refactor to use swithOutputStream
             //open output stream
-            try{
+            try {
                 mmOutputStream = mmSocket.getOutputStream();
-            }
-            catch (IOException ioe){
+                mState = ST_CONNECTED;
+                handleToUI(MESSAGE_CON_STATE_CHANGE, mmBtDevice);
+            } catch (IOException ioe) {
                 Log.v(LOG_TAG, "starting error getting InputStream");
+                mState = ST_ERROR;
             }
 
-            //open output and input streams
 
         }
 
@@ -201,7 +231,7 @@ public class BTConnectionService {
 
             Log.v(LOG_TAG, "starting ConntectThread");
 
-            if(isConnected()){
+            if (isConnected()) {
                 sendToastToUi("looks like we're talking");
             }
 
@@ -211,7 +241,7 @@ public class BTConnectionService {
                     mmBytesReceived = mmInputStream.read(mmInArray);
                     //TODO pass message to ui
                     //mHandler.obtainMessage().sendToTarget(Constants.MESSAG);
-                     sendToastToUi(new String(mmInArray));
+                    sendToastToUi(new String(mmInArray));
                 } catch (IOException ioe) {
                     Log.v(LOG_TAG, "starting error reading InputStream");
                     mState = ST_ERROR;
@@ -234,12 +264,12 @@ public class BTConnectionService {
          */
         public void cancel() {
 
-            if(mmInputStream!=null){
-                try{
+            if (mmInputStream != null) {
+                try {
                     mmInputStream.close();
-                }
-                catch (IOException ioe){
+                } catch (IOException ioe) {
                     Log.e(LOG_TAG, "failed to close IputStream", ioe);
+                    mState = ST_ERROR;
                 }
             }
 
@@ -270,23 +300,26 @@ public class BTConnectionService {
 
         /**
          * this method opens or closes InputStream
+         *
          * @param stream stream to open or close
          * @param socket socket to get the stream from
-         * @param open action true for open, false for close
+         * @param open   action true for open, false for close
          */
         public InputStream switchInputStream(InputStream stream, BluetoothSocket socket, boolean open) {
             if (socket != null) {
                 try {
                     if (open && socket.isConnected()) {
                         return socket.getInputStream();
-                    } else if(!open && stream!=null) {
+                    } else if (!open && stream != null) {
                         stream.close();
                     }
                 } catch (IOException ioe) {
                     if (open) {
                         Log.e(LOG_TAG, "failed to get InputStream.", ioe);
+                        mState = ST_ERROR;
                     } else {
                         Log.e(LOG_TAG, "failed to close InputStream.", ioe);
+                        mState = ST_ERROR;
                     }
                 }
             }
@@ -296,24 +329,26 @@ public class BTConnectionService {
 
         /**
          * this method opens or closes OutputStream
+         *
          * @param stream stream to open or close
          * @param socket socket to get the stream from
-         * @param open action true for open, false for close
+         * @param open   action true for open, false for close
          */
         public OutputStream switchOutputStream(OutputStream stream, BluetoothSocket socket, boolean open) {
             if (socket != null) {
                 try {
                     if (open && socket.isConnected()) {
                         return socket.getOutputStream();
-                    } else if(!open && stream != null) {
+                    } else if (!open && stream != null) {
                         stream.close();
                     }
                 } catch (IOException ioe) {
                     if (open) {
                         Log.e(LOG_TAG, "failed to get InputStream.", ioe);
+                        mState = ST_ERROR;
                     } else {
                         Log.e(LOG_TAG, "failed to close InputStream", ioe);
-
+                        mState = ST_ERROR;
                     }
                 }
 
@@ -329,6 +364,7 @@ public class BTConnectionService {
          * if remote device responsd with "OK"
          * (typical behavior for a seiral bluetoodh module)
          * then connection works as expected
+         *
          * @return
          */
         public boolean isConnected() {

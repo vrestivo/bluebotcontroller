@@ -8,8 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.ContentLoadingProgressBar;
-import android.support.v7.widget.ButtonBarLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,10 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import javax.net.ssl.HandshakeCompletedListener;
-
+import static com.example.devbox.bluebotcontroller.Constants.DEV_INFO_STR;
 import static com.example.devbox.bluebotcontroller.Constants.STR_CONNECTED;
 import static com.example.devbox.bluebotcontroller.Constants.STR_CONNECTING;
 import static com.example.devbox.bluebotcontroller.Constants.STR_DISCONNECTED;
@@ -35,7 +33,7 @@ import static com.example.devbox.bluebotcontroller.Constants.ST_ERROR;
 import static com.example.devbox.bluebotcontroller.Constants.ST_NONE;
 
 /**
- * Created by devbox on 2/9/17.
+ * This class provides app UI
  */
 
 public class MainFragment extends Fragment {
@@ -50,10 +48,13 @@ public class MainFragment extends Fragment {
     private Button mButtonRight;
     private Button mButtonSend;
 
-    //text field
+    //text input field
     private EditText mEditText;
     private String mBuffer;
 
+    //status indicator
+    private TextView mConStatusTitle;
+    private TextView mConStatus;
 
     private final String LOG_TAG = "_MainFragment";
 
@@ -73,10 +74,17 @@ public class MainFragment extends Fragment {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             Toast.makeText(getActivity(), "on Handler", Toast.LENGTH_SHORT).show();
-            switch (msg.what){
+            switch (msg.what) {
                 case Constants.MESSAGE_CON_STATE_CHANGE:
                     //TODO finish
-                    int stateCode = msg.getData().getInt(Constants.STATE_STR);
+                    //FIXME pass the device address if connected
+                    int stateCode = msg.arg1;
+                    if (stateCode == ST_CONNECTED && msg.getData().containsKey(DEV_INFO_STR)) {
+                        String devinfo = msg.getData().getString(DEV_INFO_STR);
+                        updateStatusIndicator(stateCode, devinfo);
+                    } else {
+                        updateStatusIndicator(stateCode, null);
+                    }
                     Toast.makeText(getContext(), pickState(stateCode), Toast.LENGTH_SHORT).show();
                     break;
                 case Constants.MESSAGE_WRITE:
@@ -84,23 +92,19 @@ public class MainFragment extends Fragment {
                     Toast.makeText(getContext(), "just Wrote something", Toast.LENGTH_SHORT).show();
                     break;
                 case Constants.MESSAGE_TOAST:
-                    if(msg.getData().containsKey(Constants.TOAST_STR)){
+                    if (msg.getData().containsKey(Constants.TOAST_STR)) {
                         Toast.makeText(getActivity(), msg.getData().getString(Constants.TOAST_STR), Toast.LENGTH_SHORT).show();
                     }
                     break;
-                case Constants.MESSAGE_FROM_REMOTE_DEVICE:{
+                case Constants.MESSAGE_FROM_REMOTE_DEVICE: {
                     //TODO print message in the console view when ready
 
 
                     break;
                 }
-
             }
-
         }
     };
-
-
 
 
     @Override
@@ -111,6 +115,7 @@ public class MainFragment extends Fragment {
         setRetainInstance(true);
 
         //TODO setHasOptionsMenu(true); when ready
+        //TODO cancel connection when BT is turned off;
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -133,15 +138,13 @@ public class MainFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
 
-
         mButtonBtOn = (Button) rootView.findViewById(R.id.bt_on);
 
         mOn = mBluetoothAdapter.isEnabled();
 
-        if(mOn){
+        if (mOn) {
             mButtonBtOn.setText(getString(R.string.button_bt_off));
-        }
-        else {
+        } else {
             mButtonBtOn.setText(getString(R.string.button_bt_on));
 
         }
@@ -158,17 +161,19 @@ public class MainFragment extends Fragment {
         //edit text view
         mEditText = (EditText) rootView.findViewById(R.id.exit_text);
 
+        //status indicator
+        mConStatus = (TextView) rootView.findViewById(R.id.con_status);
+
 
         mButtonBtOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mOn = mBluetoothAdapter.isEnabled();
-                if(mOn) {
+                if (mOn) {
                     btOff(v);
                     enableButtons(false);
 
-                }
-                else {
+                } else {
                     btOn(v);
                     enableButtons(true);
 
@@ -192,11 +197,11 @@ public class MainFragment extends Fragment {
 
                 //TODO delete
                 //Toast.makeText(getContext(), mBuffer, Toast.LENGTH_SHORT).show();
-                if(mBtService!=null){
+                if (mBtService != null) {
                     mBtService.sendToRemoteBt(mBuffer);
                     //TODO delete when done
                     Log.v(LOG_TAG, "data passed to thread");
-                }else{
+                } else {
                     Toast.makeText(getContext(), "Service not started.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -265,9 +270,9 @@ public class MainFragment extends Fragment {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
-                    case MotionEvent.ACTION_DOWN:{
-                        if(mmRepeatHandler!=null){
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        if (mmRepeatHandler != null) {
                             return true;
                         }
                         mmRepeatHandler = new Handler();
@@ -275,7 +280,7 @@ public class MainFragment extends Fragment {
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-                        if(mmRepeatHandler == null){
+                        if (mmRepeatHandler == null) {
                             return true;
                         }
                         mmRepeatHandler.removeCallbacks(mmRunRepeatedAction);
@@ -310,9 +315,9 @@ public class MainFragment extends Fragment {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
-                    case MotionEvent.ACTION_DOWN:{
-                        if(mmRepeatHandler!=null){
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        if (mmRepeatHandler != null) {
                             return true;
                         }
                         mmRepeatHandler = new Handler();
@@ -320,7 +325,7 @@ public class MainFragment extends Fragment {
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-                        if(mmRepeatHandler == null){
+                        if (mmRepeatHandler == null) {
                             return true;
                         }
                         mmRepeatHandler.removeCallbacks(mmRunRepeatedAction);
@@ -354,9 +359,9 @@ public class MainFragment extends Fragment {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
-                    case MotionEvent.ACTION_DOWN:{
-                        if(mmRepeatHandler!=null){
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        if (mmRepeatHandler != null) {
                             return true;
                         }
                         mmRepeatHandler = new Handler();
@@ -364,7 +369,7 @@ public class MainFragment extends Fragment {
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-                        if(mmRepeatHandler == null){
+                        if (mmRepeatHandler == null) {
                             return true;
                         }
                         mmRepeatHandler.removeCallbacks(mmRunRepeatedAction);
@@ -399,9 +404,9 @@ public class MainFragment extends Fragment {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
-                    case MotionEvent.ACTION_DOWN:{
-                        if(mmRepeatHandler!=null){
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        if (mmRepeatHandler != null) {
                             return true;
                         }
                         mmRepeatHandler = new Handler();
@@ -409,7 +414,7 @@ public class MainFragment extends Fragment {
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-                        if(mmRepeatHandler == null){
+                        if (mmRepeatHandler == null) {
                             return true;
                         }
                         mmRepeatHandler.removeCallbacks(mmRunRepeatedAction);
@@ -457,11 +462,10 @@ public class MainFragment extends Fragment {
         super.onResume();
         mOn = mBluetoothAdapter.isEnabled();
 
-        if(mOn){
+        if (mOn) {
             mButtonBtOn.setText(getString(R.string.button_bt_off));
             enableButtons(mOn);
-        }
-        else {
+        } else {
             mButtonBtOn.setText(getString(R.string.button_bt_on));
             enableButtons(mOn);
         }
@@ -474,7 +478,7 @@ public class MainFragment extends Fragment {
         Log.v(LOG_TAG, "_in onActivityResult");
 
         //TODO finish implementation
-        if(data!=null) {
+        if (data != null) {
             switch (requestCode) {
                 case REQUEST_ENABLE_BT: {
                     Toast.makeText(getContext(), String.valueOf(resultCode), Toast.LENGTH_SHORT).show();
@@ -487,7 +491,7 @@ public class MainFragment extends Fragment {
                     }
                     Toast.makeText(getContext(), "Action Discover: device Selected: " + deviceString, Toast.LENGTH_SHORT).show();
                     //TODO initiate pairing
-                    if(data.hasExtra(BluetoothDevice.EXTRA_DEVICE)) {
+                    if (data.hasExtra(BluetoothDevice.EXTRA_DEVICE)) {
                         mBtService = new BTConnectionService(getContext(), mHandler);
                         Log.v(LOG_TAG, "_staring service for" + deviceString);
                         mBtService.connect(((BluetoothDevice) data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)), true);
@@ -500,7 +504,9 @@ public class MainFragment extends Fragment {
     }
 
 
-    /** *** BLUETOOTH OPERATIONS ***  **/
+    /**
+     * ** BLUETOOTH OPERATIONS ***
+     **/
 
 
     public void btOn(View v) {
@@ -526,35 +532,34 @@ public class MainFragment extends Fragment {
         }
     }
 
-    public void btDiscover(View v){
+    public void btDiscover(View v) {
         //TODO start Bt discovery activity
         Intent discoveryIntent = new Intent(getContext(), DiscoveryActivity.class);
         startActivityForResult(discoveryIntent, ACTION_DISCOVERY);
     }
 
-    public void sendMessage(String message){
+    public void sendMessage(String message) {
         //TODO implement
-        if(mBtService!=null && message!=null){
+        if (mBtService != null && message != null) {
             mBtService.sendToRemoteBt(message);
-        }
-        else{
+        } else {
             Log.v(LOG_TAG, "cant sent message");
         }
     }
 
-    public void enableButtons(boolean flag){
-            mButtonSend.setEnabled(flag);
-            mButtonForward.setEnabled(flag);
-            mButtonReverse.setEnabled(flag);
-            mButtonLeft.setEnabled(flag);
-            mButtonRight.setEnabled(flag);
+    public void enableButtons(boolean flag) {
+        mButtonSend.setEnabled(flag);
+        mButtonForward.setEnabled(flag);
+        mButtonReverse.setEnabled(flag);
+        mButtonLeft.setEnabled(flag);
+        mButtonRight.setEnabled(flag);
     }
 
     /**
      * takes state code and returns correct state String
      */
-    private String pickState(int code){
-        switch (code){
+    private String pickState(int code) {
+        switch (code) {
             case ST_ERROR:
                 return STR_ERROR;
             case ST_NONE:
@@ -571,5 +576,21 @@ public class MainFragment extends Fragment {
         return STR_NONE;
     }
 
+
+    private void updateStatusIndicator(int statusCode, @Nullable String devinfo) {
+        switch (statusCode) {
+            case ST_CONNECTED: {
+                //TODO update status
+                if (devinfo != null) {
+                    String statusMessage = mBluetoothAdapter.getName() + " " + devinfo;
+                    mConStatus.setText(devinfo);
+                } else {
+                    mConStatus.setText(STR_CONNECTED);
+                }
+                break;
+            }
+
+        }
+    }
 
 }

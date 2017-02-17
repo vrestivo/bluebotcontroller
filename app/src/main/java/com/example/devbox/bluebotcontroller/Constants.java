@@ -13,6 +13,7 @@ public class Constants {
 
     public static final String TOAST_STR = "TOAST";
     public static final String STATE_STR = "STATE";
+    public static final String DEV_INFO_STR = "DEV_INFO";
 
 
     //state constants
