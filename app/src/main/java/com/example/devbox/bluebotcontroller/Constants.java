@@ -28,7 +28,8 @@ public class Constants {
     public static final String BT_LFT = "A";
     public static final String BT_RGT = "F";
 
-
+    //delay for repead action button runnable
+    public static final long RUN_DELAY = 45;
 
 
 
