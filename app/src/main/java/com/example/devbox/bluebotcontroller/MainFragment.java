@@ -21,6 +21,19 @@ import android.widget.Toast;
 
 import javax.net.ssl.HandshakeCompletedListener;
 
+import static com.example.devbox.bluebotcontroller.Constants.STR_CONNECTED;
+import static com.example.devbox.bluebotcontroller.Constants.STR_CONNECTING;
+import static com.example.devbox.bluebotcontroller.Constants.STR_DISCONNECTED;
+import static com.example.devbox.bluebotcontroller.Constants.STR_DISCONNECTED_BY_USR;
+import static com.example.devbox.bluebotcontroller.Constants.STR_ERROR;
+import static com.example.devbox.bluebotcontroller.Constants.STR_NONE;
+import static com.example.devbox.bluebotcontroller.Constants.ST_CONNECTED;
+import static com.example.devbox.bluebotcontroller.Constants.ST_CONNECTING;
+import static com.example.devbox.bluebotcontroller.Constants.ST_DISCONNECTED;
+import static com.example.devbox.bluebotcontroller.Constants.ST_DISCONNECTED_BY_USR;
+import static com.example.devbox.bluebotcontroller.Constants.ST_ERROR;
+import static com.example.devbox.bluebotcontroller.Constants.ST_NONE;
+
 /**
  * Created by devbox on 2/9/17.
  */
@@ -62,8 +75,9 @@ public class MainFragment extends Fragment {
             Toast.makeText(getActivity(), "on Handler", Toast.LENGTH_SHORT).show();
             switch (msg.what){
                 case Constants.MESSAGE_CON_STATE_CHANGE:
-                    //TODO implement
-                    Toast.makeText(getContext(), "State Changed", Toast.LENGTH_SHORT).show();
+                    //TODO finish
+                    int stateCode = msg.getData().getInt(Constants.STATE_STR);
+                    Toast.makeText(getContext(), pickState(stateCode), Toast.LENGTH_SHORT).show();
                     break;
                 case Constants.MESSAGE_WRITE:
                     //TODO implement
@@ -529,23 +543,33 @@ public class MainFragment extends Fragment {
     }
 
     public void enableButtons(boolean flag){
-        if(flag){
             mButtonSend.setEnabled(flag);
             mButtonForward.setEnabled(flag);
             mButtonReverse.setEnabled(flag);
             mButtonLeft.setEnabled(flag);
             mButtonRight.setEnabled(flag);
-        }
-        else {
-            mButtonSend.setEnabled(flag);
-            mButtonForward.setEnabled(flag);
-            mButtonReverse.setEnabled(flag);
-            mButtonLeft.setEnabled(flag);
-            mButtonRight.setEnabled(flag);
-        }
     }
 
-
+    /**
+     * takes state code and returns correct state String
+     */
+    private String pickState(int code){
+        switch (code){
+            case ST_ERROR:
+                return STR_ERROR;
+            case ST_NONE:
+                return STR_NONE;
+            case ST_CONNECTING:
+                return STR_CONNECTING;
+            case ST_CONNECTED:
+                return STR_CONNECTED;
+            case ST_DISCONNECTED:
+                return STR_DISCONNECTED;
+            case ST_DISCONNECTED_BY_USR:
+                return STR_DISCONNECTED_BY_USR;
+        }
+        return STR_NONE;
+    }
 
 
 }
