@@ -59,11 +59,14 @@
             />
 
         <EditText
+            android:id="@+id/exit_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_columnSpan="2"
             android:layout_column="1"
             android:layout_row="3"
+            android:inputType="text"
+            android:hint="string to sent"
             />
 
         <Button

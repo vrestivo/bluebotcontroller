@@ -26,14 +26,15 @@ public class MainFragment extends Fragment {
     private Button mButtonBtOn;
     private Button mButtonoBtOff;
     private Button mButtonDiscovery;
-    private Button mSendMessage;
     private Button mButtonForward;
     private Button mButtonReverse;
     private Button mButtonLeft;
     private Button mButtonRight;
+    private Button mButtonSend;
 
     //text field
     private EditText mEditText;
+    private String mBuffer;
 
 
     private final String LOG_TAG = "_MainFragment";
@@ -113,6 +114,7 @@ public class MainFragment extends Fragment {
         mButtonBtOn = (Button) rootView.findViewById(R.id.bt_on);
         mButtonoBtOff = (Button) rootView.findViewById(R.id.bt_off);
         mButtonDiscovery = (Button) rootView.findViewById(R.id.bt_discover);
+        mButtonSend = (Button) rootView.findViewById(R.id.bt_send);
 
         //directional controls
         mButtonForward = (Button) rootView.findViewById(R.id.button_fwd);
@@ -120,6 +122,8 @@ public class MainFragment extends Fragment {
         mButtonLeft = (Button) rootView.findViewById(R.id.button_left);
         mButtonRight = (Button) rootView.findViewById(R.id.button_right);
 
+        //edit text view
+        mEditText = (EditText) rootView.findViewById(R.id.exit_text);
 
 
         mButtonBtOn.setOnClickListener(new View.OnClickListener() {
@@ -140,6 +144,17 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 btDiscover(v);
+            }
+        });
+
+        mButtonSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO implement send message
+                mBuffer = mEditText.getText().toString();
+
+                //TODO delete
+                Toast.makeText(getContext(), mBuffer, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -227,7 +242,7 @@ public class MainFragment extends Fragment {
         startActivityForResult(discoveryIntent, ACTION_DISCOVERY);
     }
 
-    public void sendMessageToRemoteBtDevice(String message){
+    public void sendMessage(String message){
         //TODO implement
     }
 
