@@ -19,6 +19,7 @@ import static com.example.devbox.bluebotcontroller.Constants.MESSAGE_CON_STATE_C
 import static com.example.devbox.bluebotcontroller.Constants.ST_CONNECTED;
 import static com.example.devbox.bluebotcontroller.Constants.ST_CONNECTING;
 import static com.example.devbox.bluebotcontroller.Constants.ST_DISCONNECTED;
+import static com.example.devbox.bluebotcontroller.Constants.ST_DISCONNECTED_BY_USR;
 import static com.example.devbox.bluebotcontroller.Constants.ST_ERROR;
 import static com.example.devbox.bluebotcontroller.Constants.ST_NONE;
 
@@ -65,6 +66,15 @@ public class BTConnectionService {
         mConnectThread.start();
     }
 
+    public synchronized void disconnect(){
+        if(mConnectThread !=null){
+            mConnectThread.cancel();
+            mState = ST_DISCONNECTED_BY_USR;
+            handleToUI(MESSAGE_CON_STATE_CHANGE, null);
+        }
+
+
+    }
 
     /**
      * @return returns connection state

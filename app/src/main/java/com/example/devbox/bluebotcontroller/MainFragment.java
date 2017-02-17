@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -472,6 +473,18 @@ public class MainFragment extends Fragment {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //TODO delete logging
+        Log.v(LOG_TAG, "_in_onDestroy()");
+        //terminate connection
+        if(mBtService!=null){
+            mBtService.disconnect();
+            mConStatus.setText(STR_DISCONNECTED);
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //TODO delete when done
@@ -523,6 +536,10 @@ public class MainFragment extends Fragment {
 
     public void btOff(View v) {
         if (mBluetoothAdapter.isEnabled()) {
+            //TODO close connection
+            if(mBtService!=null){
+                mBtService.disconnect();
+            }
             mBluetoothAdapter.disable();
             mButtonBtOn.setText(getString(R.string.button_bt_on));
             //mOn = mBluetoothAdapter.isEnabled();
@@ -589,7 +606,12 @@ public class MainFragment extends Fragment {
                 }
                 break;
             }
-
+            case ST_DISCONNECTED_BY_USR:
+                mConStatus.setText(STR_DISCONNECTED_BY_USR);
+                break;
+            case ST_ERROR:
+                mConStatus.setText(STR_ERROR);
+                break;
         }
     }
 
