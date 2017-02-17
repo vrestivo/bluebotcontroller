@@ -88,13 +88,15 @@ public class BTConnectionService {
         ConnectThread thread;
 
         synchronized (this){
-            if(mState == ST_CONNECTED){
+            if(mState != ST_CONNECTED){
                 return;
             }
             thread = mConnectThread;
         }
 
         if(message!=null & !message.isEmpty()){
+            //TODO delete logging
+            Log.v(LOG_TAG, "sending message");
             thread.write(message.getBytes());
         }
     }
@@ -258,6 +260,7 @@ public class BTConnectionService {
         public void write(byte[] writeBytes) {
             try {
                 mmOutputStream.write(writeBytes);
+                Log.v(LOG_TAG, "data sent");
             } catch (IOException ioe) {
                 Log.e(LOG_TAG, "failed to write to socked", ioe);
                 mState = ST_ERROR;

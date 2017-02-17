@@ -46,6 +46,8 @@ public class MainFragment extends Fragment {
 
     private BluetoothAdapter mBluetoothAdapter;
 
+    private BTConnectionService mBtService;
+
 
     private final Handler mHandler = new Handler() {
         @Override
@@ -154,7 +156,14 @@ public class MainFragment extends Fragment {
                 mBuffer = mEditText.getText().toString();
 
                 //TODO delete
-                Toast.makeText(getContext(), mBuffer, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), mBuffer, Toast.LENGTH_SHORT).show();
+                if(mBtService!=null){
+                    mBtService.sendToRemoteBt(mBuffer);
+                    //TODO delete when done
+                    Log.v(LOG_TAG, "data passed to thread");
+                }else{
+                    Toast.makeText(getContext(), "Service not started.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -202,9 +211,9 @@ public class MainFragment extends Fragment {
                     Toast.makeText(getContext(), "Action Discover: device Selected: " + deviceString, Toast.LENGTH_SHORT).show();
                     //TODO initiate pairing
                     if(data.hasExtra(BluetoothDevice.EXTRA_DEVICE)) {
-                        BTConnectionService connectionService = new BTConnectionService(getContext(), mHandler);
+                        mBtService = new BTConnectionService(getContext(), mHandler);
                         Log.v(LOG_TAG, "_staring service for" + deviceString);
-                        connectionService.connect(((BluetoothDevice) data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)), true);
+                        mBtService.connect(((BluetoothDevice) data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)), true);
                     }
 
                     break;
