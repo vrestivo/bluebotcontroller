@@ -201,9 +201,8 @@ public class BTConnectionService {
 
         @Override
         public void run() {
-            String inputStreamError = "starting error reading InputStream";
             //TODO delete logging
-
+            Log.v(LOG_TAG, "starting ConntectThread");
 
             //making sure discovery is disabled
             mBtAdapter.cancelDiscovery();
@@ -224,29 +223,28 @@ public class BTConnectionService {
                 }
                 Log.e(LOG_TAG, "failed to connect", ioe1);
                 sendToastToUi("failed to connect");
+                mmInputStream = switchInputStream(mmInputStream, mmSocket, false);
+                mmOutputStream = switchOutputStream(mmOutputStream, mmSocket, false);
             }
 
-            if(mmInputStream==null || mmOutputStream==null) {
+
+            //check input and output streams
+            if (mmInputStream == null) {
                 mmInputStream = switchInputStream(mmInputStream, mmSocket, true);
+            }
+            if (mmOutputStream == null) {
                 mmOutputStream = switchOutputStream(mmOutputStream, mmSocket, true);
             }
 
-            //TODO refactor to use swithOutputStream
-//            //open output stream
-//            try {
-//                mmOutputStream = mmSocket.getOutputStream();
-//                mState = ST_CONNECTED;
-//                handleToUI(MESSAGE_CON_STATE_CHANGE, mmBtDevice);
-//            } catch (IOException ioe) {
-//                Log.v(LOG_TAG, "starting error getting InputStream");
-//                mState = ST_ERROR;
-//            }
-
-            Log.v(LOG_TAG, "starting ConntectThread");
-
-            if (isConnected()) {
-                sendToastToUi("looks like we're talking");
+            //TODO refactor to implement isConnected()
+            if (mmInputStream != null && mmOutputStream != null) {
+                mState = ST_CONNECTED;
+                handleToUI(MESSAGE_CON_STATE_CHANGE, mmBtDevice);
+            } else {
+                mState = ST_DISCONNECTED;
+                handleToUI(MESSAGE_CON_STATE_CHANGE, mmBtDevice);
             }
+
 
             //TODO add reconnection attempts
             while (mState == ST_CONNECTED) {
@@ -276,15 +274,6 @@ public class BTConnectionService {
          * and upates the conection status
          */
         public void cancel() {
-
-            if (mmInputStream != null) {
-                try {
-                    mmInputStream.close();
-                } catch (IOException ioe) {
-                    Log.e(LOG_TAG, "failed to close IputStream", ioe);
-                    mState = ST_ERROR;
-                }
-            }
 
             mmOutputStream = switchOutputStream(mmOutputStream, mmSocket, false);
             mmInputStream = switchInputStream(mmInputStream, mmSocket, false);
@@ -319,18 +308,24 @@ public class BTConnectionService {
          * @param open   action true for open, false for close
          */
         public InputStream switchInputStream(InputStream stream, BluetoothSocket socket, boolean open) {
-            if (socket != null) {
+            if (socket != null && open) {
                 try {
-                    if (open && socket.isConnected()) {
+                    if (socket.isConnected()) {
                         return socket.getInputStream();
-                    } else if (!open && stream != null) {
-                        stream.close();
+                    }else{
+                        //we should not be here
+                        Log.d(LOG_TAG, "socket is closed: can't get InputStream");
+                        mState = ST_ERROR;
                     }
                 } catch (IOException ioe) {
-                    if (open) {
-                        Log.e(LOG_TAG, "failed to get InputStream.", ioe);
-                        mState = ST_ERROR;
-                    } else {
+                    Log.e(LOG_TAG, "failed to get InputStream.", ioe);
+                    mState = ST_ERROR;
+                }
+            } else if (!open) {
+                if (stream != null) {
+                    try {
+                        stream.close();
+                    } catch (IOException ioe) {
                         Log.e(LOG_TAG, "failed to close InputStream.", ioe);
                         mState = ST_ERROR;
                     }
@@ -348,23 +343,28 @@ public class BTConnectionService {
          * @param open   action true for open, false for close
          */
         public OutputStream switchOutputStream(OutputStream stream, BluetoothSocket socket, boolean open) {
-            if (socket != null) {
+            if (socket != null && open) {
                 try {
-                    if (open && socket.isConnected()) {
+                    if (socket.isConnected()) {
                         return socket.getOutputStream();
-                    } else if (!open && stream != null) {
-                        stream.close();
+                    }else{
+                        //we should not be here
+                        Log.d(LOG_TAG, "socket is closed: can't get OutputStream");
+                        mState = ST_ERROR;
                     }
                 } catch (IOException ioe) {
-                    if (open) {
-                        Log.e(LOG_TAG, "failed to get InputStream.", ioe);
-                        mState = ST_ERROR;
-                    } else {
-                        Log.e(LOG_TAG, "failed to close InputStream", ioe);
+                    Log.e(LOG_TAG, "failed to get OutputStream.", ioe);
+                    mState = ST_ERROR;
+                }
+            } else if (!open) {
+                if (stream != null) {
+                    try {
+                        stream.close();
+                    } catch (IOException ioe) {
+                        Log.e(LOG_TAG, "failed to close OutputStream.", ioe);
                         mState = ST_ERROR;
                     }
                 }
-
             }
             return null;
 
