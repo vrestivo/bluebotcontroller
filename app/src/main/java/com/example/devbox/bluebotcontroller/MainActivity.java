@@ -16,6 +16,7 @@ public class MainActivity extends FragmentActivity {
 
         //create the fragment on the first run
         if (savedInstanceState == null) {
+        //if (mMainFragment == null) {
             mMainFragment = new MainFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.gui_container, mMainFragment).commit();

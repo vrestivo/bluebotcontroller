@@ -67,6 +67,7 @@ public class MainFragment extends Fragment {
     //bluetooth stuff
     private BluetoothAdapter mBluetoothAdapter;
     private BTConnectionService mBtService;
+    private BluetoothDevice mBtDevice;
     private boolean mOn;
     private int mConState;
     private String mDevInfo;
@@ -81,7 +82,9 @@ public class MainFragment extends Fragment {
                 case Constants.MESSAGE_CON_STATE_CHANGE:
                     //TODO finish
                     //FIXME pass the device address if connected
-                    int mConState = msg.arg1;
+                    mConState = msg.arg1;
+                    //TODO delete logging
+                    Log.v(LOG_TAG, "contains devinfo: " + msg.getData().containsKey(DEV_INFO_STR));
                     if (mConState == ST_CONNECTED && msg.getData().containsKey(DEV_INFO_STR)) {
                         mDevInfo = msg.getData().getString(DEV_INFO_STR);
                         updateStatusIndicator(mConState, mDevInfo);
@@ -119,8 +122,9 @@ public class MainFragment extends Fragment {
             mConState = ST_NONE;
         }else{
             mConState = savedInstanceState.getInt(STATE_STR);
+            mDevInfo = savedInstanceState.getString(DEV_INFO_STR);
             //TODO delete logging
-            Log.v(LOG_TAG, "in onCreate, mConState: " + mConState);
+            Log.v(LOG_TAG, "in onCreate, mConState: " + mConState + " " + mDevInfo);
         }
         super.onCreate(savedInstanceState);
 
@@ -434,6 +438,7 @@ public class MainFragment extends Fragment {
                             return true;
                         }
                         mmRepeatHandler.removeCallbacks(mmRunRepeatedAction);
+                        mmRepeatHandler.removeCallbacks(mmRunRepeatedAction);
                         mmRepeatHandler = null;
                         break;
                     }
@@ -456,6 +461,14 @@ public class MainFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState!=null){
+            mDevInfo=savedInstanceState.getString(DEV_INFO_STR);
+
+        }
+    }
 
     @Override
     public void onStart() {
@@ -478,8 +491,8 @@ public class MainFragment extends Fragment {
     @Override
     public void onResume() {
         //TODO delete logging
-        Log.v(LOG_TAG, "_in_onResume()" + mConState + " " + mDevInfo);
         super.onResume();
+        Log.v(LOG_TAG, "_in_onResume()" + mConState + " " + mDevInfo);
 
         mOn = mBluetoothAdapter.isEnabled();
         updateStatusIndicator(mConState, mDevInfo);
@@ -517,9 +530,12 @@ public class MainFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt(STATE_STR, mConState);
+        outState.putString(DEV_INFO_STR, mDevInfo);
         super.onSaveInstanceState(outState);
 
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -540,8 +556,8 @@ public class MainFragment extends Fragment {
                         deviceString = data.getStringExtra(DiscoveryActivity.DEVICE_STRING);
                     }
                     Toast.makeText(getContext(), "Action Discover: device Selected: " + deviceString, Toast.LENGTH_SHORT).show();
-                    //TODO initiate pairing
                     if (data.hasExtra(BluetoothDevice.EXTRA_DEVICE)) {
+                        mBtDevice = data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                         mBtService = new BTConnectionService(getContext(), mHandler);
                         Log.v(LOG_TAG, "_staring service for" + deviceString);
                         mBtService.connect(((BluetoothDevice) data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)), true);
@@ -636,7 +652,7 @@ public class MainFragment extends Fragment {
             case ST_CONNECTED: {
                 //TODO update status
                 if (devinfo != null) {
-                    mDevInfo = mBluetoothAdapter.getName() + " " + devinfo;
+                    mDevInfo = devinfo;
 
                     mConStatus.setText(mDevInfo);
                 } else {

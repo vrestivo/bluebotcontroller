@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import static com.example.devbox.bluebotcontroller.Constants.DEV_INFO_STR;
 import static com.example.devbox.bluebotcontroller.Constants.MESSAGE_CON_STATE_CHANGE;
 import static com.example.devbox.bluebotcontroller.Constants.ST_CONNECTED;
 import static com.example.devbox.bluebotcontroller.Constants.ST_CONNECTING;
@@ -66,14 +67,12 @@ public class BTConnectionService {
         mConnectThread.start();
     }
 
-    public synchronized void disconnect(){
-        if(mConnectThread !=null){
+    public synchronized void disconnect() {
+        if (mConnectThread != null) {
             mConnectThread.cancel();
             mState = ST_DISCONNECTED_BY_USR;
             handleToUI(MESSAGE_CON_STATE_CHANGE, null);
         }
-
-
     }
 
     /**
@@ -134,10 +133,10 @@ public class BTConnectionService {
                     Bundle bundle = new Bundle();
                     bundle.putString(Constants.DEV_INFO_STR, devinfo);
                     msg.setData(bundle);
+                    //TODO delete logging
+                    Log.v(LOG_TAG, "sending msg with: " + msg.getData().getString(DEV_INFO_STR));
                     mHandler.sendMessage(msg);
-                }
-                else
-                {
+                } else {
                     Message msg = mHandler.obtainMessage(msgWhat, mState, -1);
                     mHandler.sendMessage(msg);
                 }
@@ -202,7 +201,9 @@ public class BTConnectionService {
 
             //TODO handle error for already connected socket
             try {
-                mmSocket.connect();
+                if (!mmSocket.isConnected()) {
+                    mmSocket.connect();
+                }
                 mState = ST_CONNECTED;
             } catch (IOException ioe1) {
                 try {
