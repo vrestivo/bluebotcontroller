@@ -196,6 +196,15 @@ public class BTConnectionService {
 
             mmSocket = tmp;
 
+        }
+
+
+        @Override
+        public void run() {
+            String inputStreamError = "starting error reading InputStream";
+            //TODO delete logging
+
+
             //making sure discovery is disabled
             mBtAdapter.cancelDiscovery();
 
@@ -217,28 +226,21 @@ public class BTConnectionService {
                 sendToastToUi("failed to connect");
             }
 
-
-            mmInputStream = switchInputStream(mmInputStream, mmSocket, true);
-
-            //TODO refactor to use swithOutputStream
-            //open output stream
-            try {
-                mmOutputStream = mmSocket.getOutputStream();
-                mState = ST_CONNECTED;
-                handleToUI(MESSAGE_CON_STATE_CHANGE, mmBtDevice);
-            } catch (IOException ioe) {
-                Log.v(LOG_TAG, "starting error getting InputStream");
-                mState = ST_ERROR;
+            if(mmInputStream==null || mmOutputStream==null) {
+                mmInputStream = switchInputStream(mmInputStream, mmSocket, true);
+                mmOutputStream = switchOutputStream(mmOutputStream, mmSocket, true);
             }
 
-
-        }
-
-
-        @Override
-        public void run() {
-            String inputStreamError = "starting error reading InputStream";
-            //TODO delete logging
+            //TODO refactor to use swithOutputStream
+//            //open output stream
+//            try {
+//                mmOutputStream = mmSocket.getOutputStream();
+//                mState = ST_CONNECTED;
+//                handleToUI(MESSAGE_CON_STATE_CHANGE, mmBtDevice);
+//            } catch (IOException ioe) {
+//                Log.v(LOG_TAG, "starting error getting InputStream");
+//                mState = ST_ERROR;
+//            }
 
             Log.v(LOG_TAG, "starting ConntectThread");
 
