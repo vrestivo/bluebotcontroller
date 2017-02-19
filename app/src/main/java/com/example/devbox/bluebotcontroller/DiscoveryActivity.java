@@ -128,7 +128,7 @@ public class DiscoveryActivity extends AppCompatActivity {
                 if (mBtAdapter.isDiscovering()) {
                     mBtAdapter.cancelDiscovery();
                 }
-                BluetoothDevice btDev =  (BluetoothDevice) mPairedAdapter.getItem(position);
+                BluetoothDevice btDev =  (BluetoothDevice) mAvailableAdapter.getItem(position);
                 String deviceMac = btDev.getAddress();
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(DEVICE_STRING, deviceMac);
