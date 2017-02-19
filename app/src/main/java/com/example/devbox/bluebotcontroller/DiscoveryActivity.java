@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +56,8 @@ public class DiscoveryActivity extends AppCompatActivity {
     private BroadcastReceiver mBtReceiver;
     private IntentFilter mIntentFilter;
 
+    private Toolbar mToolbar;
+
     public DiscoveryActivity() {
         super();
         mBtReceiver = new BroadcastReceiver() {
@@ -86,6 +89,11 @@ public class DiscoveryActivity extends AppCompatActivity {
 
         mScanHandler = new Handler();
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        mToolbar = (Toolbar) findViewById(R.id.discovery_toolbar);
+        setSupportActionBar(mToolbar);
+
+
 
         mScanButton = (Button) findViewById(R.id.button_scan);
         mPairedDevicesView = (ListView) findViewById(R.id.devices_paired_lv);

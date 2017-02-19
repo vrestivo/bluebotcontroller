@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    >
 
     <include
         android:id="@+id/discovery_toolbar"
-        layout="@layout/toolbar_discovery">
-        </include>
+        layout="@layout/toolbar_discovery"
+        >
 
+    </include>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
+        android:layout_below="@id/discovery_toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/discovery_toolbar"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/paired_devices_tv"
                 style="@style/DevicesHeading"
-                android:elevation="4dp"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/title_paired_devices" />
 
@@ -33,7 +35,7 @@
             <ListView
                 android:id="@+id/devices_paired_lv"
                 style="@style/DeviceListView"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/paired_devices_tv"
                 />
@@ -42,15 +44,14 @@
         </RelativeLayout>
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@color/colorPrimary" />
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
             android:orientation="vertical">
 
             <TextView
@@ -72,4 +73,5 @@
 
 
     </LinearLayout>
+
 </RelativeLayout>
