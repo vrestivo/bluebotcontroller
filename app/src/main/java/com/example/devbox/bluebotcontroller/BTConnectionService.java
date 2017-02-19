@@ -58,6 +58,13 @@ public class BTConnectionService {
     }
 
 
+    public synchronized boolean isConnected(){
+        if(mConnectThread.isConnected()){
+            return true;
+        }
+        return false;
+    }
+
     public synchronized void connect(BluetoothDevice device, boolean secure) {
         if (mConnectThread == null) {
             mConnectThread = new ConnectThread(device, mHandler);
@@ -70,6 +77,8 @@ public class BTConnectionService {
     public synchronized void disconnect() {
         if (mConnectThread != null) {
             mConnectThread.cancel();
+            //TODO delete logging
+            Log.v(LOG_TAG, "main calling from mConnectThread.cancel()");
             mState = ST_DISCONNECTED_BY_USR;
             handleToUI(MESSAGE_CON_STATE_CHANGE, null);
         }
@@ -373,10 +382,6 @@ public class BTConnectionService {
 
         /**
          * this method validates connection with a remote bluetooth device
-         * it sends an "AT" commamd to a remote device
-         * if remote device responsd with "OK"
-         * (typical behavior for a seiral bluetoodh module)
-         * then connection works as expected
          *
          * @return
          */
@@ -384,26 +389,11 @@ public class BTConnectionService {
             String LOG_TAG = "_isConnected";
             byte[] response = null;
 
-            //TODO test this
+            //TODO validate mState
             boolean connected = false;
-            if (mmSocket.isConnected()) {
+            if (mmSocket.isConnected() && mState == ST_CONNECTED) {
                 if (mmInputStream != null && mmOutputStream != null) {
-                    try {
-                        mmOutputStream.write(mmATComand);
-                    } catch (IOException ioe) {
-                        Log.e(LOG_TAG, "failed to write to OutputStream", ioe);
-                    }
-                    try {
-                        if (mmInputStream.available() > 0) {
-                            mmInputStream.read(response);
-                            if (new String(response).equals(mmOkResponse)) {
-                                connected = true;
-                            }
-                        }
-                    } catch (IOException ioe) {
-                        Log.e(LOG_TAG, "failed to read from InputStream", ioe);
-
-                    }
+                    return true;
                 }
 
             }

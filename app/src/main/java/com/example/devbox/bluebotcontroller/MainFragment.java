@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -76,8 +77,7 @@ public class MainFragment extends Fragment {
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            Toast.makeText(getActivity(), "on Handler", Toast.LENGTH_SHORT).show();
+            //super.handleMessage(msg);
             switch (msg.what) {
                 case Constants.MESSAGE_CON_STATE_CHANGE:
                     //TODO finish
@@ -92,15 +92,19 @@ public class MainFragment extends Fragment {
                         mDevInfo = null;
                         updateStatusIndicator(mConState, mDevInfo);
                     }
-                    Toast.makeText(getContext(), pickState(mConState), Toast.LENGTH_SHORT).show();
+                    //check
+                    if (getActivity() != null)
+                        Toast.makeText(getContext(), pickState(mConState), Toast.LENGTH_SHORT).show();
                     break;
                 case Constants.MESSAGE_WRITE:
                     //TODO implement
-                    Toast.makeText(getContext(), "just Wrote something", Toast.LENGTH_SHORT).show();
+                    if (getActivity() != null)
+                        Toast.makeText(getContext(), "just Wrote something", Toast.LENGTH_SHORT).show();
                     break;
                 case Constants.MESSAGE_TOAST:
                     if (msg.getData().containsKey(Constants.TOAST_STR)) {
-                        Toast.makeText(getActivity(), msg.getData().getString(Constants.TOAST_STR), Toast.LENGTH_SHORT).show();
+                        if (getActivity() != null)
+                            Toast.makeText(getActivity(), msg.getData().getString(Constants.TOAST_STR), Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case Constants.MESSAGE_FROM_REMOTE_DEVICE: {
@@ -110,23 +114,17 @@ public class MainFragment extends Fragment {
                     break;
                 }
             }
+
         }
     };
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
         //TODO delete logging
         Log.v(LOG_TAG, "_in_onCreate()");
-        if(savedInstanceState==null){
-            mConState = ST_NONE;
-        }else{
-            mConState = savedInstanceState.getInt(STATE_STR);
-            mDevInfo = savedInstanceState.getString(DEV_INFO_STR);
-            //TODO delete logging
-            Log.v(LOG_TAG, "in onCreate, mConState: " + mConState + " " + mDevInfo);
-        }
-        super.onCreate(savedInstanceState);
 
         //retain state on config changes
         setRetainInstance(true);
@@ -152,7 +150,8 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
 
-
+        //TODO delete logging
+        Log.v(LOG_TAG, "_in_onCreateView");
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -182,8 +181,8 @@ public class MainFragment extends Fragment {
 
         //status indicator
         mConStatus = (TextView) rootView.findViewById(R.id.con_status);
-        updateStatusIndicator(mConState, null);
 
+        updateStatusIndicator(mConState, mDevInfo);
 
         mButtonBtOn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,8 +214,6 @@ public class MainFragment extends Fragment {
                 //TODO implement send message
                 mBuffer = mEditText.getText().toString();
 
-                //TODO delete
-                //Toast.makeText(getContext(), mBuffer, Toast.LENGTH_SHORT).show();
                 if (mBtService != null) {
                     mBtService.sendToRemoteBt(mBuffer);
                     //TODO delete when done
@@ -226,56 +223,6 @@ public class MainFragment extends Fragment {
                 }
             }
         });
-
-
-        //TODO delete below
-        //Directional button listeners setup
-//        mButtonForward.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //TODO delete
-//                //Toast.makeText(getContext(), "forward pressed", Toast.LENGTH_SHORT).show();
-//                if(mBtService!=null){
-//                    mBtService.sendToRemoteBt(Constants.BT_FWD);
-//                    //TODO delete when done
-//                    Log.v(LOG_TAG, "fwd passed to thread");
-//                }else{
-//                    Toast.makeText(getContext(), "Service not started.", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-
-//        mButtonForward.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                //TODO delete logging
-//                Log.v(LOG_TAG, "fwd long click");
-//                return false;
-//            }
-//        });
-
-
-        /**
-         * last working on touch listener
-         */
-//        mButtonForward.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                //TODO delete logging
-//                Log.v(LOG_TAG, "fwd on touch listener");
-//                if(mBtService!=null){
-//                    mBtService.sendToRemoteBt(Constants.BT_FWD);
-//                    //TODO delete when done
-//                    Log.v(LOG_TAG, "fwd passed to thread");
-//                }else{
-//                    //Toast.makeText(getContext(), "Service not started.", Toast.LENGTH_SHORT).show();
-//                    Log.v(LOG_TAG, "service not started");
-//
-//                }
-//
-//                return false;
-//            }
-//        });
 
 
         /**
@@ -464,8 +411,8 @@ public class MainFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(savedInstanceState!=null){
-            mDevInfo=savedInstanceState.getString(DEV_INFO_STR);
+        if (savedInstanceState != null) {
+            //mDevInfo = savedInstanceState.getString(DEV_INFO_STR);
 
         }
     }
@@ -495,7 +442,7 @@ public class MainFragment extends Fragment {
         Log.v(LOG_TAG, "_in_onResume()" + mConState + " " + mDevInfo);
 
         mOn = mBluetoothAdapter.isEnabled();
-        updateStatusIndicator(mConState, mDevInfo);
+        //updateStatusIndicator(mConState, mDevInfo);
 
         if (mOn) {
             mButtonBtOn.setText(getString(R.string.button_bt_off));
@@ -519,9 +466,11 @@ public class MainFragment extends Fragment {
         //TODO delete logging
         Log.v(LOG_TAG, "_in_onDestroy()");
         //terminate connection
-        if(mBtService!=null && mConState == ST_DISCONNECTED_BY_USR){
+        if (mBtService != null) {
             mBtService.disconnect();
-            mConStatus.setText(STR_DISCONNECTED);
+            mConState = ST_DISCONNECTED_BY_USR;
+            mDevInfo = null;
+            //mConStatus.setText(STR_DISCONNECTED);
         }
         super.onDestroy();
 
@@ -529,12 +478,12 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt(STATE_STR, mConState);
-        outState.putString(DEV_INFO_STR, mDevInfo);
+        Log.v(LOG_TAG, "_in onSaveInstanceState");
+//        outState.putInt(STATE_STR, mConState);
+//        outState.putString(DEV_INFO_STR, mDevInfo);
         super.onSaveInstanceState(outState);
 
     }
-
 
 
     @Override
@@ -558,7 +507,9 @@ public class MainFragment extends Fragment {
                     Toast.makeText(getContext(), "Action Discover: device Selected: " + deviceString, Toast.LENGTH_SHORT).show();
                     if (data.hasExtra(BluetoothDevice.EXTRA_DEVICE)) {
                         mBtDevice = data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                        mBtService = new BTConnectionService(getContext(), mHandler);
+                        if (mBtService == null) {
+                            mBtService = new BTConnectionService(getContext(), mHandler);
+                        }
                         Log.v(LOG_TAG, "_staring service for" + deviceString);
                         mBtService.connect(((BluetoothDevice) data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)), true);
                     }
@@ -589,9 +540,12 @@ public class MainFragment extends Fragment {
 
     public void btOff(View v) {
         if (mBluetoothAdapter.isEnabled()) {
-            //TODO close connection
-            if(mBtService!=null){
+            //TODO delete logging
+            Log.v(LOG_TAG, "inside btOff:");
+            if (mBtService != null) {
                 mBtService.disconnect();
+                //TODO delete logging
+                Log.v(LOG_TAG, "inside btOff: called mBtService.disconnect()");
             }
             mBluetoothAdapter.disable();
             mButtonBtOn.setText(getString(R.string.button_bt_on));
@@ -613,7 +567,7 @@ public class MainFragment extends Fragment {
         if (mBtService != null && message != null) {
             mBtService.sendToRemoteBt(message);
         } else {
-            Log.v(LOG_TAG, "cant sent message");
+            Log.v(LOG_TAG, "cant sent message: " + message + " " + String.valueOf(mBtService != null));
         }
     }
 
@@ -657,7 +611,7 @@ public class MainFragment extends Fragment {
                     mConStatus.setText(mDevInfo);
                 } else {
                     mConStatus.setText(STR_CONNECTED);
-                    mDevInfo=null;
+                    mDevInfo = null;
                 }
                 break;
             }
