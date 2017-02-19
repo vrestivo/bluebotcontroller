@@ -49,6 +49,8 @@ public class MainFragment extends Fragment {
     private Button mButtonLeft;
     private Button mButtonRight;
     private Button mButtonSend;
+    private Button mButtonDisconnect;
+
 
     //text input field
     private EditText mEditText;
@@ -169,6 +171,8 @@ public class MainFragment extends Fragment {
 
         mButtonDiscovery = (Button) rootView.findViewById(R.id.bt_discover);
         mButtonSend = (Button) rootView.findViewById(R.id.bt_send);
+        mButtonDisconnect = (Button) rootView.findViewById(R.id.bt_disconnect);
+
 
         //directional controls
         mButtonForward = (Button) rootView.findViewById(R.id.button_fwd);
@@ -205,6 +209,13 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 btDiscover(v);
+            }
+        });
+
+        mButtonDisconnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                disconnect();
             }
         });
 
@@ -571,17 +582,28 @@ public class MainFragment extends Fragment {
         }
     }
 
+    public void disconnect(){
+        if(mBtService!=null){
+            mBtService.disconnect();
+            mConState = ST_DISCONNECTED_BY_USR;
+            updateStatusIndicator(mConState, null);
+        }
+    }
+
     public void enableButtons(boolean flag) {
         mButtonSend.setEnabled(flag);
         mButtonForward.setEnabled(flag);
         mButtonReverse.setEnabled(flag);
         mButtonLeft.setEnabled(flag);
         mButtonRight.setEnabled(flag);
+        mButtonDisconnect.setEnabled(flag);
+        mButtonDiscovery.setEnabled(flag);
     }
 
-    /**
-     * takes state code and returns correct state String
-     */
+
+        /**
+         * takes state code and returns correct state String
+         */
     private String pickState(int code) {
         switch (code) {
             case ST_ERROR:

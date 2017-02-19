@@ -14,6 +14,7 @@
     <string name="button_bt_on">Turn ON BT</string>
     <string name="button_bt_off">Turn OFF BT</string>
     <string name="button_bt_discover">BT Discovery</string>
+    <string name="button_bt_disconnect">Disconnect</string>
     <string name="button_bt_scan">Scan for Devices</string>
     <string name="button_send">Send</string>
 
