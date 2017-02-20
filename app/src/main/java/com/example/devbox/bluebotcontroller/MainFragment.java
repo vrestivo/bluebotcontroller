@@ -437,7 +437,6 @@ public class MainFragment extends Fragment {
                 startActivityForResult(btEnableIntent, REQUEST_ENABLE_BT);
             } else {
                 //TODO initialization
-                Toast.makeText(getContext(), "TODO: initialization block", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -523,9 +522,14 @@ public class MainFragment extends Fragment {
                         //TODO check if already connected to the same device
                         BluetoothDevice existingDevice = mBtService.getDevice();
                         if (existingDevice != null && mBtDevice.getAddress().equals(existingDevice.getAddress())) {
+                            Toast.makeText(getContext(), getString(R.string.bt_error_already_connected_same_dev), Toast.LENGTH_SHORT).show();
+
+                        }
+                        else if (mBtService.isConnected()){
                             Toast.makeText(getContext(), getString(R.string.bt_error_already_connected), Toast.LENGTH_SHORT).show();
 
-                        } else {
+                        }
+                        else {
                             mBtService.connect(((BluetoothDevice) data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)), true);
                         }
                     }

@@ -60,7 +60,7 @@ public class BTConnectionService {
 
 
     public synchronized boolean isConnected(){
-        if(mConnectThread.isConnected()){
+        if(mConnectThread!=null && mConnectThread.isConnected()){
             return true;
         }
         return false;
