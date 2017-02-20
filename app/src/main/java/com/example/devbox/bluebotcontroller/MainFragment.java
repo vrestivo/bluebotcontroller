@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import static com.example.devbox.bluebotcontroller.Constants.DEV_INFO_STR;
-import static com.example.devbox.bluebotcontroller.Constants.STATE_STR;
 import static com.example.devbox.bluebotcontroller.Constants.STR_CONNECTED;
 import static com.example.devbox.bluebotcontroller.Constants.STR_CONNECTING;
 import static com.example.devbox.bluebotcontroller.Constants.STR_DISCONNECTED;
@@ -522,7 +520,14 @@ public class MainFragment extends Fragment {
                             mBtService = new BTConnectionService(getContext(), mHandler);
                         }
                         Log.v(LOG_TAG, "_staring service for" + deviceString);
-                        mBtService.connect(((BluetoothDevice) data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)), true);
+                        //TODO check if already connected to the same device
+                        BluetoothDevice existingDevice = mBtService.getDevice();
+                        if (existingDevice != null && mBtDevice.getAddress().equals(existingDevice.getAddress())) {
+                            Toast.makeText(getContext(), getString(R.string.bt_error_already_connected), Toast.LENGTH_SHORT).show();
+
+                        } else {
+                            mBtService.connect(((BluetoothDevice) data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)), true);
+                        }
                     }
 
                     break;
@@ -582,8 +587,8 @@ public class MainFragment extends Fragment {
         }
     }
 
-    public void disconnect(){
-        if(mBtService!=null){
+    public void disconnect() {
+        if (mBtService != null) {
             mBtService.disconnect();
             mConState = ST_DISCONNECTED_BY_USR;
             updateStatusIndicator(mConState, null);
@@ -601,9 +606,9 @@ public class MainFragment extends Fragment {
     }
 
 
-        /**
-         * takes state code and returns correct state String
-         */
+    /**
+     * takes state code and returns correct state String
+     */
     private String pickState(int code) {
         switch (code) {
             case ST_ERROR:

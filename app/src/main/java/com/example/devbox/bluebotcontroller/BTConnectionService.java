@@ -49,6 +49,7 @@ public class BTConnectionService {
     private boolean mIsConnected;
     private BluetoothAdapter mBtAdapter;
     private Context mParentContext;
+    private BluetoothDevice mBtDevice;
 
     public BTConnectionService(Context context, Handler handler) {
         mHandler = handler;
@@ -65,6 +66,7 @@ public class BTConnectionService {
         return false;
     }
 
+    //TODO delete boolean secure, or implement insecure option
     public synchronized void connect(BluetoothDevice device, boolean secure) {
         if (mConnectThread == null) {
             mConnectThread = new ConnectThread(device, mHandler);
@@ -80,8 +82,16 @@ public class BTConnectionService {
             //TODO delete logging
             Log.v(LOG_TAG, "main calling from mConnectThread.cancel()");
             mState = ST_DISCONNECTED_BY_USR;
+            mBtDevice = null;
             handleToUI(MESSAGE_CON_STATE_CHANGE, null);
         }
+    }
+
+    public synchronized BluetoothDevice getDevice(){
+        if(mConnectThread!=null){
+            return mConnectThread.geBtDevice();
+        }
+        return null;
     }
 
     /**
@@ -398,6 +408,10 @@ public class BTConnectionService {
 
             }
             return connected;
+        }
+
+        public BluetoothDevice geBtDevice(){
+            return mmBtDevice;
         }
 
     }
