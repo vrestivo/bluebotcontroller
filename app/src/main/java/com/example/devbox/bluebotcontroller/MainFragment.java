@@ -38,9 +38,10 @@ import static com.example.devbox.bluebotcontroller.Constants.ST_NONE;
 
 public class MainFragment extends Fragment {
 
+    public static final String TAG = "MainFragment_TAG";
+
     //buttons
     private Button mButtonBtOn;
-    private Button mButtonoBtOff;
     private Button mButtonDiscovery;
     private Button mButtonForward;
     private Button mButtonReverse;

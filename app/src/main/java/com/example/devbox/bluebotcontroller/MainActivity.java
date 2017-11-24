@@ -22,18 +22,14 @@ public class MainActivity extends FragmentActivity {
 
         FragmentManager fm = getSupportFragmentManager();
 
-        mMainFragment = (MainFragment) fm.findFragmentByTag(TAG_MAIN_FRAGMENT);
+        mMainFragment = (MainFragment) fm.findFragmentByTag(MainFragment.TAG);
 
         //create the fragment on the first run
         if (mMainFragment == null) {
             Log.v(LOG_TAG, "creating new MainFragment");
-        //if (mMainFragment == null) {
             mMainFragment = new MainFragment();
-            fm.beginTransaction().replace(R.id.gui_container, mMainFragment, TAG_MAIN_FRAGMENT).commit();
-
-
-            //FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            //fragmentTransaction.replace(R.id.gui_container, mMainFragment).commit();
         }
+        fm.beginTransaction().replace(R.id.gui_container, mMainFragment, MainFragment.TAG).commit();
     }
 }
+

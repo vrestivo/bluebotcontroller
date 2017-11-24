@@ -33,7 +33,7 @@ public class BTConnectionService {
 
     private final String LOG_TAG = "BTConnectionService";
 
-    //NOTE this have to use this the following UUID IOT connect to boards
+    //NOTE this is SPP (Serial Port Profile) UUID
     //see the link below
     //https://developer.android.com/reference/android/bluetooth/BluetoothDevice.html#createRfcommSocketToServiceRecord%28java.util.UUID%29
     private final UUID APP_UUID =

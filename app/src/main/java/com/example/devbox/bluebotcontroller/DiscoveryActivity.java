@@ -195,13 +195,12 @@ public class DiscoveryActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+
     public void discovery() {
         if (mBtAdapter.isDiscovering()) {
             mBtAdapter.cancelDiscovery();
         }
-
         mBtAdapter.startDiscovery();
-
     }
 
 
