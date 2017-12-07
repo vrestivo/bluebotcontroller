@@ -70,6 +70,7 @@ public class MainFragment extends Fragment {
     private boolean mOn;
     private int mConState;
     private String mDevInfo;
+    private String mMessageFormatString;
 
 
     private final Handler mHandler = new Handler() {
@@ -153,6 +154,7 @@ public class MainFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+        mMessageFormatString = getString(R.string.message_format_string);
 
         mButtonBtOn = (Button) rootView.findViewById(R.id.bt_on);
 
@@ -173,11 +175,9 @@ public class MainFragment extends Fragment {
             @Override
             public void onJoystickDrag(float x, float y, float resultant) {
                 //format data and send over bluetooth
+                sendMessage(String.format(mMessageFormatString, x,y,resultant));
             }
         });
-
-
-
 
 
 
@@ -235,197 +235,6 @@ public class MainFragment extends Fragment {
                 }
             }
         });
-
-/*
-
-        */
-/**
-         * FORWARD button repeat action on touch listener
-         * implemented according to the following guidance
-         * http://stackoverflow.com/questions/10511423/android-repeat-action-on-pressing-and-holding-a-button
-         *
-         *//*
-
-        mButtonForward.setOnTouchListener(new View.OnTouchListener() {
-
-            private Handler mmRepeatHandler;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        if (mmRepeatHandler != null) {
-                            return true;
-                        }
-                        mmRepeatHandler = new Handler();
-                        mmRepeatHandler.postDelayed(mmRunRepeatedAction, Constants.RUN_DELAY);
-                        break;
-                    }
-                    case MotionEvent.ACTION_UP: {
-                        if (mmRepeatHandler == null) {
-                            return true;
-                        }
-                        mmRepeatHandler.removeCallbacks(mmRunRepeatedAction);
-                        mmRepeatHandler = null;
-                        break;
-                    }
-
-                }
-                return false;
-            }
-
-            Runnable mmRunRepeatedAction = new Runnable() {
-                @Override
-                public void run() {
-                    sendMessage(Constants.BT_FWD);
-                    mmRepeatHandler.postDelayed(this, Constants.RUN_DELAY);
-                }
-            };
-
-        });
-
-
-        */
-/**
-         * REVERSE button repeat action on touch listener
-         * implemented according to the following guidance
-         * http://stackoverflow.com/questions/10511423/android-repeat-action-on-pressing-and-holding-a-button
-         *
-         *//*
-
-        mButtonReverse.setOnTouchListener(new View.OnTouchListener() {
-
-            private Handler mmRepeatHandler;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        if (mmRepeatHandler != null) {
-                            return true;
-                        }
-                        mmRepeatHandler = new Handler();
-                        mmRepeatHandler.postDelayed(mmRunRepeatedAction, Constants.RUN_DELAY);
-                        break;
-                    }
-                    case MotionEvent.ACTION_UP: {
-                        if (mmRepeatHandler == null) {
-                            return true;
-                        }
-                        mmRepeatHandler.removeCallbacks(mmRunRepeatedAction);
-                        mmRepeatHandler = null;
-                        break;
-                    }
-
-                }
-                return false;
-            }
-
-            Runnable mmRunRepeatedAction = new Runnable() {
-                @Override
-                public void run() {
-                    sendMessage(Constants.BT_REV);
-                    mmRepeatHandler.postDelayed(this, Constants.RUN_DELAY);
-                }
-            };
-
-        });
-
-        */
-/**
-         * LEFT button repeat action on touch listener
-         * implemented according to the following guidance
-         * http://stackoverflow.com/questions/10511423/android-repeat-action-on-pressing-and-holding-a-button
-         *
-         *//*
-
-        mButtonLeft.setOnTouchListener(new View.OnTouchListener() {
-
-            private Handler mmRepeatHandler;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        if (mmRepeatHandler != null) {
-                            return true;
-                        }
-                        mmRepeatHandler = new Handler();
-                        mmRepeatHandler.postDelayed(mmRunRepeatedAction, Constants.RUN_DELAY);
-                        break;
-                    }
-                    case MotionEvent.ACTION_UP: {
-                        if (mmRepeatHandler == null) {
-                            return true;
-                        }
-                        mmRepeatHandler.removeCallbacks(mmRunRepeatedAction);
-                        mmRepeatHandler = null;
-                        break;
-                    }
-
-                }
-                return false;
-            }
-
-            Runnable mmRunRepeatedAction = new Runnable() {
-                @Override
-                public void run() {
-                    sendMessage(Constants.BT_LFT);
-                    mmRepeatHandler.postDelayed(this, Constants.RUN_DELAY);
-                }
-            };
-
-        });
-
-
-        */
-/**
-         * RIGHT button repeat action on touch listener
-         * implemented according to the following guidance
-         * http://stackoverflow.com/questions/10511423/android-repeat-action-on-pressing-and-holding-a-button
-         *
-         *//*
-
-        mButtonRight.setOnTouchListener(new View.OnTouchListener() {
-
-            private Handler mmRepeatHandler;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        if (mmRepeatHandler != null) {
-                            return true;
-                        }
-                        mmRepeatHandler = new Handler();
-                        mmRepeatHandler.postDelayed(mmRunRepeatedAction, Constants.RUN_DELAY);
-                        break;
-                    }
-                    case MotionEvent.ACTION_UP: {
-                        if (mmRepeatHandler == null) {
-                            return true;
-                        }
-                        mmRepeatHandler.removeCallbacks(mmRunRepeatedAction);
-                        mmRepeatHandler.removeCallbacks(mmRunRepeatedAction);
-                        mmRepeatHandler = null;
-                        break;
-                    }
-
-                }
-                return false;
-            }
-
-            Runnable mmRunRepeatedAction = new Runnable() {
-                @Override
-                public void run() {
-                    sendMessage(Constants.BT_RGT);
-                    mmRepeatHandler.postDelayed(this, Constants.RUN_DELAY);
-                }
-            };
-
-        });
-*/
-
 
         return rootView;
     }

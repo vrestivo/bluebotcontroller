@@ -19,7 +19,8 @@
     <string name="button_send">Send</string>
 
 
-
+    <!--Bluetooth message string-->
+    <string name="message_format_string">XYR:%1$.0f:%2$.0f:%3$.0f\n</string>
 
     <!-- bluetooth admin messages -->
     <string name="bt_admin_not_available">Bluetooth is not available.</string>
