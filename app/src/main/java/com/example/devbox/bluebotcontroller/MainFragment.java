@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.example.devbox.bluebotcontroller.joystick.*;
 
 import static com.example.devbox.bluebotcontroller.Constants.DEV_INFO_STR;
 import static com.example.devbox.bluebotcontroller.Constants.STR_CONNECTED;
@@ -43,13 +44,9 @@ public class MainFragment extends Fragment {
     //buttons
     private Button mButtonBtOn;
     private Button mButtonDiscovery;
-    private Button mButtonForward;
-    private Button mButtonReverse;
-    private Button mButtonLeft;
-    private Button mButtonRight;
     private Button mButtonSend;
     private Button mButtonDisconnect;
-
+    private JoystickView mJoystickView;
 
     //text input field
     private EditText mEditText;
@@ -171,13 +168,18 @@ public class MainFragment extends Fragment {
         mButtonDiscovery = (Button) rootView.findViewById(R.id.bt_discover);
         mButtonSend = (Button) rootView.findViewById(R.id.bt_send);
         mButtonDisconnect = (Button) rootView.findViewById(R.id.bt_disconnect);
+        mJoystickView = (JoystickView) rootView.findViewById(R.id.joystick_view);
+        mJoystickView.setJoystickDragListener(new JoystickView.OnJoystickDragListener() {
+            @Override
+            public void onJoystickDrag(float x, float y, float resultant) {
+                //format data and send over bluetooth
+            }
+        });
 
 
-        //directional controls
-        mButtonForward = (Button) rootView.findViewById(R.id.button_fwd);
-        mButtonReverse = (Button) rootView.findViewById(R.id.button_reverse);
-        mButtonLeft = (Button) rootView.findViewById(R.id.button_left);
-        mButtonRight = (Button) rootView.findViewById(R.id.button_right);
+
+
+
 
         //edit text view
         mEditText = (EditText) rootView.findViewById(R.id.exit_text);
@@ -234,13 +236,16 @@ public class MainFragment extends Fragment {
             }
         });
 
+/*
 
-        /**
+        */
+/**
          * FORWARD button repeat action on touch listener
          * implemented according to the following guidance
          * http://stackoverflow.com/questions/10511423/android-repeat-action-on-pressing-and-holding-a-button
          *
-         */
+         *//*
+
         mButtonForward.setOnTouchListener(new View.OnTouchListener() {
 
             private Handler mmRepeatHandler;
@@ -280,12 +285,14 @@ public class MainFragment extends Fragment {
         });
 
 
-        /**
+        */
+/**
          * REVERSE button repeat action on touch listener
          * implemented according to the following guidance
          * http://stackoverflow.com/questions/10511423/android-repeat-action-on-pressing-and-holding-a-button
          *
-         */
+         *//*
+
         mButtonReverse.setOnTouchListener(new View.OnTouchListener() {
 
             private Handler mmRepeatHandler;
@@ -324,12 +331,14 @@ public class MainFragment extends Fragment {
 
         });
 
-        /**
+        */
+/**
          * LEFT button repeat action on touch listener
          * implemented according to the following guidance
          * http://stackoverflow.com/questions/10511423/android-repeat-action-on-pressing-and-holding-a-button
          *
-         */
+         *//*
+
         mButtonLeft.setOnTouchListener(new View.OnTouchListener() {
 
             private Handler mmRepeatHandler;
@@ -369,12 +378,14 @@ public class MainFragment extends Fragment {
         });
 
 
-        /**
+        */
+/**
          * RIGHT button repeat action on touch listener
          * implemented according to the following guidance
          * http://stackoverflow.com/questions/10511423/android-repeat-action-on-pressing-and-holding-a-button
          *
-         */
+         *//*
+
         mButtonRight.setOnTouchListener(new View.OnTouchListener() {
 
             private Handler mmRepeatHandler;
@@ -413,6 +424,7 @@ public class MainFragment extends Fragment {
             };
 
         });
+*/
 
 
         return rootView;
@@ -602,10 +614,11 @@ public class MainFragment extends Fragment {
 
     public void enableButtons(boolean flag) {
         mButtonSend.setEnabled(flag);
-        mButtonForward.setEnabled(flag);
-        mButtonReverse.setEnabled(flag);
-        mButtonLeft.setEnabled(flag);
-        mButtonRight.setEnabled(flag);
+        //TODO clean up
+        //mButtonForward.setEnabled(flag);
+        //mButtonReverse.setEnabled(flag);
+        //mButtonLeft.setEnabled(flag);
+        //mButtonRight.setEnabled(flag);
         mButtonDisconnect.setEnabled(flag);
         mButtonDiscovery.setEnabled(flag);
     }
