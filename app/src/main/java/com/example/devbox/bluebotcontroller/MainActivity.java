@@ -31,5 +31,10 @@ public class MainActivity extends FragmentActivity {
         }
         fm.beginTransaction().replace(R.id.gui_container, mMainFragment, MainFragment.TAG).commit();
     }
+
+    public MainFragment getmMainFragment(){
+        return mMainFragment;
+    }
+
 }
 

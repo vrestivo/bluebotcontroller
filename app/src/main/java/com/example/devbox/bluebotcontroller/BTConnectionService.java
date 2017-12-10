@@ -46,7 +46,6 @@ public class BTConnectionService {
     private ConnectThread mConnectThread;
     private Handler mHandler;
     private int mState;
-    private boolean mIsConnected;
     private BluetoothAdapter mBtAdapter;
     private Context mParentContext;
     private BluetoothDevice mBtDevice;
@@ -76,6 +75,7 @@ public class BTConnectionService {
         mConnectThread.start();
     }
 
+
     public synchronized void disconnect() {
         if (mConnectThread != null) {
             mConnectThread.cancel();
@@ -87,6 +87,7 @@ public class BTConnectionService {
         }
     }
 
+
     public synchronized BluetoothDevice getDevice(){
         if(mConnectThread!=null){
             return mConnectThread.geBtDevice();
@@ -94,12 +95,6 @@ public class BTConnectionService {
         return null;
     }
 
-    /**
-     * @return returns connection state
-     */
-    public int getState() {
-        return mState;
-    }
 
     /**
      * this method send a toast message to the UI thread
@@ -114,8 +109,8 @@ public class BTConnectionService {
             msg.setData(bundle);
             mHandler.sendMessage(msg);
         }
-
     }
+
 
     /**
      * send a message to a remote bluetooth device
@@ -133,8 +128,6 @@ public class BTConnectionService {
         }
 
         if (message != null & !message.isEmpty()) {
-            //TODO delete logging
-            //Log.v(LOG_TAG, "sending message");
             thread.write(message.getBytes());
         }
     }
@@ -311,8 +304,6 @@ public class BTConnectionService {
         public void write(byte[] writeBytes) {
             try {
                 mmOutputStream.write(writeBytes);
-                //TODO delete logging
-                //Log.v(LOG_TAG, "data sent");
             } catch (IOException ioe) {
                 Log.e(LOG_TAG, "failed to write to socked", ioe);
                 mState = ST_ERROR;
