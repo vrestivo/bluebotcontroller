@@ -33,15 +33,20 @@ public class JoystickView extends View {
     private int mHandleColor = 0xCC6F6F6F;
     private int mBackgroundColor = 0xCC51FF1F;
     private int mPadding = 16;
-    private int mHandleRadius = 72;
+    private int mHandleRadius = 124;
 
     private MyScrollListener mMyScrollListener;
     private GestureDetector mScrollDetector;
 
     private OnJoystickDragListener mJoystickDragListener;
+    private StopSendingJoysticDataListener mStopSendingListener;
 
     public interface OnJoystickDragListener {
-        void onJoystickDrag(float x, float y, float resultant);
+        void onJoystickUpdate(float x, float y, float resultant, boolean keepSending);
+    }
+
+    public interface StopSendingJoysticDataListener{
+        void onStopSending();
     }
 
 
@@ -75,6 +80,10 @@ public class JoystickView extends View {
 
     public void setJoystickDragListener(OnJoystickDragListener listener){
         mJoystickDragListener = listener;
+    }
+
+    public void setStopSendingListener(StopSendingJoysticDataListener listener){
+        mStopSendingListener = listener;
     }
 
 
@@ -129,18 +138,25 @@ public class JoystickView extends View {
                         event.getX(),
                         event.getY()
                 );
+                if(mIsActive){
+                    normalizeOffsets(mHandle.getCenterX(), mHandle.getCenterY());
+                    //mStopSendingListener.onStopSending();
+                    mJoystickDragListener.onJoystickUpdate(mXDistanceToCenter, mYDistanceToCenter, mNormalizedResultant, true);
+                }
                 invalidate();
                 return true;
             }
             case MotionEvent.ACTION_MOVE: {
-               return mScrollDetector.onTouchEvent(event);
+                mStopSendingListener.onStopSending();
+                boolean result = mScrollDetector.onTouchEvent(event);
+                return result;
             }
             case MotionEvent.ACTION_UP: {
                 mIsActive = false;
                 mHandle.setCenterX(mBounds.getCenterX());
                 mHandle.setCenterY(mBounds.getCenterY());
                 normalizeOffsets(mHandle.getCenterX(), mHandle.getCenterY());
-                mJoystickDragListener.onJoystickDrag(mXDistanceToCenter, mYDistanceToCenter, mNormalizedResultant);
+                mStopSendingListener.onStopSending();
                 invalidate();
                 return true;
             }
@@ -198,7 +214,7 @@ public class JoystickView extends View {
                 mHandle.setCenterX(e2.getX());
                 mHandle.setCenterY(e2.getY());
                 normalizeOffsets(mHandle.getCenterX(), mHandle.getCenterY());
-                mJoystickDragListener.onJoystickDrag(mXDistanceToCenter, mYDistanceToCenter, mNormalizedResultant);
+                mJoystickDragListener.onJoystickUpdate(mXDistanceToCenter, mYDistanceToCenter, mNormalizedResultant, true);
                 invalidate();
 
                 return true;

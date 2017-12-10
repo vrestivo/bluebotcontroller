@@ -10,13 +10,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.devbox.bluebotcontroller.joystick.*;
 
 import static com.example.devbox.bluebotcontroller.Constants.DEV_INFO_STR;
@@ -71,6 +71,8 @@ public class MainFragment extends Fragment {
     private int mConState;
     private String mDevInfo;
     private String mMessageFormatString;
+    private JoystickHandlerThread mJoysticHandlerThread;
+    private Message mJoystickMessage;
 
 
     private final Handler mHandler = new Handler() {
@@ -132,6 +134,7 @@ public class MainFragment extends Fragment {
         //TODO cancel connection when BT is turned off;
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mJoystickMessage = Message.obtain();
 
         if (mBluetoothAdapter == null) {
             //TODO see if need to call getAdapter();
@@ -173,12 +176,39 @@ public class MainFragment extends Fragment {
         mJoystickView = (JoystickView) rootView.findViewById(R.id.joystick_view);
         mJoystickView.setJoystickDragListener(new JoystickView.OnJoystickDragListener() {
             @Override
-            public void onJoystickDrag(float x, float y, float resultant) {
+            public void onJoystickUpdate(float x, float y, float resultant, boolean keepSending) {
                 //format data and send over bluetooth
-                sendMessage(String.format(mMessageFormatString, x,y,resultant));
+                //sendMessage(String.format(mMessageFormatString, x,y,resultant));
+
+                String messageToSend = String.format(mMessageFormatString, x,y,resultant);
+                if (mJoysticHandlerThread != null && mJoysticHandlerThread.isAlive()) {
+
+                    if (keepSending && mJoysticHandlerThread.isSending()) {
+                        mJoysticHandlerThread.setKeepSending(keepSending);
+                        mJoysticHandlerThread.setDataToSend(messageToSend);
+                    }
+                    else if(keepSending && !mJoysticHandlerThread.isSending()){
+                        mJoysticHandlerThread.setKeepSending(keepSending);
+                        mJoysticHandlerThread.getHandler()
+                                .obtainMessage(JoystickHandlerThread.SEND_MSG, messageToSend)
+                                .sendToTarget();
+                    }
+                    else {
+                        mJoysticHandlerThread.setKeepSending(false);
+                    }
+
+                }
             }
         });
 
+        mJoystickView.setStopSendingListener(new JoystickView.StopSendingJoysticDataListener() {
+            @Override
+            public void onStopSending() {
+                if (mJoysticHandlerThread != null && mJoysticHandlerThread.isAlive()) {
+                    mJoysticHandlerThread.setKeepSending(false);
+                }
+            }
+        });
 
 
         //edit text view
@@ -273,6 +303,12 @@ public class MainFragment extends Fragment {
 
         mOn = mBluetoothAdapter.isEnabled();
         //updateStatusIndicator(mConState, mDevInfo);
+        //TODO check placement
+        mJoysticHandlerThread = new JoystickHandlerThread(JoystickHandlerThread.NAME);
+        mJoysticHandlerThread.start();
+        if (mBtService != null) {
+            mJoysticHandlerThread.setBluetoothThread(mBtService);
+        }
 
         if (mOn) {
             mButtonBtOn.setText(getString(R.string.button_bt_off));
@@ -287,6 +323,9 @@ public class MainFragment extends Fragment {
     public void onStop() {
         //TODO delete logging
         Log.v(LOG_TAG, "_in_onStop()");
+        if (mJoysticHandlerThread != null && mJoysticHandlerThread.isAlive()) {
+            mJoysticHandlerThread.quit();
+        }
         super.onStop();
 
     }
@@ -339,20 +378,18 @@ public class MainFragment extends Fragment {
                         mBtDevice = data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                         if (mBtService == null) {
                             mBtService = new BTConnectionService(getContext(), mHandler);
+                            mJoysticHandlerThread.setBluetoothThread(mBtService);
                         }
                         Log.v(LOG_TAG, "_staring service for" + deviceString);
                         //TODO check if already connected to the same device
                         BluetoothDevice existingDevice = mBtService.getDevice();
                         if (existingDevice != null && mBtDevice.getAddress().equals(existingDevice.getAddress())) {
                             Toast.makeText(getContext(), getString(R.string.bt_error_already_connected_same_dev), Toast.LENGTH_SHORT).show();
-
-                        }
-                        else if (mBtService.isConnected()){
+                        } else if (mBtService.isConnected()) {
                             Toast.makeText(getContext(), getString(R.string.bt_error_already_connected), Toast.LENGTH_SHORT).show();
-
-                        }
-                        else {
+                        } else {
                             mBtService.connect(((BluetoothDevice) data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)), true);
+                            mJoysticHandlerThread.setBluetoothThread(mBtService);
                         }
                     }
 
@@ -423,11 +460,6 @@ public class MainFragment extends Fragment {
 
     public void enableButtons(boolean flag) {
         mButtonSend.setEnabled(flag);
-        //TODO clean up
-        //mButtonForward.setEnabled(flag);
-        //mButtonReverse.setEnabled(flag);
-        //mButtonLeft.setEnabled(flag);
-        //mButtonRight.setEnabled(flag);
         mButtonDisconnect.setEnabled(flag);
         mButtonDiscovery.setEnabled(flag);
     }
