@@ -18,5 +18,5 @@ The X and Y coordinates specify direction, while the distance from the center sp
 
 The control commands are sent in a special string format over the the serial Bluetooth connection.  
 The Python script on the Pi side seeks out valid commands using regular expressions,
-parses the input and activates appropriate GPIO pins [See python page](https://github.com/vrestivo/pibluebot_public).__
+parses the input and activates appropriate GPIO pins [See python page](https://github.com/vrestivo/pibluebot_public).
 
