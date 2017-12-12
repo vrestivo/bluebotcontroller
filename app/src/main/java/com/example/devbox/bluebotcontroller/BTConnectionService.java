@@ -119,14 +119,12 @@ public class BTConnectionService {
      */
     public void sendToRemoteBt(String message) {
         ConnectThread thread;
-
         synchronized (this) {
             if (mState != ST_CONNECTED) {
                 return;
             }
             thread = mConnectThread;
         }
-
         if (message != null & !message.isEmpty()) {
             thread.write(message.getBytes());
         }
@@ -155,7 +153,6 @@ public class BTConnectionService {
                 break;
             }
         }
-
     }
 
 
@@ -192,7 +189,6 @@ public class BTConnectionService {
             mmBytesReceived = 0;
             mmHancler = handler;
 
-
             BluetoothSocket tmp = null;
 
             try {
@@ -203,18 +199,16 @@ public class BTConnectionService {
                 String errorMessage = mParentContext.getString(R.string.bt_conn_error_failed_rfcomm);
                 Log.e(LOG_TAG, errorMessage, ioe);
                 sendToastToUi(errorMessage);
-
+                mState = ST_ERROR;
             }
-
             mmSocket = tmp;
-
         }
 
 
         @Override
         public void run() {
             //TODO delete logging
-            Log.v(LOG_TAG, "starting ConntectThread");
+            Log.v(LOG_TAG, "starting ConnectThread");
 
             //making sure discovery is disabled
             mBtAdapter.cancelDiscovery();
@@ -248,29 +242,30 @@ public class BTConnectionService {
                 mmOutputStream = switchOutputStream(mmOutputStream, mmSocket, true);
             }
 
-            //TODO refactor to implement isConnected()
-            if (mmInputStream != null && mmOutputStream != null) {
+            if (isConnected()) {
                 mState = ST_CONNECTED;
-                handleToUI(MESSAGE_CON_STATE_CHANGE, mmBtDevice);
-            } else {
-                mState = ST_DISCONNECTED;
                 handleToUI(MESSAGE_CON_STATE_CHANGE, mmBtDevice);
             }
 
 
             //TODO add reconnection attempts
-            while (mState == ST_CONNECTED) {
-                try {
+            //while (mState == ST_CONNECTED) {
+            while (isConnected()) {
+                    try {
                     mmBytesReceived = mmInputStream.read(mmInArray);
+                    Log.v(LOG_TAG, String.valueOf(mmInArray));
                     //TODO pass message to ui
                     //mHandler.obtainMessage().sendToTarget(Constants.MESSAG);
-                    sendToastToUi(new String(mmInArray));
+                    //sendToastToUi(new String(mmInArray));
                 } catch (IOException ioe) {
                     Log.v(LOG_TAG, "starting error reading InputStream");
                     mState = ST_ERROR;
                     break;
                 }
             }
+
+            mState = ST_DISCONNECTED;
+            handleToUI(MESSAGE_CON_STATE_CHANGE, mmBtDevice);
 
             cancel();
 
@@ -280,10 +275,10 @@ public class BTConnectionService {
         }
 
         /**
-         * this smehod terminates the connectionn by
+         * this method terminates the connection by
          * closing input and output streams,
-         * closing bluettooth socket,
-         * and upates the conection status
+         * closing Bluetooth socket,
+         * and updates the connection status
          */
         public void cancel() {
 
@@ -391,13 +386,9 @@ public class BTConnectionService {
             String LOG_TAG = "_isConnected";
             byte[] response = null;
 
-            //TODO validate mState
             boolean connected = false;
-            if (mmSocket.isConnected() && mState == ST_CONNECTED) {
-                if (mmInputStream != null && mmOutputStream != null) {
+            if (mmSocket.isConnected() && mmInputStream != null && mmOutputStream != null) {
                     return true;
-                }
-
             }
             return connected;
         }

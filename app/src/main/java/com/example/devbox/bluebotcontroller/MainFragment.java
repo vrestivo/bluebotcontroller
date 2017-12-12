@@ -451,7 +451,10 @@ public class MainFragment extends Fragment {
                 mConnectionStatusIndicator.setText(STR_DISCONNECTED_BY_USR);
                 mDevInfo = null;
                 break;
-
+            case ST_DISCONNECTED:
+                mConnectionStatusIndicator.setText(STR_DISCONNECTED);
+                mDevInfo = null;
+                break;
             case ST_ERROR:
                 mConnectionStatusIndicator.setText(STR_ERROR);
                 break;

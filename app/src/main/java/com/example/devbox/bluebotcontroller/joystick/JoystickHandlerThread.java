@@ -15,7 +15,7 @@ public class JoystickHandlerThread extends HandlerThread {
 
     public static String NAME = "JoystickHandlerThread_name";
     public static int SEND_MSG = 999;
-    public int SEND_DELAY = 20;
+    public int SEND_DELAY = 15;
     private Handler mHandler;
     private boolean mKeepSending;
     private BTConnectionService mBluetoothThread;
@@ -41,7 +41,6 @@ public class JoystickHandlerThread extends HandlerThread {
                 }
             }
         };
-
     }
 
 
