@@ -29,9 +29,9 @@ import static com.example.devbox.bluebotcontroller.Constants.ST_NONE;
  * with a remote Bluetooth device
  */
 
-public class BTConnectionService {
+public class BluetoothThread {
 
-    private final String LOG_TAG = "BTConnectionService";
+    private final String LOG_TAG = "BluetoothThread";
 
     //NOTE this is SPP (Serial Port Profile) UUID
     //see the link below
@@ -50,7 +50,7 @@ public class BTConnectionService {
     private Context mParentContext;
     private BluetoothDevice mBtDevice;
 
-    public BTConnectionService(Context context, Handler handler) {
+    public BluetoothThread(Context context, Handler handler) {
         mHandler = handler;
         mParentContext = context;
         mState = ST_NONE;
@@ -269,7 +269,7 @@ public class BTConnectionService {
 
             cancel();
 
-            synchronized (BTConnectionService.this) {
+            synchronized (BluetoothThread.this) {
                 mConnectThread = null;
             }
         }

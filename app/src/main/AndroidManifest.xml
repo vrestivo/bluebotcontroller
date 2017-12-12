@@ -25,7 +25,7 @@
         <activity android:name=".DiscoveryActivity"></activity>
 
         <!--<service-->
-            <!--android:name=".BTConnectionService"-->
+            <!--android:namBluetoothThreadvice"-->
             <!--android:exported="false" />-->
 
     </application>

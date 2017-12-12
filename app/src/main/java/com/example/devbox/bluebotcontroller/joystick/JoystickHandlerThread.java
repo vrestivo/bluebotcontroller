@@ -5,7 +5,7 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
 
-import com.example.devbox.bluebotcontroller.BTConnectionService;
+import com.example.devbox.bluebotcontroller.BluetoothThread;
 
 /**
  * Created by devbox on 12/9/17.
@@ -18,7 +18,7 @@ public class JoystickHandlerThread extends HandlerThread {
     public int SEND_DELAY = 15;
     private Handler mHandler;
     private boolean mKeepSending;
-    private BTConnectionService mBluetoothThread;
+    private BluetoothThread mBluetoothThread;
     private String LOG_TAG = getClass().getSimpleName();
     private String mDataToSend;
     private boolean mSending;
@@ -76,7 +76,7 @@ public class JoystickHandlerThread extends HandlerThread {
     }
 
 
-    public void setBluetoothThread(BTConnectionService bluetoothThread) {
+    public void setBluetoothThread(BluetoothThread bluetoothThread) {
         mBluetoothThread = bluetoothThread;
     }
 

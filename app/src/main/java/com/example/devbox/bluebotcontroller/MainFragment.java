@@ -67,7 +67,7 @@ public class MainFragment extends Fragment {
 
     //bluetooth stuff
     private BluetoothAdapter mBluetoothAdapter;
-    private BTConnectionService mBtService;
+    private BluetoothThread mBtService;
     private BluetoothDevice mBtDevice;
     private boolean mIsBluetoothOn;
     private int mConnectionState;
@@ -295,7 +295,7 @@ public class MainFragment extends Fragment {
                     if (data.hasExtra(BluetoothDevice.EXTRA_DEVICE)) {
                         mBtDevice = data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                         if (mBtService == null) {
-                            mBtService = new BTConnectionService(getContext(), mUiHAndler);
+                            mBtService = new BluetoothThread(getContext(), mUiHAndler);
                             mJoysticHandlerThread.setBluetoothThread(mBtService);
                         }
                         Log.v(LOG_TAG, "_staring service for" + deviceString);
