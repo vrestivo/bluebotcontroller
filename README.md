@@ -6,9 +6,9 @@ This app is in the very early stages of development and will be getting a lot of
 Features:
 1) Bluetooth connection runs on a dedicated thread
 2) A custom JoystickView mimicking a joystic interface
-3) Normalized joystick positions taking with between -100 and 100
+3) Normalized joystick positions with values between -100 and 100
 4) Joystick "hold" functionality implemented using a separate thread
-5) Command interface
+5) Command input interface
 
 This is a basic Android App which controls Raspberry Pi W-based rover.  
 It communicates over standard Bluetooth sockets using Serial Port Profile.  
