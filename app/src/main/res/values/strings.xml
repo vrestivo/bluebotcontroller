@@ -33,7 +33,6 @@
     <string name="bt_error_already_connected">Already connect to a device.  Please disconnect first.</string>
 
 
-
     <!-- bluetooth connection error messages -->
     <string name="bt_conn_error_failed_rfcomm">Failed to establishe RFCOMM channel.</string>
 

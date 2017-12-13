@@ -213,7 +213,6 @@ public class BluetoothThread {
             //making sure discovery is disabled
             mBtAdapter.cancelDiscovery();
 
-            //TODO handle error for already connected socket
             try {
                 if (!mmSocket.isConnected()) {
                     mmSocket.connect();
@@ -247,16 +246,12 @@ public class BluetoothThread {
                 handleToUI(MESSAGE_CON_STATE_CHANGE, mmBtDevice);
             }
 
-
-            //TODO add reconnection attempts
-            //while (mState == ST_CONNECTED) {
+            //keeps the connection open
             while (isConnected()) {
                     try {
                     mmBytesReceived = mmInputStream.read(mmInArray);
                     Log.v(LOG_TAG, String.valueOf(mmInArray));
                     //TODO pass message to ui
-                    //mHandler.obtainMessage().sendToTarget(Constants.MESSAG);
-                    //sendToastToUi(new String(mmInArray));
                 } catch (IOException ioe) {
                     Log.v(LOG_TAG, "starting error reading InputStream");
                     mState = ST_ERROR;
