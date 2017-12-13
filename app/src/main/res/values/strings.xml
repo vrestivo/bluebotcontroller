@@ -18,6 +18,7 @@
     <string name="button_bt_scan">Scan for Devices</string>
     <string name="button_send">Send</string>
 
+    <string name="command_edit_text_hint">String to send</string>
 
     <!--Bluetooth message string-->
     <string name="message_format_string">XYR:%1$.0f:%2$.0f:%3$.0f\n</string>
