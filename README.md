@@ -20,3 +20,6 @@ The control commands are sent in a special string format over the the serial Blu
 The Python script on the Pi side seeks out valid commands using regular expressions,
 parses the input and activates appropriate GPIO pins [See python page](https://github.com/vrestivo/pibluebot_public).
 
+# Video Overview
+
+[![IMAGE ALT TEXT HERE](http://i.ytimg.com/vi/-OFqrM3yGVg/maxresdefault.jpg)](https://youtu.be/-OFqrM3yGVg)
