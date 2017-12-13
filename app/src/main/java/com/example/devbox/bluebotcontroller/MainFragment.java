@@ -55,26 +55,22 @@ public class MainFragment extends Fragment {
     private String mBuffer;
 
     //status indicator
-    private TextView mConStatusTitle;
     private TextView mConnectionStatusIndicator;
 
     private final String LOG_TAG = "_MainFragment";
 
     private static final int REQUEST_ENABLE_BT = 1;
-    private static final int ACTION_STATE_CHAGED = 2;
-    private static final int ACTION_FOUND = 3;
     private static final int ACTION_DISCOVERY = 4;
 
     //bluetooth stuff
     private BluetoothAdapter mBluetoothAdapter;
-    private BluetoothThread mBtService;
-    private BluetoothDevice mBtDevice;
+    private BluetoothThread mBluetoothThread;
+    private BluetoothDevice mBluetoothDevice;
     private boolean mIsBluetoothOn;
     private int mConnectionState;
     private String mDevInfo;
     private String mMessageFormatString;
     private JoystickHandlerThread mJoysticHandlerThread;
-    private Message mJoystickMessage;
     private static MyUiHandler mUiHAndler;
 
 
@@ -103,14 +99,8 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //retain state on config changes
         setRetainInstance(true);
-        if (savedInstanceState == null) {
-            mUiHAndler = new MyUiHandler((MainActivity) getActivity());
-        }
-
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        mJoystickMessage = Message.obtain();
-
         if (mBluetoothAdapter == null) {
             //TODO see if need to call getAdapter();
             MainActivity mainActivity = (MainActivity) getActivity();
@@ -125,6 +115,8 @@ public class MainFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mUiHAndler = new MyUiHandler((MainActivity) getActivity());
+
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mMessageFormatString = getString(R.string.message_format_string);
 
@@ -190,7 +182,7 @@ public class MainFragment extends Fragment {
         mButtonDiscovery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btDiscover(v);
+                btDiscover();
             }
         });
 
@@ -205,8 +197,8 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mBuffer = mEnterCommandField.getText().toString();
-                if (mBtService != null) {
-                    mBtService.sendToRemoteBt(mBuffer);
+                if (mBluetoothThread != null) {
+                    mBluetoothThread.sendToRemoteBt(mBuffer);
                 } else {
                     Toast.makeText(getContext(), "Service not started.", Toast.LENGTH_SHORT).show();
                 }
@@ -236,8 +228,8 @@ public class MainFragment extends Fragment {
         mJoysticHandlerThread = new JoystickHandlerThread(JoystickHandlerThread.NAME);
         mJoysticHandlerThread.start();
 
-        if (mBtService != null) {
-            mJoysticHandlerThread.setBluetoothThread(mBtService);
+        if (mBluetoothThread != null) {
+            mJoysticHandlerThread.setBluetoothThread(mBluetoothThread);
         }
 
         if (mIsBluetoothOn) {
@@ -260,11 +252,10 @@ public class MainFragment extends Fragment {
     @Override
     public void onDestroy() {
         //terminate connection
-        if (mBtService != null) {
-            mBtService.disconnect();
-            mConnectionState = ST_DISCONNECTED_BY_USR;
+        if (mBluetoothThread != null) {
+            mBluetoothThread.disconnect();
+            mConnectionState = ST_DISCONNECTED;
             mDevInfo = null;
-            //mConnectionStatusIndicator.setText(STR_DISCONNECTED);
         }
         super.onDestroy();
 
@@ -293,20 +284,20 @@ public class MainFragment extends Fragment {
                     }
                     Toast.makeText(getContext(), "Action Discover: device Selected: " + deviceString, Toast.LENGTH_SHORT).show();
                     if (data.hasExtra(BluetoothDevice.EXTRA_DEVICE)) {
-                        mBtDevice = data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                        if (mBtService == null) {
-                            mBtService = new BluetoothThread(getContext(), mUiHAndler);
-                            mJoysticHandlerThread.setBluetoothThread(mBtService);
+                        mBluetoothDevice = data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                        if (mBluetoothThread == null) {
+                            mBluetoothThread = new BluetoothThread(getContext(), mUiHAndler);
+                            mJoysticHandlerThread.setBluetoothThread(mBluetoothThread);
                         }
                         Log.v(LOG_TAG, "_staring service for" + deviceString);
-                        BluetoothDevice existingDevice = mBtService.getDevice();
-                        if (existingDevice != null && mBtDevice.getAddress().equals(existingDevice.getAddress())) {
+                        BluetoothDevice existingDevice = mBluetoothThread.getDevice();
+                        if (existingDevice != null && mBluetoothDevice.getAddress().equals(existingDevice.getAddress())) {
                             Toast.makeText(getContext(), getString(R.string.bt_error_already_connected_same_dev), Toast.LENGTH_SHORT).show();
-                        } else if (mBtService.isConnected()) {
+                        } else if (mBluetoothThread.isConnected()) {
                             Toast.makeText(getContext(), getString(R.string.bt_error_already_connected), Toast.LENGTH_SHORT).show();
                         } else {
-                            mBtService.connect(((BluetoothDevice) data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)), true);
-                            mJoysticHandlerThread.setBluetoothThread(mBtService);
+                            mBluetoothThread.connect(((BluetoothDevice) data.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)), true);
+                            mJoysticHandlerThread.setBluetoothThread(mBluetoothThread);
                         }
                     }
                     break;
@@ -330,14 +321,9 @@ public class MainFragment extends Fragment {
                     mDevInfo = null;
                     updateStatusIndicator(mConnectionState, mDevInfo);
                 }
-                //check
-                if (getActivity() != null)
-                    Toast.makeText(getContext(), pickState(mConnectionState), Toast.LENGTH_SHORT).show();
                 break;
             case Constants.MESSAGE_WRITE:
                 //TODO implement
-                if (getActivity() != null)
-                    Toast.makeText(getContext(), "just Wrote something", Toast.LENGTH_SHORT).show();
                 break;
             case Constants.MESSAGE_TOAST:
                 if (msg.getData().containsKey(Constants.TOAST_STR)) {
@@ -352,11 +338,11 @@ public class MainFragment extends Fragment {
         }
     }
 
+
+
     /**
      * ** BLUETOOTH OPERATIONS ***
      **/
-
-
     public void btOn(View v) {
         if (!mBluetoothAdapter.isEnabled()) {
             Intent btOnIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -374,10 +360,10 @@ public class MainFragment extends Fragment {
         if (mBluetoothAdapter.isEnabled()) {
             //TODO delete logging
             Log.v(LOG_TAG, "inside btOff:");
-            if (mBtService != null) {
-                mBtService.disconnect();
+            if (mBluetoothThread != null) {
+                mBluetoothThread.disconnect();
                 //TODO delete logging
-                Log.v(LOG_TAG, "inside btOff: called mBtService.disconnect()");
+                Log.v(LOG_TAG, "inside btOff: called mBluetoothThread.disconnect()");
             }
             mBluetoothAdapter.disable();
             mButtonBtOn.setText(getString(R.string.button_bt_on));
@@ -389,20 +375,18 @@ public class MainFragment extends Fragment {
     }
 
 
-    public void btDiscover(View v) {
-        //TODO start Bt discovery activity
+    public void btDiscover() {
         Intent discoveryIntent = new Intent(getContext(), DiscoveryActivity.class);
         startActivityForResult(discoveryIntent, ACTION_DISCOVERY);
     }
 
 
     public void disconnect() {
-        if (mBtService != null) {
-            mBtService.disconnect();
-            mConnectionState = ST_DISCONNECTED_BY_USR;
-            updateStatusIndicator(mConnectionState, null);
+        if (mBluetoothThread != null) {
+            mBluetoothThread.disconnect();
         }
     }
+
 
     public void enableButtons(boolean flag) {
         mButtonSend.setEnabled(flag);
@@ -439,7 +423,6 @@ public class MainFragment extends Fragment {
                 //TODO update status
                 if (devinfo != null) {
                     mDevInfo = devinfo;
-
                     mConnectionStatusIndicator.setText(mDevInfo);
                 } else {
                     mConnectionStatusIndicator.setText(STR_CONNECTED);
@@ -447,10 +430,11 @@ public class MainFragment extends Fragment {
                 }
                 break;
             }
-            case ST_DISCONNECTED_BY_USR:
+            //TODO delete
+/*            case ST_DISCONNECTED_BY_USR:
                 mConnectionStatusIndicator.setText(STR_DISCONNECTED_BY_USR);
                 mDevInfo = null;
-                break;
+                break;*/
             case ST_DISCONNECTED:
                 mConnectionStatusIndicator.setText(STR_DISCONNECTED);
                 mDevInfo = null;
@@ -463,6 +447,9 @@ public class MainFragment extends Fragment {
                 mConnectionStatusIndicator.setText(getString(R.string.status_default));
                 break;
         }
+
+        Toast.makeText(getContext(), pickState(mConnectionState), Toast.LENGTH_SHORT).show();
+
     }
 
 }

@@ -81,9 +81,9 @@ public class BluetoothThread {
             mConnectThread.cancel();
             //TODO delete logging
             Log.v(LOG_TAG, "main calling from mConnectThread.cancel()");
-            mState = ST_DISCONNECTED_BY_USR;
+            mState = ST_DISCONNECTED;
             mBtDevice = null;
-            handleToUI(MESSAGE_CON_STATE_CHANGE, null);
+            //handleToUI(MESSAGE_CON_STATE_CHANGE, null);
         }
     }
 

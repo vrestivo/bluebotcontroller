@@ -30,12 +30,12 @@
     <string name="bt_admin_already_off">Bluetooth is already Off</string>
     <string name="bt_error_off">Bluetooth  Off. Please enable your bluetooth.</string>
     <string name="bt_error_already_connected_same_dev">Already connect to selected device.</string>
-    <string name="bt_error_already_connected">Already connect to a Different device.  Please disconnect first.</string>
+    <string name="bt_error_already_connected">Already connect to a device.  Please disconnect first.</string>
 
 
 
     <!-- bluetooth connection error messages -->
-    <string name="bt_conn_error_failed_rfcomm">Filed to establishe RFCOMM channel.</string>
+    <string name="bt_conn_error_failed_rfcomm">Failed to establishe RFCOMM channel.</string>
 
 
 
