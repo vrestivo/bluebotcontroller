@@ -1,4 +1,4 @@
-package com.example.devbox.bluebotcontroller.joystick;
+package com.example.devbox.bluebotcontroller.view.joystick;
 
 import android.content.Context;
 import android.graphics.Canvas;

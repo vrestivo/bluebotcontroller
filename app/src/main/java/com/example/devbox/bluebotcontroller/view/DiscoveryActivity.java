@@ -1,4 +1,4 @@
-package com.example.devbox.bluebotcontroller;
+package com.example.devbox.bluebotcontroller.view;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -25,6 +25,9 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.example.devbox.bluebotcontroller.R;
+import com.example.devbox.bluebotcontroller.Util;
 
 import java.util.ArrayList;
 import java.util.Set;

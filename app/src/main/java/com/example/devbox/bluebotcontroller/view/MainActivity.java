@@ -1,11 +1,11 @@
-package com.example.devbox.bluebotcontroller;
+package com.example.devbox.bluebotcontroller.view;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import com.example.devbox.bluebotcontroller.R;
 
 public class MainActivity extends FragmentActivity {
 

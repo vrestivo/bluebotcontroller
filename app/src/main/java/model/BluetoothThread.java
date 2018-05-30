@@ -1,4 +1,4 @@
-package com.example.devbox.bluebotcontroller;
+package model;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -10,6 +10,9 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.example.devbox.bluebotcontroller.Constants;
+import com.example.devbox.bluebotcontroller.R;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -20,7 +23,6 @@ import static com.example.devbox.bluebotcontroller.Constants.MESSAGE_CON_STATE_C
 import static com.example.devbox.bluebotcontroller.Constants.ST_CONNECTED;
 import static com.example.devbox.bluebotcontroller.Constants.ST_CONNECTING;
 import static com.example.devbox.bluebotcontroller.Constants.ST_DISCONNECTED;
-import static com.example.devbox.bluebotcontroller.Constants.ST_DISCONNECTED_BY_USR;
 import static com.example.devbox.bluebotcontroller.Constants.ST_ERROR;
 import static com.example.devbox.bluebotcontroller.Constants.ST_NONE;
 

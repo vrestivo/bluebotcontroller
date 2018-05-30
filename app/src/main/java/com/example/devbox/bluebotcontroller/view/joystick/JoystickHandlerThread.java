@@ -1,11 +1,11 @@
-package com.example.devbox.bluebotcontroller.joystick;
+package com.example.devbox.bluebotcontroller.view.joystick;
 
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
 
-import com.example.devbox.bluebotcontroller.BluetoothThread;
+import model.BluetoothThread;
 
 /**
  * Created by devbox on 12/9/17.

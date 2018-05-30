@@ -1,10 +1,10 @@
 package com.example.devbox.bluebotcontroller;
 
 import android.bluetooth.BluetoothDevice;
-import android.icu.lang.UCharacter;
+
+import com.example.devbox.bluebotcontroller.view.DiscoveryActivity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Set;
 
 /**

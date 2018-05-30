@@ -1,4 +1,4 @@
-package com.example.devbox.bluebotcontroller;
+package com.example.devbox.bluebotcontroller.view;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -17,9 +17,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.devbox.bluebotcontroller.joystick.*;
+import com.example.devbox.bluebotcontroller.Constants;
+import com.example.devbox.bluebotcontroller.R;
+import com.example.devbox.bluebotcontroller.view.joystick.*;
 
 import java.lang.ref.WeakReference;
+
+import model.BluetoothThread;
 
 import static com.example.devbox.bluebotcontroller.Constants.DEV_INFO_STR;
 import static com.example.devbox.bluebotcontroller.Constants.STR_CONNECTED;
