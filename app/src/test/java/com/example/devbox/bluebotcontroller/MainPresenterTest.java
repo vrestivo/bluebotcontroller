@@ -82,4 +82,13 @@ public class MainPresenterTest {
         verify(mMainView).showDeviceStatus(mTestString);
     }
 
+    @Test
+    public void disconnectTest(){
+        //given intialized view, presenter, and model
+        //when disconnect() is called
+        mMainPresenter.disconnect();
+
+        verify(mModel).disconnect();
+    }
+
 }

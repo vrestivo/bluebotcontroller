@@ -38,6 +38,11 @@ public class MainPresenter implements IMainPresenter {
     }
 
     @Override
+    public void disconnect() {
+        mModel.disconnect();
+    }
+
+    @Override
     public void cleanup() {
         mMainView = null;
         mModel.cleanup();

@@ -11,4 +11,6 @@ public class DiscoveryView extends AppCompatActivity implements IDiscoveryView {
     public BluetoothAdapter getBluetoothAdapter() {
         return null;
     }
+
+
 }

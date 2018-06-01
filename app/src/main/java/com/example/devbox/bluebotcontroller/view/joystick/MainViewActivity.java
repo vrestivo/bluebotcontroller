@@ -37,4 +37,9 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     public void showDeviceStatus(String status) {
 
     }
+
+    @Override
+    public void requestBluetoothPermissions() {
+
+    }
 }
