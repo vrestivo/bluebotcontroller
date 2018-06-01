@@ -22,4 +22,19 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     public void cleaup() {
         //TODO implement
     }
+
+    @Override
+    public void showMessage(String message) {
+
+    }
+
+    @Override
+    public void sendMessageToRemoteDevice(String message) {
+
+    }
+
+    @Override
+    public void showDeviceStatus(String status) {
+
+    }
 }

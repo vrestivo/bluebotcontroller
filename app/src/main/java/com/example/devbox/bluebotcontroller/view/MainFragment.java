@@ -23,7 +23,7 @@ import com.example.devbox.bluebotcontroller.view.joystick.*;
 
 import java.lang.ref.WeakReference;
 
-import model.BluetoothThread;
+import com.example.devbox.bluebotcontroller.model.BluetoothThread;
 
 import static com.example.devbox.bluebotcontroller.Constants.DEV_INFO_STR;
 import static com.example.devbox.bluebotcontroller.Constants.STR_CONNECTED;

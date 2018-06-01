@@ -5,7 +5,7 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
 
-import model.BluetoothThread;
+import com.example.devbox.bluebotcontroller.model.BluetoothThread;
 
 /**
  * Created by devbox on 12/9/17.

@@ -1,4 +1,4 @@
-package model;
+package com.example.devbox.bluebotcontroller.model;
 
 import android.bluetooth.BluetoothDevice;
 

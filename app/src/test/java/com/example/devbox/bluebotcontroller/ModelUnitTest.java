@@ -9,9 +9,15 @@ import static org.junit.Assert.*;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-public class ExampleUnitTest {
+public class ModelUnitTest {
+
+
+
     @Test
-    public void addition_isCorrect() throws Exception {
+    public void deviceFoundTest() {
         assertEquals(4, 2 + 2);
     }
+
+
+
 }

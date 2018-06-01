@@ -19,8 +19,12 @@ android {
     }
 }
 ext {
-    supportVersion = "27.0.0"
-    espressoVersion = "3.0.1"
+    supportVersion = "27.1.1"
+    espressoVersion = "3.0.2"
+    hamcrestVersion = '1.3'
+    mockitoVersion = '1.10.19'
+    powerMockito = '1.6.2'
+    junitVersion = '4.12'
 }
 
 dependencies {
@@ -30,4 +34,10 @@ dependencies {
     })
     implementation "com.android.support:appcompat-v7:$supportVersion"
     testImplementation 'junit:junit:4.12'
+
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.mockito:mockito-all:$mockitoVersion"
+    testImplementation "org.hamcrest:hamcrest-all:$hamcrestVersion"
+    testImplementation "org.powermock:powermock-module-junit4:$powerMockito"
+    testImplementation "org.powermock:powermock-api-mockito:$powerMockito"
 }
