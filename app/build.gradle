@@ -17,14 +17,21 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
 }
 ext {
     supportVersion = "27.1.1"
     espressoVersion = "3.0.2"
     hamcrestVersion = '1.3'
     mockitoVersion = '1.10.19'
-    powerMockito = '1.6.2'
+    powerMockVersion = '1.6.4'
     junitVersion = '4.12'
+    rxJavaVersion = '2.1.14'
+    rxAndroidVersion = '2.0.2'
+    roboelectricVersion = '3.8'
 }
 
 dependencies {
@@ -33,11 +40,28 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation "com.android.support:appcompat-v7:$supportVersion"
-    testImplementation 'junit:junit:4.12'
+    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
+    implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
+    testImplementation "junit:junit:$junitVersion"
+
 
     testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "org.hamcrest:hamcrest-all:$hamcrestVersion"
+    testImplementation "org.powermock:powermock-module-junit4:$powerMockVersion"
+    testImplementation "org.powermock:powermock-api-mockito:$powerMockVersion"
+    //testImplementation "org.powermock:powermock-api-easymock:$powerMockVersion"
+
+
+/*
     testImplementation "org.mockito:mockito-all:$mockitoVersion"
     testImplementation "org.hamcrest:hamcrest-all:$hamcrestVersion"
-    testImplementation "org.powermock:powermock-module-junit4:$powerMockito"
-    testImplementation "org.powermock:powermock-api-mockito:$powerMockito"
+    testImplementation "org.powermock:powermock-module-junit4:$powerMockVersion"
+    testImplementation "org.powermock:powermock-core:$powerMockVersion"
+    testImplementation "org.powermock:powermock-api-easymock:$powerMockVersion"
+    testImplementation "org.powermock:powermock-api-mockito:$powerMockVersion"
+*/
+
+    testImplementation "org.robolectric:robolectric:$roboelectricVersion"
+
 }

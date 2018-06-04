@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 
+import com.example.devbox.bluebotcontroller.presenter.IDiscoveryPresenter;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
 
 import java.util.ArrayList;
@@ -13,9 +14,9 @@ public class Model implements IModel {
 
     private static IModel sModelInstance;
     private static IMainPresenter sMainPresenter;
+    private static IDiscoveryPresenter sDiscoveryPresenter;
     private static Context sApplicationContext;
-    private BluetoothAdapter mBluetoothAdapter;
-    private Set<BluetoothDevice> mDevices;
+    private static IBluetoothConnection sBluetoothConnection;
 
     private Model() {
 
@@ -24,14 +25,23 @@ public class Model implements IModel {
 
     public static IModel getInstance(Context applicationnContext, IMainPresenter mainPresenter) {
         initModel(applicationnContext);
+        sMainPresenter = mainPresenter;
         return sModelInstance;
     }
+
+    public static IModel getInstance(Context applicationnContext, IDiscoveryPresenter discoveryPresenter) {
+        initModel(applicationnContext);
+        sDiscoveryPresenter = discoveryPresenter;
+        return sModelInstance;
+    }
+
 
 
     private static void initModel(Context applicationContext){
         if (sModelInstance == null){
             sModelInstance = new Model();
             sApplicationContext = applicationContext;
+            sBluetoothConnection = new BluetoothConnection(sModelInstance, applicationContext);
         }
     }
 
@@ -41,56 +51,88 @@ public class Model implements IModel {
         return null;
     }
 
+
     @Override
     public Set<BluetoothDevice> getPairedDevices() {
         return null;
     }
 
+
     @Override
     public void startDiscovery() {
-        if(mBluetoothAdapter!=null){
-            if (mBluetoothAdapter.isDiscovering()){
-                mBluetoothAdapter.cancelDiscovery();
+        if(sBluetoothConnection!=null){
+            if(sBluetoothConnection.isConnected()){
+                sBluetoothConnection.disconnect();
             }
-            mBluetoothAdapter.startDiscovery();
+            sBluetoothConnection.startDiscovery();
         }
     }
 
     @Override
     public void stopDiscovery() {
-        if(mBluetoothAdapter!=null)
-        mBluetoothAdapter.cancelDiscovery();
+        if(sBluetoothConnection!=null){
+            sBluetoothConnection.stopDiscovery();
+        }
+    }
+
+    @Override
+    public void loadPairedDevices(Set<BluetoothDevice> pairedDevices) {
+
+    }
+
+    @Override
+    public void loadAvailableDevices(Set<BluetoothDevice> availableDevices) {
+
     }
 
     @Override
     public void sendMessageToRemoteDevice(String message) {
-
+        if(sBluetoothConnection != null && sBluetoothConnection.isConnected() && message !=null){
+            sBluetoothConnection.sendMessageToRemoteDevice(message);
+        }
     }
 
     @Override
     public void connectToDevice(BluetoothDevice device) {
-
+        if(sBluetoothConnection!=null && device!=null){
+            sBluetoothConnection.connectToRemoteDevice(device);
+        }
     }
 
     @Override
-    public void notifyPresenter(String message) {
-
+    public void notifyMainPresenter(String message) {
+        if(sMainPresenter!=null){
+            sMainPresenter.sendMessageToUI(message);
+        }
     }
 
     @Override
-    public void updateDeviceStatus() {
+    public void notifyDiscoveryPresenter(String message) {
+        if(sDiscoveryPresenter!=null){
+            sDiscoveryPresenter.sendMesageToUI(message);
+        }
+    }
 
+    @Override
+    public void updateDeviceStatus(String newStatus) {
+        if(sMainPresenter!=null) {
+            sMainPresenter.updateDeviceStatus(newStatus);
+        }
     }
 
     @Override
     public void disconnect() {
+        if(sBluetoothConnection!=null && sBluetoothConnection.isConnected()){
+            sBluetoothConnection.disconnect();
+        }
 
     }
 
     @Override
     public void cleanup() {
+
         sMainPresenter = null;
-        //TODO cleanup DiscoveryPresenter
+        sDiscoveryPresenter = null;
         //TODO cleanup Bluetooth resources
     }
 }

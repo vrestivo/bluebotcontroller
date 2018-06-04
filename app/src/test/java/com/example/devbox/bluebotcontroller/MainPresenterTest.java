@@ -7,7 +7,6 @@ import com.example.devbox.bluebotcontroller.view.IMainView;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -16,8 +15,6 @@ import com.example.devbox.bluebotcontroller.model.IModel;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 public class MainPresenterTest {
 
