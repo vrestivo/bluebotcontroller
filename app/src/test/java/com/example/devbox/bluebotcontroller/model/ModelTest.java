@@ -46,7 +46,6 @@ public class ModelTest {
         mMockDiscoveryPresenter = PowerMockito.mock(MockDiscoveryPresenter.class);
         mMockBluetoothConnection = PowerMockito.mock(BluetoothConnection.class);
 
-
         mClassUnderTest = Model.getInstance(mMockContext, mMockMainPresenter);
         mClassUnderTest = Model.getInstance(mMockContext, mMockDiscoveryPresenter);
 
