@@ -4,15 +4,15 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.support.annotation.VisibleForTesting;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Observable;
 import java.util.Set;
 import java.util.UUID;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -29,6 +29,11 @@ public class BluetoothConnection implements IBluetoothConnection {
     //                           ^^^^
     // UUID section marked by a "^" points to the device type, in this case
     // a serial device
+
+    public static final String STATUS_DISCONNECTED = "Disconnected";
+    public static final String STATUS_CONNECTED = "Connected";
+    public static final String STATUS_ERROR = "Error";
+    public static final String MSG_CON_FAIED = "Connection failed";
 
 
     private BluetoothSocket mBluetoothSocket;
@@ -120,23 +125,20 @@ public class BluetoothConnection implements IBluetoothConnection {
                 }
                 mBluetoothSocket = remoteDevice.createRfcommSocketToServiceRecord(SPP_UUID);
                 setupInputOutputStreams();
+                updateDeviceStatus(STATUS_CONNECTED);
             } catch (IOException e) {
                 e.printStackTrace();
+                notifyDiscoveryPresenter(MSG_CON_FAIED);
+                notifyMainPresenter(MSG_CON_FAIED);
             }
         }
     }
 
-
-    private void setupInputOutputStreams() {
-        //TODO implement
-        //TODO check if subscribed, if so
+    private void setupInputOutputStreams() throws IOException {
         cleanUpStreams();
-        //TODO initialize streams
         openStreams();
-        //TODO initialize and PublishSubjects and subscribe to them
         subscribeToInputStream();
         subscribeToOutputStream();
-
     }
 
     private void cleanUpStreams() {
@@ -160,68 +162,50 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
-
-    private void openStreams() {
+    private void openStreams() throws IOException {
         if (mBluetoothSocket != null && mBluetoothSocket.isConnected()) {
-            try {
-                mBluetoothSocketInputStream = mBluetoothSocket.getInputStream();
-                mBluetoothSocketOutputStream = mBluetoothSocket.getOutputStream();
-            } catch (IOException ioException) {
-                //TODO handle  the exception
-            }
+            mBluetoothSocketInputStream = mBluetoothSocket.getInputStream();
+            mBluetoothSocketOutputStream = mBluetoothSocket.getOutputStream();
         }
     }
 
-    @VisibleForTesting
     private void subscribeToInputStream() {
-        if (mBluetoothSocket.isConnected()) {
-            io.reactivex.Observable<String> inputObservable = io.reactivex.Observable.create(
-                    emitter -> {
-                        while (!mInputStreamDisposable.isDisposed()) {
-                            try {
-                                mBluetoothSocketInputStream.read(mInputByteArray);
-                                emitter.onNext(mInputByteArray.toString());
-                            } catch (Throwable throwable) {
-                                emitter.onError(throwable);
-                            }
-
+        Observable<String> inputObservable = Observable.create(
+                emitter -> {
+                    while (mBluetoothSocket.isConnected()) {
+                        try {
+                            mBluetoothSocketInputStream.read(mInputByteArray);
+                            emitter.onNext(mInputByteArray.toString());
+                        } catch (Throwable throwable) {
+                            emitter.onError(throwable);
                         }
                     }
-            );
+                    emitter.onComplete();
+                });
 
-            mInputStreamDisposable = inputObservable.subscribe(
-                    bluetoothInputString -> {
-                        if(bluetoothInputString!=null){
+        if (mBluetoothSocket.isConnected()) {
+            mInputStreamDisposable = inputObservable
+                    .observeOn(Schedulers.newThread())
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .toFlowable(BackpressureStrategy.LATEST) //TODO vefity
+                    .subscribe(bluetoothInputString -> {
+                        if (bluetoothInputString != null) {
                             notifyMainPresenter(bluetoothInputString);
                         }
                     },
                     e -> {
-                        //TODO handle reading error
+                        //TODO notify user of error
+                        disconnect();
+                    },
+                    () -> {
+                        disconnect();
                     }
             );
-
-/*            mInputStreamDisposable = mInputStreamPublishSubject
-                    .observeOn(Schedulers.newThread())
-                    .subscribeOn(Schedulers.newThread())  //send data on a separate thread
-                    .subscribe(
-                            message -> {
-                                //TODO implement reading
-                                while(!mInputStreamDisposable.isDisposed()){
-                                    //TODO read fromm the socket
-                                    if(message!=null){
-
-                                    }
-                                }
-
-
-                            }
-                    );*/
         } else {
-            disconnect();
+            cleanUpStreams();
         }
     }
 
-    @VisibleForTesting
     private void subscribeToOutputStream() {
         if (mBluetoothSocket.isConnected()) {
             mOutputStreamDisposable = mOutputStreamPublisheSubject
@@ -229,13 +213,17 @@ public class BluetoothConnection implements IBluetoothConnection {
                     .subscribeOn(Schedulers.newThread())
                     .subscribe(
                             message -> {
-                                if(message!=null) {
-                                    mBluetoothSocketOutputStream.write(message.getBytes());
+                                if (message != null) {
+                                    try {
+                                        mBluetoothSocketOutputStream.write(message.getBytes());
+                                    } catch (Throwable throwable) {
+                                        //TODO handle errors
+                                    }
                                 }
                             }
                     );
         } else {
-            disconnect();
+            cleanUpStreams();
         }
     }
 
@@ -253,8 +241,10 @@ public class BluetoothConnection implements IBluetoothConnection {
         if (mBluetoothSocket != null) {
             try {
                 mBluetoothSocket.close();
+                updateDeviceStatus(STATUS_DISCONNECTED);
             } catch (IOException e) {
                 e.printStackTrace();
+                //TODO update device error status
             }
         }
     }
@@ -266,19 +256,6 @@ public class BluetoothConnection implements IBluetoothConnection {
         } else {
             return false;
         }
-    }
-
-    @VisibleForTesting
-    private void closeStreams() {
-        //TODO implement
-        //TODO check if PublishSubjects are subscribed,
-        //TODO dispose/unsubscribe from PublisSubjects
-        //TODO close streams
-
-    }
-
-    private void cleanup() {
-        //TODO clean up resources
     }
 
 
