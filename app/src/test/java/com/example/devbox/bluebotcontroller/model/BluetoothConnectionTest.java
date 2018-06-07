@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.example.devbox.bluebotcontroller.presenter.IDiscoveryPresenter;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
@@ -12,10 +13,10 @@ import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -27,8 +28,13 @@ import org.robolectric.shadows.ShadowBluetoothAdapter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.TimeUnit;
 
-import io.reactivex.subjects.PublishSubject;
+import io.reactivex.Scheduler;
+import io.reactivex.android.plugins.RxAndroidPlugins;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.schedulers.ExecutorScheduler;
+import io.reactivex.plugins.RxJavaPlugins;
 
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
@@ -61,6 +67,37 @@ public class BluetoothConnectionTest {
     private InputStream mMockInputStream;
     private OutputStream mMockOutputStream;
 
+
+    /**
+     * This fixes initialization issues in RxJava tests
+     *
+     * solution from:
+     * https://stackoverflow.com/questions/43356314/android-rxjava-2-junit-test-getmainlooper-in-android-os-looper-not-mocked-runt
+     *
+     */
+    @BeforeClass
+    public static void classSetup(){
+
+        Scheduler immediate = new Scheduler() {
+            @Override
+            public Disposable scheduleDirect(@NonNull Runnable run, long delay, @NonNull TimeUnit unit) {
+                // this prevents StackOverflowErrors when scheduling with a delay
+                return super.scheduleDirect(run, 0, unit);
+            }
+
+            @Override
+            public Worker createWorker() {
+                return new ExecutorScheduler.ExecutorWorker(Runnable::run);
+            }
+        };
+
+
+        RxJavaPlugins.setInitIoSchedulerHandler(schedulerCallable -> immediate);
+        RxJavaPlugins.setInitComputationSchedulerHandler(scheduler -> immediate);
+        RxJavaPlugins.setInitNewThreadSchedulerHandler(scheduler -> immediate);
+        RxJavaPlugins.setInitSingleSchedulerHandler(scheduler -> immediate);
+        RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> immediate);
+    }
 
     @Before
     public void setup(){
@@ -147,12 +184,10 @@ public class BluetoothConnectionTest {
 
 
 
-    //TODO move to Roboelectric due to RxJava and AndrooidSchedules
-/*
     @Test
     public void connectToRemoteDeviceTest(){
         //given initialized connection
-        setupBluetoothConectionSocketAndStreamMocks();
+        setupBluetoothConnectionSocketAndStreamMocks();
         PowerMockito.when(mMockBluetoothSocket.isConnected()).thenReturn(true);
 
         //when connect is called
@@ -173,10 +208,9 @@ public class BluetoothConnectionTest {
         //device Status is updated
 
     }
-*/
 
 
-    private void setupBluetoothConectionSocketAndStreamMocks(){
+    private void setupBluetoothConnectionSocketAndStreamMocks(){
          mMockSelectedBTRemoteDevice = PowerMockito.mock(BluetoothDevice.class);
 
         try {
@@ -197,13 +231,25 @@ public class BluetoothConnectionTest {
 
     }
 
+    @Test public void subscribeToInputStreamTest(){
+        //given initialized connection
+        setupBluetoothConnectionSocketAndStreamMocks();
+        PowerMockito.when(mMockBluetoothSocket.isConnected()).thenReturn(true);
 
-    //TODO move to Roboelectric
+        //when connect is called
+        mClassUnderTest.connectToRemoteDevice(mMockSelectedBTRemoteDevice);
+
+        //the output stream disposable is not disposed
+        Whitebox.getInternalState(mClassUnderTest, "mOutputStreamDisposable");
+
+
+    }
+
+
     @Test
     public void sendMessageToRemoteDeviceReactivelyTest(){
 
         PowerMockito.when(mMockAdapter.isEnabled()).thenReturn(true);
-
 
 
         mBluetoothDevice1 = PowerMockito.mock(BluetoothDevice.class);

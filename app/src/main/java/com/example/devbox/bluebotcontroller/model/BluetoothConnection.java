@@ -9,6 +9,7 @@ import android.support.annotation.VisibleForTesting;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Observable;
 import java.util.Set;
 import java.util.UUID;
 
@@ -43,6 +44,8 @@ public class BluetoothConnection implements IBluetoothConnection {
     private PublishSubject<String> mOutputStreamPublisheSubject;
     private Disposable mOutputStreamDisposable;
     private Disposable mInputStreamDisposable;
+
+    private byte[] mInputByteArray = new byte[1024];
 
 
     public BluetoothConnection(IModel model, Context context) {
@@ -153,7 +156,7 @@ public class BluetoothConnection implements IBluetoothConnection {
                 mBluetoothSocketOutputStream.close();
             }
         } catch (IOException ioException) {
-            //TODO handle the excetion
+            //TODO handle the exception
         }
     }
 
@@ -169,30 +172,66 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
+    @VisibleForTesting
     private void subscribeToInputStream() {
         if (mBluetoothSocket.isConnected()) {
-            mInputStreamDisposable = mInputStreamPublishSubject
+            io.reactivex.Observable<String> inputObservable = io.reactivex.Observable.create(
+                    emitter -> {
+                        while (!mInputStreamDisposable.isDisposed()) {
+                            try {
+                                mBluetoothSocketInputStream.read(mInputByteArray);
+                                emitter.onNext(mInputByteArray.toString());
+                            } catch (Throwable throwable) {
+                                emitter.onError(throwable);
+                            }
+
+                        }
+                    }
+            );
+
+            mInputStreamDisposable = inputObservable.subscribe(
+                    bluetoothInputString -> {
+                        if(bluetoothInputString!=null){
+                            notifyMainPresenter(bluetoothInputString);
+                        }
+                    },
+                    e -> {
+                        //TODO handle reading error
+                    }
+            );
+
+/*            mInputStreamDisposable = mInputStreamPublishSubject
+                    .observeOn(Schedulers.newThread())
                     .subscribeOn(Schedulers.newThread())  //send data on a separate thread
                     .subscribe(
                             message -> {
                                 //TODO implement reading
+                                while(!mInputStreamDisposable.isDisposed()){
+                                    //TODO read fromm the socket
+                                    if(message!=null){
+
+                                    }
+                                }
 
 
                             }
-                    );
+                    );*/
         } else {
             disconnect();
         }
     }
 
+    @VisibleForTesting
     private void subscribeToOutputStream() {
         if (mBluetoothSocket.isConnected()) {
             mOutputStreamDisposable = mOutputStreamPublisheSubject
-                    .observeOn(Schedulers.newThread())
-                    .subscribeOn(AndroidSchedulers.mainThread()) //FIXME causes initializatin error during unit tests
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.newThread())
                     .subscribe(
                             message -> {
-                                //TODO implement writing
+                                if(message!=null) {
+                                    mBluetoothSocketOutputStream.write(message.getBytes());
+                                }
                             }
                     );
         } else {
@@ -203,8 +242,7 @@ public class BluetoothConnection implements IBluetoothConnection {
     @Override
     public void sendMessageToRemoteDevice(String message) {
         if (isConnected() && message != null) {
-            //TODO implement reactively
-
+            mOutputStreamPublisheSubject.onNext(message);
         }
 
     }
@@ -230,6 +268,7 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
+    @VisibleForTesting
     private void closeStreams() {
         //TODO implement
         //TODO check if PublishSubjects are subscribed,
