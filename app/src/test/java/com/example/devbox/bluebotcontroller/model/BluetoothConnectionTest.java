@@ -10,16 +10,12 @@ import com.example.devbox.bluebotcontroller.presenter.IDiscoveryPresenter;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
 import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
 
-import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
@@ -37,10 +33,10 @@ import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.schedulers.ExecutorScheduler;
 import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.schedulers.TestScheduler;
 
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.spy;
 
@@ -72,46 +68,23 @@ public class BluetoothConnectionTest {
     private OutputStream mMockOutputStream;
 
     private byte[] mTestInputArray = new byte[1024];
-    private byte[] mTestReturnedByteArray = new byte[] {'T', 'e', 's', 't', '\0'};
+    private byte[] mTestReturnedByteArray = new byte[]{'T', 'e', 's', 't', '\0'};
 
+
+
+    @BeforeClass
+    public static void classSetup() {
+        setupRxStreams();
+
+    }
 
     /**
      * This fixes initialization issues in RxJava tests
-     *
+     * <p>
      * solution from:
      * https://stackoverflow.com/questions/43356314/android-rxjava-2-junit-test-getmainlooper-in-android-os-looper-not-mocked-runt
-     *
      */
-    @BeforeClass
-    public static void classSetup(){
-
-
-    }
-
-    @Before
-    public void setup(){
-
-        mMockContext = PowerMockito.mock(Context.class);
-        mMockModel = PowerMockito.mock(Model.class);
-        mMockMainPresenter = PowerMockito.mock(MainPresenter.class);
-        mMockDiscoveryPresenter = PowerMockito.mock(MockDiscoveryPresenter.class);
-        mMockAdapter = PowerMockito.mock(BluetoothAdapter.class);
-        mMockBluetoothSocket = PowerMockito.mock(BluetoothSocket.class);
-        mMockInputStream = PowerMockito.mock(InputStream.class);
-        mMockOutputStream = PowerMockito.mock(OutputStream.class);
-
-        //TODO delete if not needed
-        //Whitebox.setInternalState(Model.class, mMockMainPresenter);
-        //Whitebox.setInternalState(Model.class, mMockDiscoveryPresenter);
-
-        PowerMockito.mockStatic(BluetoothAdapter.class);
-        PowerMockito.when(BluetoothAdapter.getDefaultAdapter()).thenReturn(mMockAdapter);
-
-        mClassUnderTest = new BluetoothConnection(mMockModel, mMockContext);
-
-    }
-
-    private void setupRxStreams(){
+    private static void setupRxStreams() {
         Scheduler immediate = new Scheduler() {
             @Override
             public Disposable scheduleDirect(@NonNull Runnable run, long delay, @NonNull TimeUnit unit) {
@@ -121,34 +94,41 @@ public class BluetoothConnectionTest {
 
             @Override
             public Worker createWorker() {
-                return new ExecutorScheduler.ExecutorWorker(Runnable::run);
-            }
-        };
 
-        Scheduler fakemain = new Scheduler() {
-            @Override
-            public Disposable scheduleDirect(@NonNull Runnable run, long delay, @NonNull TimeUnit unit) {
-                // this prevents StackOverflowErrors when scheduling with a delay
-                return super.scheduleDirect(run, 0, unit);
-            }
-
-            @Override
-            public Worker createWorker() {
+                //TODO check instantiation
+                //Executors.newSingleThreadExecutor().
                 return new ExecutorScheduler.ExecutorWorker(Runnable::run);
+
             }
         };
 
 
         RxJavaPlugins.setInitIoSchedulerHandler(schedulerCallable -> immediate);
-        RxJavaPlugins.setInitComputationSchedulerHandler(scheduler -> immediate);
-        RxJavaPlugins.setInitNewThreadSchedulerHandler(scheduler -> immediate);
-        RxJavaPlugins.setInitSingleSchedulerHandler(scheduler -> immediate);
         RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> immediate);
     }
 
+    @Before
+    public void setup() {
+        mMockContext = PowerMockito.mock(Context.class);
+        mMockModel = PowerMockito.mock(Model.class);
+        mMockMainPresenter = PowerMockito.mock(MainPresenter.class);
+        mMockDiscoveryPresenter = PowerMockito.mock(MockDiscoveryPresenter.class);
+        mMockAdapter = PowerMockito.mock(BluetoothAdapter.class);
+        mMockBluetoothSocket = PowerMockito.mock(BluetoothSocket.class);
+        mMockInputStream = PowerMockito.mock(InputStream.class);
+        mMockOutputStream = PowerMockito.mock(OutputStream.class);
+
+        PowerMockito.mockStatic(BluetoothAdapter.class);
+        PowerMockito.when(BluetoothAdapter.getDefaultAdapter()).thenReturn(mMockAdapter);
+
+        mClassUnderTest = new BluetoothConnection(mMockModel, mMockContext);
+    }
+
+
+
 
     @Test
-    public void startDiscoveryWhenNotDiscoveringAndDisconnectedTest(){
+    public void startDiscoveryWhenNotDiscoveringAndDisconnectedTest() {
         //given class under test initialized with Model
         Whitebox.setInternalState(mClassUnderTest, "mBluetoothAdapter", mMockAdapter);
         PowerMockito.when(mMockAdapter.isDiscovering()).thenReturn(true);
@@ -170,7 +150,7 @@ public class BluetoothConnectionTest {
     }
 
     @Test
-    public void notifyMainPresenterTest(){
+    public void notifyMainPresenterTest() {
         //given class under test initialized with Model
 
         //when notifyMainPresenter() is called
@@ -182,7 +162,7 @@ public class BluetoothConnectionTest {
 
 
     @Test
-    public void notifyDiscoveryPresenter(){
+    public void notifyDiscoveryPresenter() {
         //given class under test initialized with Model
 
         //when notifyDiscoveryPresenter() is called
@@ -194,9 +174,8 @@ public class BluetoothConnectionTest {
     }
 
     @Test
-    public void updateDeviceStatusTest(){
+    public void updateDeviceStatusTest() {
         //given class under test initialized with Model
-
 
         //when updateDeviceStatus() is called
         mClassUnderTest.updateDeviceStatus(TEST_STRING);
@@ -206,11 +185,9 @@ public class BluetoothConnectionTest {
     }
 
 
-
     @Test
-    public void connectToRemoteDeviceTest(){
+    public void connectToRemoteDeviceTest() {
         //given initialized connection
-        setupRxStreams();
         setupBluetoothConnectionSocketAndStreamMocks();
         PowerMockito.when(mMockBluetoothSocket.isConnected()).thenReturn(true, true, true, true, true, false);
 
@@ -232,8 +209,8 @@ public class BluetoothConnectionTest {
     }
 
 
-    private void setupBluetoothConnectionSocketAndStreamMocks(){
-         mMockSelectedBTRemoteDevice = PowerMockito.mock(BluetoothDevice.class);
+    private void setupBluetoothConnectionSocketAndStreamMocks() {
+        mMockSelectedBTRemoteDevice = PowerMockito.mock(BluetoothDevice.class);
 
         try {
             PowerMockito.when(mMockSelectedBTRemoteDevice
@@ -251,18 +228,28 @@ public class BluetoothConnectionTest {
         }
     }
 
-    @Test public void subscribeToInputAndOutputStreamTest(){
+    @Test
+    public void subscribeToInputAndOutputStreamTest() {
         //given initialized connection
-        setupRxStreams();
         setupBluetoothConnectionSocketAndStreamMocks();
-        //one of the values has to return false,
+
         //input stream observer will be stuck in the infinite loop
-        //PowerMockito.when(mMockBluetoothSocket.isConnected()).thenReturn(true);
-        PowerMockito.when(mMockBluetoothSocket.isConnected()).thenReturn(true, true, true, true, true, true, true,  false);
+        PowerMockito.when(mMockBluetoothSocket.isConnected()).thenReturn(true);
 
         //when connect is called
         mClassUnderTest.connectToRemoteDevice(mMockSelectedBTRemoteDevice);
         mClassUnderTest.sendMessageToRemoteDevice(TEST_STRING);
+
+        //give a changes for the other thread to finish work
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        mClassUnderTest.disconnect();
+
+        byte[] bytesTosend = TEST_STRING.getBytes();
 
         try {
             verify(mMockBluetoothSocket, atLeastOnce()).getInputStream();

@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 
 import org.junit.Rule;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -34,6 +35,10 @@ public class RxJavaTest {
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
 
+    @Test
+    public void testSchedulerTest(){
+
+    }
 
 
 

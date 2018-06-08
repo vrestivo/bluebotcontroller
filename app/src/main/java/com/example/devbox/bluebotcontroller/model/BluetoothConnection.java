@@ -183,11 +183,17 @@ public class BluetoothConnection implements IBluetoothConnection {
                     emitter.onComplete();
                 });
 
+        /**
+         * Subscribing on newThread due to constant read operation.
+         * An infinite loop condition may occur if using Shedulers.io()
+         * due to a possiblility of being allocated a single thread
+         * for running read and write operations
+        **/
         if (mBluetoothSocket.isConnected()) {
             mInputStreamDisposable = inputObservable
-                    .observeOn(Schedulers.newThread())
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .toFlowable(BackpressureStrategy.LATEST) //TODO vefity
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.newThread())
+                    .toFlowable(BackpressureStrategy.LATEST) //TODO verify
                     .subscribe(bluetoothInputString -> {
                         if (bluetoothInputString != null) {
                             notifyMainPresenter(bluetoothInputString);
@@ -209,8 +215,8 @@ public class BluetoothConnection implements IBluetoothConnection {
     private void subscribeToOutputStream() {
         if (mBluetoothSocket.isConnected()) {
             mOutputStreamDisposable = mOutputStreamPublisheSubject
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(Schedulers.io())
+                    .subscribeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             message -> {
                                 if (message != null) {
