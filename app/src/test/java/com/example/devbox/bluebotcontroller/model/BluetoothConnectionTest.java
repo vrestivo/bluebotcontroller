@@ -75,7 +75,6 @@ public class BluetoothConnectionTest {
     @BeforeClass
     public static void classSetup() {
         setupRxStreams();
-
     }
 
     /**
@@ -98,7 +97,6 @@ public class BluetoothConnectionTest {
                 //TODO check instantiation
                 //Executors.newSingleThreadExecutor().
                 return new ExecutorScheduler.ExecutorWorker(Runnable::run);
-
             }
         };
 
@@ -122,9 +120,28 @@ public class BluetoothConnectionTest {
         PowerMockito.when(BluetoothAdapter.getDefaultAdapter()).thenReturn(mMockAdapter);
 
         mClassUnderTest = new BluetoothConnection(mMockModel, mMockContext);
+
+        setupBluetoothConnectionSocketAndStreamMocks();
     }
 
+    private void setupBluetoothConnectionSocketAndStreamMocks() {
+        mMockSelectedBTRemoteDevice = PowerMockito.mock(BluetoothDevice.class);
 
+        try {
+            PowerMockito.when(mMockSelectedBTRemoteDevice
+                    .createRfcommSocketToServiceRecord(BluetoothConnection.SPP_UUID))
+                    .thenReturn(mMockBluetoothSocket);
+
+            PowerMockito.when(mMockBluetoothSocket.getInputStream())
+                    .thenReturn(mMockInputStream);
+
+            PowerMockito.when(mMockBluetoothSocket.getOutputStream())
+                    .thenReturn(mMockOutputStream);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     @Test
@@ -170,7 +187,6 @@ public class BluetoothConnectionTest {
 
         //the call is propagated to model
         Mockito.verify(mMockModel, Mockito.atLeastOnce()).notifyDiscoveryPresenter(TEST_STRING);
-
     }
 
     @Test
@@ -188,7 +204,6 @@ public class BluetoothConnectionTest {
     @Test
     public void connectToRemoteDeviceTest() {
         //given initialized connection
-        setupBluetoothConnectionSocketAndStreamMocks();
         PowerMockito.when(mMockBluetoothSocket.isConnected()).thenReturn(true, true, true, true, true, false);
 
         //when connect is called
@@ -205,42 +220,21 @@ public class BluetoothConnectionTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
 
-    private void setupBluetoothConnectionSocketAndStreamMocks() {
-        mMockSelectedBTRemoteDevice = PowerMockito.mock(BluetoothDevice.class);
 
-        try {
-            PowerMockito.when(mMockSelectedBTRemoteDevice
-                    .createRfcommSocketToServiceRecord(BluetoothConnection.SPP_UUID))
-                    .thenReturn(mMockBluetoothSocket);
-
-            PowerMockito.when(mMockBluetoothSocket.getInputStream())
-                    .thenReturn(mMockInputStream);
-
-            PowerMockito.when(mMockBluetoothSocket.getOutputStream())
-                    .thenReturn(mMockOutputStream);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Test
     public void subscribeToInputAndOutputStreamTest() {
         //given initialized connection
-        setupBluetoothConnectionSocketAndStreamMocks();
-
-        //input stream observer will be stuck in the infinite loop
         PowerMockito.when(mMockBluetoothSocket.isConnected()).thenReturn(true);
 
         //when connect is called
         mClassUnderTest.connectToRemoteDevice(mMockSelectedBTRemoteDevice);
         mClassUnderTest.sendMessageToRemoteDevice(TEST_STRING);
 
-        //give a changes for the other thread to finish work
+        //allow thread time to finish work
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -248,8 +242,6 @@ public class BluetoothConnectionTest {
         }
 
         mClassUnderTest.disconnect();
-
-        byte[] bytesTosend = TEST_STRING.getBytes();
 
         try {
             verify(mMockBluetoothSocket, atLeastOnce()).getInputStream();

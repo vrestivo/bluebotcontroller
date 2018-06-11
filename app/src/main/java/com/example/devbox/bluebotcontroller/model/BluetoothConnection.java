@@ -32,7 +32,7 @@ public class BluetoothConnection implements IBluetoothConnection {
 
     public static final String STATUS_DISCONNECTED = "Disconnected";
     public static final String STATUS_CONNECTED = "Connected";
-    public static final String STATUS_ERROR = "Error";
+    public static final String STATUS_ERROR = "Connection Error";
     public static final String MSG_CON_FAIED = "Connection failed";
 
 
@@ -199,11 +199,8 @@ public class BluetoothConnection implements IBluetoothConnection {
                             notifyMainPresenter(bluetoothInputString);
                         }
                     },
-                    e -> {
-                        //TODO notify user of error
-                        disconnect();
-                    },
-                    () -> {
+                    error -> {
+                        //TODO
                         disconnect();
                     }
             );
@@ -223,9 +220,14 @@ public class BluetoothConnection implements IBluetoothConnection {
                                     try {
                                         mBluetoothSocketOutputStream.write(message.getBytes());
                                     } catch (Throwable throwable) {
-                                        //TODO handle errors
+                                        //Errors are handled downstream
                                     }
                                 }
+                            },
+                            error -> {
+                                notifyMainPresenter(STATUS_ERROR);
+                                updateDeviceStatus(STATUS_ERROR);
+                                disconnect();
                             }
                     );
         } else {
