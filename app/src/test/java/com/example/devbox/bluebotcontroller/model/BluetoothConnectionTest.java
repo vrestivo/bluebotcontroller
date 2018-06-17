@@ -33,7 +33,6 @@ import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.schedulers.ExecutorScheduler;
 import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.TestScheduler;
 
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
@@ -145,24 +144,26 @@ public class BluetoothConnectionTest {
 
 
     @Test
-    public void startDiscoveryWhenNotDiscoveringAndDisconnectedTest() {
+    public void  startDiscoveryTest() {
         //given class under test initialized with Model
         Whitebox.setInternalState(mClassUnderTest, "mBluetoothAdapter", mMockAdapter);
         PowerMockito.when(mMockAdapter.isDiscovering()).thenReturn(true);
+
         BluetoothConnection spyConnection = spy(mClassUnderTest);
 
-        //when bluetooth adapter is not discovering and
+        //when bluetooth adapter is discovering and
         //discovery is requested
         spyConnection.startDiscovery();
 
+        // connection status is checked
         Mockito.verify(spyConnection, atLeastOnce()).isConnected();
 
         InOrder adapterOrder = inOrder(mMockAdapter);
-
-        //discovery status is checked
+        // discovery status is checked
         adapterOrder.verify(mMockAdapter, atLeastOnce()).isDiscovering();
-
-        //then discovery is initialized
+        // if active - discovery is cancelled
+        adapterOrder.verify(mMockAdapter, atLeastOnce()).cancelDiscovery();
+        // then discovery is initialized
         adapterOrder.verify(mMockAdapter, atLeastOnce()).startDiscovery();
     }
 
