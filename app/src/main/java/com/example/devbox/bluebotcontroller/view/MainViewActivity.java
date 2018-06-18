@@ -121,4 +121,12 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     private void notifyUserAndExitTheApp() {
         //TODO Implement;
     }
+
+
+    @Override
+    public void disableBluetoothFeatures() {
+        // TODO disable bluetooth related buttons
+        // TODO display message to user notifying
+        // that the bluetooth is not supported
+    }
 }

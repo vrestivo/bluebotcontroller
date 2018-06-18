@@ -20,7 +20,9 @@ import org.powermock.core.classloader.annotations.SuppressStaticInitializationFo
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.verify;
 
 @RunWith(PowerMockRunner.class)
 @SuppressStaticInitializationFor("com.example.devbox.bluebotcontroller.model.Model")
@@ -171,6 +173,17 @@ public class ModelTest {
 
         //the message is propagated to the UI layer
         Mockito.verify(mMockDiscoveryPresenter, Mockito.atLeastOnce()).sendMesageToUI(TEST_MESSAGE);
+    }
+
+    @Test
+    public void disableBluetoothFeaturesTest(){
+        //given initialized Model
+
+        //when disableBluetoothFeatures() is called
+        mClassUnderTest.disableBluetoothFeatures();
+
+        //the call propagated to the MainPresenter
+        verify(mMockMainPresenter, atLeastOnce()).disableBluetoothFeatures();
     }
 
 }

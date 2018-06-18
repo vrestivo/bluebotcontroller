@@ -1,4 +1,4 @@
-package com.example.devbox.bluebotcontroller;
+package com.example.devbox.bluebotcontroller.presenter;
 
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
 import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
@@ -13,6 +13,7 @@ import org.mockito.junit.MockitoRule;
 
 import com.example.devbox.bluebotcontroller.model.IModel;
 
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
@@ -86,6 +87,16 @@ public class MainPresenterTest {
         mMainPresenter.disconnect();
 
         verify(mModel).disconnect();
+    }
+
+    @Test
+    public void disableBluetoothFeaturesTest(){
+        //given intialized view, presenter, and model
+        //when disableBluetoothFeatures() is called
+        mMainPresenter.disableBluetoothFeatures();
+
+        //the call is propagated to the view
+        verify(mMainView, atLeastOnce()).disableBluetoothFeatures();
     }
 
 }

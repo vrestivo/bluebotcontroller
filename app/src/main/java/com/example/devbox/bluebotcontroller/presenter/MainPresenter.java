@@ -39,7 +39,9 @@ public class MainPresenter implements IMainPresenter {
 
     @Override
     public void disableBluetoothFeatures() {
-        //TODO implement
+        if(mMainView!=null){
+            mMainView.disableBluetoothFeatures();
+        }
     }
 
     @Override

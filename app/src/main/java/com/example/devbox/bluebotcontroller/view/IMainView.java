@@ -8,4 +8,5 @@ public interface IMainView {
     void sendMessageToRemoteDevice(String message);
     void showDeviceStatus(String status);
     void requestBluetoothPermissions();
+    void disableBluetoothFeatures();
 }
