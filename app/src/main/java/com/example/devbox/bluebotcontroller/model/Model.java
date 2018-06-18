@@ -23,14 +23,14 @@ public class Model implements IModel {
     }
 
 
-    public static IModel getInstance(Context applicationnContext, IMainPresenter mainPresenter) {
-        initModel(applicationnContext);
+    public static IModel getInstance(Context applicationContext, IMainPresenter mainPresenter) {
+        initModel(applicationContext);
         sMainPresenter = mainPresenter;
         return sModelInstance;
     }
 
-    public static IModel getInstance(Context applicationnContext, IDiscoveryPresenter discoveryPresenter) {
-        initModel(applicationnContext);
+    public static IModel getInstance(Context applicationContext, IDiscoveryPresenter discoveryPresenter) {
+        initModel(applicationContext);
         sDiscoveryPresenter = discoveryPresenter;
         return sModelInstance;
     }

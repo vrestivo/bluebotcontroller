@@ -1,5 +1,6 @@
 package com.example.devbox.bluebotcontroller.model;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 
@@ -8,10 +9,10 @@ import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -23,7 +24,7 @@ import static org.mockito.Mockito.inOrder;
 
 @RunWith(PowerMockRunner.class)
 @SuppressStaticInitializationFor("com.example.devbox.bluebotcontroller.model.Model")
-@PrepareForTest({Model.class, BluetoothConnection.class})
+@PrepareForTest({Model.class, BluetoothConnection.class, BluetoothAdapter.class})
 public class ModelTest {
 
     private final String DEVICE_STATUS = "TESTING";
@@ -34,8 +35,6 @@ public class ModelTest {
     private Context mMockContext;
     private IMainPresenter mMockMainPresenter;
     private IDiscoveryPresenter mMockDiscoveryPresenter;
-
-    @Mock
     public BluetoothConnection mMockBluetoothConnection;
 
 
@@ -45,6 +44,11 @@ public class ModelTest {
         mMockMainPresenter = PowerMockito.mock(MockMainPresenter.class);
         mMockDiscoveryPresenter = PowerMockito.mock(MockDiscoveryPresenter.class);
         mMockBluetoothConnection = PowerMockito.mock(BluetoothConnection.class);
+
+        // assist with model initialization
+        BluetoothAdapter mockAdapter = PowerMockito.mock(BluetoothAdapter.class);
+        PowerMockito.mockStatic(BluetoothAdapter.class);
+        Mockito.when(BluetoothAdapter.getDefaultAdapter()).thenReturn(mockAdapter);
 
         mClassUnderTest = Model.getInstance(mMockContext, mMockMainPresenter);
         mClassUnderTest = Model.getInstance(mMockContext, mMockDiscoveryPresenter);
@@ -134,7 +138,7 @@ public class ModelTest {
 
         //when connectToDevice() is called
         mClassUnderTest.connectToDevice(mockDevice);
-        //respecive the call is propagated to BluetoothConnection
+        //respective the call is propagated to BluetoothConnection
         Mockito.verify(mMockBluetoothConnection, Mockito.atLeastOnce()).connectToRemoteDevice(mockDevice);
     }
 
@@ -155,7 +159,7 @@ public class ModelTest {
         //when main notifyMainPresenter() is called
         mClassUnderTest.notifyMainPresenter(TEST_MESSAGE);
 
-        //the mesasge is propagated to UI layer
+        //the messasge is propagated to UI layer
         Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).sendMessageToUI(TEST_MESSAGE);
     }
 
