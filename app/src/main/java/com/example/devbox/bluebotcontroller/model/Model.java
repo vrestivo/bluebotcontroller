@@ -121,6 +121,13 @@ public class Model implements IModel {
     }
 
     @Override
+    public void disableBluetoothFeatures() {
+        if(sMainPresenter!=null){
+            sMainPresenter.disableBluetoothFeatures();
+        }
+    }
+
+    @Override
     public void disconnect() {
         if(sBluetoothConnection!=null && sBluetoothConnection.isConnected()){
             sBluetoothConnection.disconnect();

@@ -38,6 +38,11 @@ public class MainPresenter implements IMainPresenter {
     }
 
     @Override
+    public void disableBluetoothFeatures() {
+        //TODO implement
+    }
+
+    @Override
     public void disconnect() {
         mModel.disconnect();
     }

@@ -24,6 +24,11 @@ public class MockMainPresenter implements IMainPresenter {
     }
 
     @Override
+    public void disableBluetoothFeatures() {
+
+    }
+
+    @Override
     public void disconnect() {
 
     }

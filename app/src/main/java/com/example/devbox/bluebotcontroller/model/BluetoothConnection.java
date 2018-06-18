@@ -64,6 +64,11 @@ public class BluetoothConnection implements IBluetoothConnection {
 
     private void initializeAdapter() {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(mBluetoothAdapter == null){
+            if(mModel != null){
+                mModel.disableBluetoothFeatures();
+            }
+        }
     }
 
     @Override
