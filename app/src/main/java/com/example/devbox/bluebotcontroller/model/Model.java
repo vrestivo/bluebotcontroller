@@ -22,7 +22,6 @@ public class Model implements IModel {
 
     }
 
-
     public static IModel getInstance(Context applicationContext, IMainPresenter mainPresenter) {
         initModel(applicationContext);
         sMainPresenter = mainPresenter;
@@ -34,7 +33,6 @@ public class Model implements IModel {
         sDiscoveryPresenter = discoveryPresenter;
         return sModelInstance;
     }
-
 
 
     private static void initModel(Context applicationContext){

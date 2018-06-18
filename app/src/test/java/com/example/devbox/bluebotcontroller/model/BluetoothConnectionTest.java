@@ -224,6 +224,11 @@ public class BluetoothConnectionTest {
     }
 
 
+    @Test
+    public void bluetoothNotSupportedTest(){
+        //given initialized connection
+
+    }
 
 
     @Test
