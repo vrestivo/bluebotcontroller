@@ -50,17 +50,6 @@ dependencies {
     testImplementation "org.hamcrest:hamcrest-all:$hamcrestVersion"
     testImplementation "org.powermock:powermock-module-junit4:$powerMockVersion"
     testImplementation "org.powermock:powermock-api-mockito:$powerMockVersion"
-    //testImplementation "org.powermock:powermock-api-easymock:$powerMockVersion"
-
-
-/*
-    testImplementation "org.mockito:mockito-all:$mockitoVersion"
-    testImplementation "org.hamcrest:hamcrest-all:$hamcrestVersion"
-    testImplementation "org.powermock:powermock-module-junit4:$powerMockVersion"
-    testImplementation "org.powermock:powermock-core:$powerMockVersion"
-    testImplementation "org.powermock:powermock-api-easymock:$powerMockVersion"
-    testImplementation "org.powermock:powermock-api-mockito:$powerMockVersion"
-*/
 
     testImplementation "org.robolectric:robolectric:$roboelectricVersion"
 
