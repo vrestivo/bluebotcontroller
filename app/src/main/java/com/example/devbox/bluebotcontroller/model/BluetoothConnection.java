@@ -90,6 +90,7 @@ public class BluetoothConnection implements IBluetoothConnection {
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
+        intentFilter.addAction(BluetoothBroadcastReceiver.ACTION_SELF_UNREGISTER);
         return intentFilter;
     }
 
@@ -295,6 +296,10 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
-
-
+    @Override
+    public void unregisterReceiver() {
+        if(mBluetoothBroadcastReceiver!=null){
+            mApplicationContext.unregisterReceiver(mBluetoothBroadcastReceiver);
+        }
+    }
 }

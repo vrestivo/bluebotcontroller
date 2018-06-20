@@ -45,7 +45,7 @@ public class BroadCastReceiverTest {
 
         mClassUnderTest = new BluetoothConnection(mMockModel, RuntimeEnvironment.application.getApplicationContext());
 
-        //RuntimeEnvironment.application -- aplication context
+        //RuntimeEnvironment.application -- application context
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(RuntimeEnvironment.application);
     }
 
@@ -63,7 +63,7 @@ public class BroadCastReceiverTest {
 
 
     @Test
-    public void verifyBluetoothBroadcastReceiverIsRegisteredTest(){
+    public void verifyBluetoothBroadcastReceiverIsRegisteredAndUnregisterTest(){
         //given initialized BluetoothConnection and mock model
 
         //when the class is created
@@ -75,8 +75,22 @@ public class BroadCastReceiverTest {
         Assert.assertFalse(registeredReceivers.isEmpty());
         Assert.assertTrue(bluetoothBroadcastReceiverFound(registeredReceivers));
 
+        mClassUnderTest.unregisterReceiver();
         registeredReceivers = shadowApplication.getRegisteredReceivers();
+        Assert.assertTrue(registeredReceivers.isEmpty());
+    }
 
+    @Test
+    public void selfUnregisterTest(){
+        ShadowApplication shadowApplication = ShadowApplication.getInstance();
+        List<ShadowApplication.Wrapper> registeredReceivers = shadowApplication.getRegisteredReceivers();
+
+        Assert.assertFalse(registeredReceivers.isEmpty());
+        Assert.assertTrue(bluetoothBroadcastReceiverFound(registeredReceivers));
+
+        shadowApplication.sendBroadcast(new Intent(BluetoothBroadcastReceiver.ACTION_SELF_UNREGISTER));
+        registeredReceivers = shadowApplication.getRegisteredReceivers();
+        Assert.assertTrue(registeredReceivers.isEmpty());
     }
 
     private boolean bluetoothBroadcastReceiverFound(List<ShadowApplication.Wrapper> registeredReceivers){
@@ -91,6 +105,8 @@ public class BroadCastReceiverTest {
 
         return found;
     }
+
+
 
     //Generic broadcast receiver test
     @Test
@@ -114,7 +130,6 @@ public class BroadCastReceiverTest {
         Assert.assertTrue(sent[0]);
         mLocalBroadcastManager.unregisterReceiver(receiver);
     }
-
 
 
 
