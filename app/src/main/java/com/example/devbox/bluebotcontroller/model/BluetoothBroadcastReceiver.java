@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 
 public class BluetoothBroadcastReceiver extends BroadcastReceiver {
 
@@ -26,21 +25,26 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
                 mBluetoothConnection.unregisterReceiver();
             }
             case BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED:{
-                if(intent!=null && intent.hasExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE)){
-                    int state = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE,
-                            BluetoothAdapter.STATE_DISCONNECTED);
+                handleConnectionStateChange(intent);
+            }
+        }
+    }
 
-                    switch (state){
-                        case BluetoothAdapter.STATE_CONNECTED: {
-                            mBluetoothConnection.updateDeviceStatus(BluetoothConnection.STATUS_CONNECTED);
-                        }
 
-                    }
+    private void handleConnectionStateChange(Intent intent){
+        if(intent!=null && intent.hasExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE)){
+            int state = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE,
+                    BluetoothAdapter.STATE_DISCONNECTED);
+
+            switch (state){
+                case BluetoothAdapter.STATE_CONNECTED: {
+                    mBluetoothConnection.updateDeviceStatus(BluetoothConnection.STATUS_CONNECTED);
+                }
+                case BluetoothAdapter.STATE_DISCONNECTED: {
+                    mBluetoothConnection.updateDeviceStatus(BluetoothConnection.STATUS_DISCONNECTED);
                 }
             }
-
         }
-
     }
 
 

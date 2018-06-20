@@ -14,6 +14,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -134,9 +136,14 @@ public class BroadCastReceiverTest {
 
         // when "connected" state updates is received
         mShadowApplication.sendBroadcast(createConnectionStateIntent(BluetoothAdapter.STATE_CONNECTED));
+        mShadowApplication.sendBroadcast(createConnectionStateIntent(BluetoothAdapter.STATE_DISCONNECTED));
+
 
         // Model.updateDeviceStatus() is called
-        Mockito.verify(mMockModel, Mockito.atLeastOnce()).updateDeviceStatus(BluetoothConnection.STATUS_CONNECTED);
+        InOrder inOrder = Mockito.inOrder(mMockModel);
+        inOrder.verify(mMockModel, Mockito.atLeastOnce()).updateDeviceStatus(BluetoothConnection.STATUS_CONNECTED);
+        inOrder.verify(mMockModel, Mockito.atLeastOnce()).updateDeviceStatus(BluetoothConnection.STATUS_DISCONNECTED);
+
         mClassUnderTest.unregisterReceiver();
     }
 
