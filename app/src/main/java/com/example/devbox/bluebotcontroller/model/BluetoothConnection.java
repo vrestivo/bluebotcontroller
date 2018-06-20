@@ -33,7 +33,7 @@ public class BluetoothConnection implements IBluetoothConnection {
     public static final String STATUS_DISCONNECTED = "Disconnected";
     public static final String STATUS_CONNECTED = "Connected";
     public static final String STATUS_ERROR = "Connection Error";
-    public static final String MSG_CON_FAIED = "Connection failed";
+    public static final String MSG_CON_FAILED = "Connection failed";
 
 
     private BluetoothSocket mBluetoothSocket;
@@ -46,7 +46,7 @@ public class BluetoothConnection implements IBluetoothConnection {
     private OutputStream mBluetoothSocketOutputStream;
 
     private PublishSubject<String> mInputStreamPublishSubject;
-    private PublishSubject<String> mOutputStreamPublisheSubject;
+    private PublishSubject<String> mOutputStreamPublishSubject;
     private Disposable mOutputStreamDisposable;
     private Disposable mInputStreamDisposable;
 
@@ -58,9 +58,8 @@ public class BluetoothConnection implements IBluetoothConnection {
         mApplicationContext = context;
         initializeAdapter();
         mInputStreamPublishSubject = PublishSubject.create();
-        mOutputStreamPublisheSubject = PublishSubject.create();
+        mOutputStreamPublishSubject = PublishSubject.create();
     }
-
 
     private void initializeAdapter() {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -133,8 +132,8 @@ public class BluetoothConnection implements IBluetoothConnection {
                 updateDeviceStatus(STATUS_CONNECTED);
             } catch (IOException e) {
                 e.printStackTrace();
-                notifyDiscoveryPresenter(MSG_CON_FAIED);
-                notifyMainPresenter(MSG_CON_FAIED);
+                notifyDiscoveryPresenter(MSG_CON_FAILED);
+                notifyMainPresenter(MSG_CON_FAILED);
             }
         }
     }
@@ -191,7 +190,7 @@ public class BluetoothConnection implements IBluetoothConnection {
         /**
          * Subscribing on newThread due to constant read operation.
          * An infinite loop condition may occur if using Shedulers.io()
-         * due to a possiblility of being allocated a single thread
+         * due to a possibility of being allocated a single thread
          * for running read and write operations
         **/
         if (mBluetoothSocket.isConnected()) {
@@ -216,7 +215,7 @@ public class BluetoothConnection implements IBluetoothConnection {
 
     private void subscribeToOutputStream() {
         if (mBluetoothSocket.isConnected()) {
-            mOutputStreamDisposable = mOutputStreamPublisheSubject
+            mOutputStreamDisposable = mOutputStreamPublishSubject
                     .observeOn(Schedulers.io())
                     .subscribeOn(AndroidSchedulers.mainThread())
                     .subscribe(
@@ -243,7 +242,7 @@ public class BluetoothConnection implements IBluetoothConnection {
     @Override
     public void sendMessageToRemoteDevice(String message) {
         if (isConnected() && message != null) {
-            mOutputStreamPublisheSubject.onNext(message);
+            mOutputStreamPublishSubject.onNext(message);
         }
 
     }
