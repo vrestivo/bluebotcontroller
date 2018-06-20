@@ -36,14 +36,7 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
             int state = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE,
                     BluetoothAdapter.STATE_DISCONNECTED);
 
-            switch (state){
-                case BluetoothAdapter.STATE_CONNECTED: {
-                    mBluetoothConnection.updateDeviceStatus(BluetoothConnection.STATUS_CONNECTED);
-                }
-                case BluetoothAdapter.STATE_DISCONNECTED: {
-                    mBluetoothConnection.updateDeviceStatus(BluetoothConnection.STATUS_DISCONNECTED);
-                }
-            }
+            mBluetoothConnection.updateConnectionStatus(state);
         }
     }
 

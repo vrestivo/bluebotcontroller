@@ -15,6 +15,7 @@ public interface IBluetoothConnection {
     void disconnect();
     void notifyMainPresenter(String message);
     void notifyDiscoveryPresenter(String message);
-    void updateDeviceStatus(String status);
+    void updateConnectionStatusIndicator(String status);
     void unregisterReceiver();
+    void updateConnectionStatus(int status);
 }

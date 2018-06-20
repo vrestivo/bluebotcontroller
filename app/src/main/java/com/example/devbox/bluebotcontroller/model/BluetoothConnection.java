@@ -3,11 +3,8 @@ package com.example.devbox.bluebotcontroller.model;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.annotation.VisibleForTesting;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,6 +52,8 @@ public class BluetoothConnection implements IBluetoothConnection {
     private Disposable mInputStreamDisposable;
 
     private BluetoothBroadcastReceiver mBluetoothBroadcastReceiver;
+
+    private int mConnectionStateCode = BluetoothAdapter.STATE_DISCONNECTED;
 
     private byte[] mInputByteArray = new byte[1024];
 
@@ -139,7 +138,16 @@ public class BluetoothConnection implements IBluetoothConnection {
     }
 
     @Override
-    public void updateDeviceStatus(String status) {
+    public void updateConnectionStatus(int newStatusCode) {
+        mConnectionStateCode = newStatusCode;
+        switch (mConnectionStateCode) {
+            case BluetoothAdapter.STATE_CONNECTED: updateConnectionStatusIndicator(STATUS_CONNECTED);
+            case BluetoothAdapter.STATE_DISCONNECTED: updateConnectionStatusIndicator(STATUS_DISCONNECTED);
+        }
+    }
+
+    @Override
+    public void updateConnectionStatusIndicator(String status) {
         //TODO Implement
         if (mModel != null && status != null) {
             mModel.updateDeviceStatus(status);
@@ -155,7 +163,7 @@ public class BluetoothConnection implements IBluetoothConnection {
                 }
                 mBluetoothSocket = remoteDevice.createRfcommSocketToServiceRecord(SPP_UUID);
                 setupInputOutputStreams();
-                updateDeviceStatus(STATUS_CONNECTED);
+                updateConnectionStatusIndicator(STATUS_CONNECTED);
             } catch (IOException e) {
                 e.printStackTrace();
                 notifyDiscoveryPresenter(MSG_CON_FAILED);
@@ -256,7 +264,7 @@ public class BluetoothConnection implements IBluetoothConnection {
                             },
                             error -> {
                                 notifyMainPresenter(STATUS_ERROR);
-                                updateDeviceStatus(STATUS_ERROR);
+                                updateConnectionStatusIndicator(STATUS_ERROR);
                                 disconnect();
                             }
                     );
@@ -279,7 +287,7 @@ public class BluetoothConnection implements IBluetoothConnection {
         if (mBluetoothSocket != null) {
             try {
                 mBluetoothSocket.close();
-                updateDeviceStatus(STATUS_DISCONNECTED);
+                updateConnectionStatusIndicator(STATUS_DISCONNECTED);
             } catch (IOException e) {
                 e.printStackTrace();
                 //TODO update device error status

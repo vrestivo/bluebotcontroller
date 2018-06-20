@@ -70,7 +70,6 @@ public class BluetoothConnectionTest {
     private byte[] mTestReturnedByteArray = new byte[]{'T', 'e', 's', 't', '\0'};
 
 
-
     @BeforeClass
     public static void classSetup() {
         setupRxStreams();
@@ -195,7 +194,7 @@ public class BluetoothConnectionTest {
         //given class under test initialized with Model
 
         //when updateDeviceStatus() is called
-        mClassUnderTest.updateDeviceStatus(TEST_STRING);
+        mClassUnderTest.updateConnectionStatusIndicator(TEST_STRING);
 
         //the call is propagated to model
         Mockito.verify(mMockModel, Mockito.atLeastOnce()).updateDeviceStatus(TEST_STRING);
