@@ -3,7 +3,11 @@ package com.example.devbox.bluebotcontroller.model;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.annotation.VisibleForTesting;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,6 +54,8 @@ public class BluetoothConnection implements IBluetoothConnection {
     private Disposable mOutputStreamDisposable;
     private Disposable mInputStreamDisposable;
 
+    private BluetoothBroadcastReceiver mBluetoothBroadcastReceiver;
+
     private byte[] mInputByteArray = new byte[1024];
 
 
@@ -59,6 +65,7 @@ public class BluetoothConnection implements IBluetoothConnection {
         initializeAdapter();
         mInputStreamPublishSubject = PublishSubject.create();
         mOutputStreamPublishSubject = PublishSubject.create();
+        initializedBroadcastReceiver();
     }
 
     private void initializeAdapter() {
@@ -69,6 +76,24 @@ public class BluetoothConnection implements IBluetoothConnection {
             }
         }
     }
+
+    private void initializedBroadcastReceiver(){
+        mBluetoothBroadcastReceiver = new BluetoothBroadcastReceiver(this);
+
+        mApplicationContext.registerReceiver(mBluetoothBroadcastReceiver, generateIntentFilters());
+    }
+
+    private IntentFilter generateIntentFilters(){
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
+        return intentFilter;
+    }
+
+
 
     @Override
     public Set<BluetoothDevice> getBondedDevices() {
@@ -269,6 +294,7 @@ public class BluetoothConnection implements IBluetoothConnection {
             return false;
         }
     }
+
 
 
 }
