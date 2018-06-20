@@ -19,7 +19,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     }
 
     @Override
-    public void cleaup() {
+    public void cleanup() {
         //TODO implement
     }
 

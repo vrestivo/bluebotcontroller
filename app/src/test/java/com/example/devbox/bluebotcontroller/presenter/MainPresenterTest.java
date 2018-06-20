@@ -41,27 +41,27 @@ public class MainPresenterTest {
 
     @Test
     public void showMessageToUserTest(){
-        //given intialized view, presenter, and model
+        //given initialized view, presenter, and model
         //when sendMessageToUI() is called
         mMainPresenter.sendMessageToUI(mTestString);
-        //the call is propagatd to main view
+        //the call is propagated to main view
         verify(mMainView).showMessage(mTestString);
     }
 
 
     @Test
-    public void mainPresenterCleaupTest(){
+    public void mainPresenterCleanupTest(){
         //given initialized presenter
         //when cleanup is called
         mMainPresenter.cleanup();
 
-        //IModel.cleaup() is invoked
+        //IModel.cleanup() is invoked
         verify(mModel).cleanup();
     }
 
     @Test
     public void sendMessageToRemoteDeviceTest(){
-        //given intialized view, presenter, and model
+        //given initialized view, presenter, and model
         //when view send message to bluetooth
         mMainPresenter.sendMessageToRemoteDevice(mTestString);
 
@@ -72,7 +72,7 @@ public class MainPresenterTest {
 
     @Test
     public void updateDeviceStatusTest(){
-        //given intialized view, presenter, and model
+        //given initialized view, presenter, and model
         //when updateDeviceStatus() is called
         mMainPresenter.updateDeviceStatus(mTestString);
 
@@ -82,7 +82,7 @@ public class MainPresenterTest {
 
     @Test
     public void disconnectTest(){
-        //given intialized view, presenter, and model
+        //given initialized view, presenter, and model
         //when disconnect() is called
         mMainPresenter.disconnect();
 
@@ -91,7 +91,7 @@ public class MainPresenterTest {
 
     @Test
     public void disableBluetoothFeaturesTest(){
-        //given intialized view, presenter, and model
+        //given initialized view, presenter, and model
         //when disableBluetoothFeatures() is called
         mMainPresenter.disableBluetoothFeatures();
 

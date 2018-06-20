@@ -42,7 +42,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     }
 
     @Override
-    public void cleaup() {
+    public void cleanup() {
         if(mMainPresenter!=null){
             mMainPresenter.cleanup();
         }
