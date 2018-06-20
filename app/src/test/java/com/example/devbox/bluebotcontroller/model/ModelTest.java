@@ -3,6 +3,7 @@ package com.example.devbox.bluebotcontroller.model;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.IntentFilter;
 
 import com.example.devbox.bluebotcontroller.presenter.IDiscoveryPresenter;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
@@ -46,6 +47,15 @@ public class ModelTest {
         mMockMainPresenter = PowerMockito.mock(MockMainPresenter.class);
         mMockDiscoveryPresenter = PowerMockito.mock(MockDiscoveryPresenter.class);
         mMockBluetoothConnection = PowerMockito.mock(BluetoothConnection.class);
+
+        IntentFilter mockIntentFilter = PowerMockito.mock(IntentFilter.class);
+        try {
+            PowerMockito.whenNew(IntentFilter.class).withNoArguments().thenReturn(mockIntentFilter);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
 
         // assist with model initialization
         BluetoothAdapter mockAdapter = PowerMockito.mock(BluetoothAdapter.class);

@@ -4,12 +4,14 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.support.annotation.NonNull;
 
 import com.example.devbox.bluebotcontroller.presenter.IDiscoveryPresenter;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
 import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -41,7 +43,7 @@ import static org.powermock.api.mockito.PowerMockito.spy;
 
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BluetoothAdapter.class})
+@PrepareForTest({BluetoothAdapter.class, BluetoothConnection.class})
 @SuppressStaticInitializationFor("com.example.devbox.bluebotcontroller.model.Model")
 public class BluetoothConnectionTest {
 
@@ -56,15 +58,15 @@ public class BluetoothConnectionTest {
     private BluetoothAdapter mMockAdapter;
     private BluetoothSocket mMockBluetoothSocket;
     private BluetoothDevice mMockSelectedBTRemoteDevice;
-
+    private IntentFilter mMockIntentFilter;
     private BluetoothConnection mClassUnderTest;
     private Context mMockContext;
     private Model mMockModel;
     private IMainPresenter mMockMainPresenter;
     private IDiscoveryPresenter mMockDiscoveryPresenter;
-
     private InputStream mMockInputStream;
     private OutputStream mMockOutputStream;
+
 
     private byte[] mTestInputArray = new byte[1024];
     private byte[] mTestReturnedByteArray = new byte[]{'T', 'e', 's', 't', '\0'};
@@ -98,7 +100,6 @@ public class BluetoothConnectionTest {
             }
         };
 
-
         RxJavaPlugins.setInitIoSchedulerHandler(schedulerCallable -> immediate);
         RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> immediate);
     }
@@ -113,12 +114,20 @@ public class BluetoothConnectionTest {
         mMockBluetoothSocket = PowerMockito.mock(BluetoothSocket.class);
         mMockInputStream = PowerMockito.mock(InputStream.class);
         mMockOutputStream = PowerMockito.mock(OutputStream.class);
+        mMockIntentFilter = PowerMockito.mock(IntentFilter.class);
+
+
+        try {
+            PowerMockito.whenNew(IntentFilter.class).withNoArguments().thenReturn(mMockIntentFilter);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
 
         PowerMockito.mockStatic(BluetoothAdapter.class);
         PowerMockito.when(BluetoothAdapter.getDefaultAdapter()).thenReturn(mMockAdapter);
 
         mClassUnderTest = new BluetoothConnection(mMockModel, mMockContext);
-
         setupBluetoothConnectionSocketAndStreamMocks();
     }
 
@@ -225,8 +234,9 @@ public class BluetoothConnectionTest {
 
     @Test
     public void bluetoothNotSupportedTest(){
+        //TODO implement
+        Assert.fail();;
         //given initialized connection
-
     }
 
 
