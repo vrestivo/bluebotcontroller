@@ -87,20 +87,10 @@ public class BluetoothConnection implements IBluetoothConnection {
 
     private void initializedBroadcastReceiver(){
         mBluetoothBroadcastReceiver = new BluetoothBroadcastReceiver(this);
-        mApplicationContext.registerReceiver(mBluetoothBroadcastReceiver, generateIntentFilters());
+        mApplicationContext.registerReceiver(mBluetoothBroadcastReceiver, mBluetoothBroadcastReceiver.generateIntentFilters());
     }
 
-    private IntentFilter generateIntentFilters(){
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
-        intentFilter.addAction(BluetoothBroadcastReceiver.ACTION_SELF_UNREGISTER);
-        intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
-        return intentFilter;
-    }
+
 
     @Override
     public boolean isBluetoothSupported() {
