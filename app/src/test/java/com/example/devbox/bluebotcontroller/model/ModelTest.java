@@ -8,6 +8,8 @@ import android.content.IntentFilter;
 import com.example.devbox.bluebotcontroller.presenter.IDiscoveryPresenter;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
 
+import junit.framework.Assert;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -195,5 +197,28 @@ public class ModelTest {
         //the call propagated to the MainPresenter
         verify(mMockMainPresenter, atLeastOnce()).disableBluetoothFeatures();
     }
+
+    @Test
+    public void isBluetoothEnabledWhenEnabledTest(){
+        //given initialized Model
+        PowerMockito.when(mMockBluetoothConnection.isBluetoothEnabled()).thenReturn(true);
+
+        //when isBluetoothEnabled() is called
+
+        //the returned value is true
+        Assert.assertTrue(mClassUnderTest.isBluetoothEnabled());
+    }
+
+    @Test
+    public void isBluetoothEnabledWhenDisabledTest(){
+        //given initialized Model
+        PowerMockito.when(mMockBluetoothConnection.isBluetoothEnabled()).thenReturn(false);
+
+        //when isBluetoothEnabled() is called
+
+        //the returned value is false
+        Assert.assertFalse(mClassUnderTest.isBluetoothEnabled());
+    }
+
 
 }

@@ -43,17 +43,25 @@ public class Model implements IModel {
         }
     }
 
+
     @Override
     public boolean isBluetoothSupported() {
         //TODO implement
+        if(sBluetoothConnection != null){
+            return sBluetoothConnection.isBluetoothSupported();
+        }
         return false;
     }
 
+
     @Override
     public boolean isBluetoothEnabled() {
-        //TOTO implement
+        if(sBluetoothConnection != null){
+            return sBluetoothConnection.isBluetoothEnabled();
+        }
         return false;
     }
+
 
     @Override
     public ArrayList<BluetoothDevice> scanForDevices() {
