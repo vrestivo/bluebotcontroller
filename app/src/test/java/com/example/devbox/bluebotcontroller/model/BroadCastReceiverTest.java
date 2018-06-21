@@ -17,20 +17,24 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
+import org.powermock.reflect.Whitebox;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 
 import java.util.List;
+import java.util.regex.Matcher;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
-@PrepareForTest({BluetoothAdapter.class})
+@PrepareForTest({BluetoothAdapter.class, BluetoothConnection.class})
 @SuppressStaticInitializationFor("com.example.devbox.bluebotcontroller.model.Model")
 public class BroadCastReceiverTest {
 
@@ -68,7 +72,6 @@ public class BroadCastReceiverTest {
                 break;
             }
         }
-
         return found;
     }
 
@@ -181,7 +184,7 @@ public class BroadCastReceiverTest {
 
 
     @Test
-    public void canReciveActionFoundBroadcasts(){
+    public void canReceiveActionFoundBroadcasts(){
         // given initialized Bluetooth connection and
         // a BluetoothBroadcastReceiver
         getAndVerifyReceiver();
@@ -205,5 +208,28 @@ public class BroadCastReceiverTest {
         mBluetoothConnection.unregisterReceiver();
     }
 
+    @Test
+    public void onReceivedActionOffTest(){
+        // given initialized Bluetooth connection
+        // a BluetoothBroadcastReceiver
+        // and a dummy BluetoothDevice
+        getAndVerifyReceiver();
+        BluetoothBroadcastReceiver receiverUnderTest = getTestedReceiver(mRegisteredReceivers);
+        Assert.assertNotNull(receiverUnderTest);
+        BluetoothDevice testDevice = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(TEST_MAC);
+        Assert.assertNotNull(testDevice);
+        Assert.assertEquals(TEST_MAC, testDevice.getAddress());
+
+        // when bluetooth is turned off
+        Intent intent = new Intent();
+        intent.setAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        intent.putExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
+        mShadowApplication.getApplicationContext().sendBroadcast(intent);
+
+        // the connection is closed
+        Mockito.verify(mMockModel, Mockito.atLeastOnce()).updateDeviceStatus(BluetoothConnection.STATUS_DISCONNECTED);
+
+        mBluetoothConnection.unregisterReceiver();
+    }
 
 }

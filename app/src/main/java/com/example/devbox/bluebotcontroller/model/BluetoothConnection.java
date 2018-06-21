@@ -177,8 +177,14 @@ public class BluetoothConnection implements IBluetoothConnection {
     public void updateConnectionStatus(int newStatusCode) {
         mConnectionStateCode = newStatusCode;
         switch (mConnectionStateCode) {
-            case BluetoothAdapter.STATE_CONNECTED: updateConnectionStatusIndicator(STATUS_CONNECTED);
-            case BluetoothAdapter.STATE_DISCONNECTED: updateConnectionStatusIndicator(STATUS_DISCONNECTED);
+            case BluetoothAdapter.STATE_CONNECTED: {
+                updateConnectionStatusIndicator(STATUS_CONNECTED);
+                break;
+            }
+            case BluetoothAdapter.STATE_DISCONNECTED:{
+                updateConnectionStatusIndicator(STATUS_DISCONNECTED);
+                break;
+            }
         }
     }
 
@@ -323,12 +329,12 @@ public class BluetoothConnection implements IBluetoothConnection {
         if (mBluetoothSocket != null) {
             try {
                 mBluetoothSocket.close();
-                updateConnectionStatusIndicator(STATUS_DISCONNECTED);
             } catch (IOException e) {
                 e.printStackTrace();
                 //TODO update device error status
             }
         }
+        updateConnectionStatusIndicator(STATUS_DISCONNECTED);
     }
 
     @Override

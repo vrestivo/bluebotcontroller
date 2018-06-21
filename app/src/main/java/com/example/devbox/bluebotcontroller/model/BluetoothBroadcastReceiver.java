@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.icu.text.SymbolTable;
 
 import com.example.devbox.bluebotcontroller.exceptions.BluebotException;
 
@@ -40,6 +41,15 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
                         break;
                     }
                 }
+                case BluetoothAdapter.ACTION_STATE_CHANGED: {
+                    if(intent.hasExtra(BluetoothAdapter.EXTRA_STATE)) {
+                        int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_ON);
+                        handleOnOffState(state);
+
+                    }
+
+                    break;
+                }
             }
         }
     }
@@ -61,5 +71,16 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
             mBluetoothConnection.onDeviceFound(foundDevice);
         }
     }
+
+    private void handleOnOffState(int state){
+        if(mBluetoothConnection!=null)
+        switch (state){
+            case BluetoothAdapter.STATE_OFF: {
+                mBluetoothConnection.disconnect();
+                break;
+            }
+        }
+    }
+
 
 }
