@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -44,16 +45,14 @@ public class BluetoothConnection implements IBluetoothConnection {
     private Set<BluetoothDevice> mBondedDevices;
     private IModel mModel;
     private Context mApplicationContext;
-
     private InputStream mBluetoothSocketInputStream;
     private OutputStream mBluetoothSocketOutputStream;
-
     private PublishSubject<String> mInputStreamPublishSubject;
     private PublishSubject<String> mOutputStreamPublishSubject;
     private Disposable mOutputStreamDisposable;
     private Disposable mInputStreamDisposable;
-
     private BluetoothBroadcastReceiver mBluetoothBroadcastReceiver;
+    private HashSet<BluetoothDevice> mDiscoveredDevices;
 
     private int mConnectionStateCode = BluetoothAdapter.STATE_DISCONNECTED;
 
@@ -63,10 +62,12 @@ public class BluetoothConnection implements IBluetoothConnection {
     public BluetoothConnection(IModel model, Context context) {
         mModel = model;
         mApplicationContext = context;
+        mDiscoveredDevices = new HashSet<BluetoothDevice>();
         initializeAdapter();
         mInputStreamPublishSubject = PublishSubject.create();
         mOutputStreamPublishSubject = PublishSubject.create();
         initializedBroadcastReceiver();
+
     }
 
     private void initializeAdapter() {
@@ -86,7 +87,6 @@ public class BluetoothConnection implements IBluetoothConnection {
 
     private void initializedBroadcastReceiver(){
         mBluetoothBroadcastReceiver = new BluetoothBroadcastReceiver(this);
-
         mApplicationContext.registerReceiver(mBluetoothBroadcastReceiver, generateIntentFilters());
     }
 
@@ -98,6 +98,7 @@ public class BluetoothConnection implements IBluetoothConnection {
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
         intentFilter.addAction(BluetoothBroadcastReceiver.ACTION_SELF_UNREGISTER);
+        intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
         return intentFilter;
     }
 
@@ -146,6 +147,15 @@ public class BluetoothConnection implements IBluetoothConnection {
     public void stopDiscovery() {
         if (mBluetoothAdapter != null) {
             mBluetoothAdapter.cancelDiscovery();
+        }
+    }
+
+    @Override
+    public void onDeviceFound(BluetoothDevice device) {
+        if(device!=null){
+            if(mDiscoveredDevices.add(device)){
+                mModel.loadAvailableDevices(mDiscoveredDevices);
+            }
         }
     }
 

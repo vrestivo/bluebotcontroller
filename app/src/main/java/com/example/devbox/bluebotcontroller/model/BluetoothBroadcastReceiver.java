@@ -1,9 +1,12 @@
 package com.example.devbox.bluebotcontroller.model;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import com.example.devbox.bluebotcontroller.exceptions.BluebotException;
 
 public class BluetoothBroadcastReceiver extends BroadcastReceiver {
 
@@ -17,15 +20,26 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if(intent!=null) {
+            String action = intent.getAction();
 
-        String action = intent.getAction();
 
-        switch (action) {
-            case BluetoothBroadcastReceiver.ACTION_SELF_UNREGISTER:{
-                mBluetoothConnection.unregisterReceiver();
-            }
-            case BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED:{
-                handleConnectionStateChange(intent);
+            switch (action) {
+                case BluetoothBroadcastReceiver.ACTION_SELF_UNREGISTER: {
+                    mBluetoothConnection.unregisterReceiver();
+                    break;
+                }
+                case BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED: {
+                    handleConnectionStateChange(intent);
+                    break;
+                }
+                case BluetoothDevice.ACTION_FOUND: {
+                    if(intent.hasExtra(BluetoothDevice.EXTRA_DEVICE)) {
+                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                        if(device != null) handleDeviceAdded(device);
+                        break;
+                    }
+                }
             }
         }
     }
@@ -36,10 +50,16 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
             int state = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE,
                     BluetoothAdapter.STATE_DISCONNECTED);
 
-            mBluetoothConnection.updateConnectionStatus(state);
+            if(mBluetoothConnection!=null) {
+                mBluetoothConnection.updateConnectionStatus(state);
+            }
         }
     }
 
-
+    private void handleDeviceAdded(BluetoothDevice foundDevice){
+        if(mBluetoothConnection != null){
+            mBluetoothConnection.onDeviceFound(foundDevice);
+        }
+    }
 
 }

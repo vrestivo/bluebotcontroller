@@ -39,6 +39,7 @@ public class MainPresenterTest {
         mMainPresenter = new MainPresenter(mMainView, mModel);
     }
 
+
     @Test
     public void showMessageToUserTest(){
         //given initialized view, presenter, and model
@@ -58,6 +59,7 @@ public class MainPresenterTest {
         //IModel.cleanup() is invoked
         verify(mModel).cleanup();
     }
+
 
     @Test
     public void sendMessageToRemoteDeviceTest(){
@@ -80,6 +82,7 @@ public class MainPresenterTest {
         verify(mMainView).showDeviceStatus(mTestString);
     }
 
+
     @Test
     public void disconnectTest(){
         //given initialized view, presenter, and model
@@ -88,6 +91,7 @@ public class MainPresenterTest {
 
         verify(mModel).disconnect();
     }
+
 
     @Test
     public void disableBluetoothFeaturesTest(){

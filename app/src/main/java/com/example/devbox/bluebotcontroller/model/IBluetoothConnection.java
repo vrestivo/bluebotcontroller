@@ -11,6 +11,7 @@ public interface IBluetoothConnection {
     Set<BluetoothDevice> getBondedDevices();
     void startDiscovery();
     void stopDiscovery();
+    void onDeviceFound(BluetoothDevice device);
     void connectToRemoteDevice(BluetoothDevice remoteDevice);
     void sendMessageToRemoteDevice(String message);
     boolean isConnected();
