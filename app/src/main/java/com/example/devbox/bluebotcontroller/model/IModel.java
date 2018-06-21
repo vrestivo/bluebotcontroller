@@ -7,6 +7,8 @@ import java.util.Set;
 
 public interface IModel {
 
+    boolean isBluetoothSupported();
+    boolean isBluetoothEnabled();
     ArrayList<BluetoothDevice> scanForDevices();
     Set<BluetoothDevice> getPairedDevices();
     void sendMessageToRemoteDevice(String message);

@@ -72,11 +72,15 @@ public class BluetoothConnection implements IBluetoothConnection {
     private void initializeAdapter() {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(mBluetoothAdapter == null){
-            if(mModel != null){
-                mModel.disableBluetoothFeatures();
-                mModel.updateDeviceStatus(STATUS_NOT_SUPPORTED);
-                mModel.notifyMainPresenter(MSG_BT_NOT_SUPPORTED);
-            }
+            handleBluetoothNotSupported();
+        }
+    }
+
+    private void handleBluetoothNotSupported(){
+        if(mModel != null){
+            mModel.disableBluetoothFeatures();
+            mModel.updateDeviceStatus(STATUS_NOT_SUPPORTED);
+            mModel.notifyMainPresenter(MSG_BT_NOT_SUPPORTED);
         }
     }
 
@@ -95,6 +99,24 @@ public class BluetoothConnection implements IBluetoothConnection {
         intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
         intentFilter.addAction(BluetoothBroadcastReceiver.ACTION_SELF_UNREGISTER);
         return intentFilter;
+    }
+
+    @Override
+    public boolean isBluetoothSupported() {
+        if(mBluetoothAdapter == null){
+            handleBluetoothNotSupported();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean isBluetoothEnabled() {
+        if(mBluetoothAdapter == null) {
+            handleBluetoothNotSupported();
+            return false;
+        }
+        return mBluetoothAdapter.isEnabled();
     }
 
 

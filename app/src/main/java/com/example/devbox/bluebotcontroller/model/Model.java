@@ -43,6 +43,17 @@ public class Model implements IModel {
         }
     }
 
+    @Override
+    public boolean isBluetoothSupported() {
+        //TODO implement
+        return false;
+    }
+
+    @Override
+    public boolean isBluetoothEnabled() {
+        //TOTO implement
+        return false;
+    }
 
     @Override
     public ArrayList<BluetoothDevice> scanForDevices() {

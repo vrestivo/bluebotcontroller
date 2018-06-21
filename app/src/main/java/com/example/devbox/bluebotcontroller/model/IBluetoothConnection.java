@@ -6,6 +6,8 @@ import java.util.Set;
 
 public interface IBluetoothConnection {
 
+    boolean isBluetoothSupported();
+    boolean isBluetoothEnabled();
     Set<BluetoothDevice> getBondedDevices();
     void startDiscovery();
     void stopDiscovery();
