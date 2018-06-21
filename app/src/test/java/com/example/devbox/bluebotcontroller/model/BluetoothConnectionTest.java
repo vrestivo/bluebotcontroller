@@ -7,11 +7,6 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.support.annotation.NonNull;
 
-import com.example.devbox.bluebotcontroller.presenter.IDiscoveryPresenter;
-import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
-import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
-
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,7 +18,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-import org.robolectric.shadows.ShadowBluetoothAdapter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,9 +46,6 @@ public class BluetoothConnectionTest {
 
     private final String TEST_STRING = "TEST STRING";
 
-    private BluetoothAdapter mBluetoothAdapter;
-    private BluetoothDevice mBluetoothDevice1;
-    private ShadowBluetoothAdapter mShadowBluetoothAdapter;
     private BluetoothAdapter mMockAdapter;
     private BluetoothSocket mMockBluetoothSocket;
     private BluetoothDevice mMockSelectedBTRemoteDevice;
@@ -62,8 +53,6 @@ public class BluetoothConnectionTest {
     private BluetoothConnection mClassUnderTest;
     private Context mMockContext;
     private Model mMockModel;
-    private IMainPresenter mMockMainPresenter;
-    private IDiscoveryPresenter mMockDiscoveryPresenter;
     private InputStream mMockInputStream;
     private OutputStream mMockOutputStream;
 
@@ -108,14 +97,11 @@ public class BluetoothConnectionTest {
     public void setup() {
         mMockContext = PowerMockito.mock(Context.class);
         mMockModel = PowerMockito.mock(Model.class);
-        mMockMainPresenter = PowerMockito.mock(MainPresenter.class);
-        mMockDiscoveryPresenter = PowerMockito.mock(MockDiscoveryPresenter.class);
         mMockAdapter = PowerMockito.mock(BluetoothAdapter.class);
         mMockBluetoothSocket = PowerMockito.mock(BluetoothSocket.class);
         mMockInputStream = PowerMockito.mock(InputStream.class);
         mMockOutputStream = PowerMockito.mock(OutputStream.class);
         mMockIntentFilter = PowerMockito.mock(IntentFilter.class);
-
 
         try {
             PowerMockito.whenNew(IntentFilter.class).withNoArguments().thenReturn(mMockIntentFilter);
@@ -124,8 +110,20 @@ public class BluetoothConnectionTest {
             e.printStackTrace();
         }
 
+
+    }
+
+    private void normalBluetoothAdapterInitialization(){
         PowerMockito.mockStatic(BluetoothAdapter.class);
         PowerMockito.when(BluetoothAdapter.getDefaultAdapter()).thenReturn(mMockAdapter);
+
+        mClassUnderTest = new BluetoothConnection(mMockModel, mMockContext);
+        setupBluetoothConnectionSocketAndStreamMocks();
+    }
+
+    private void setupReturnNullBluetoothAdapter(){
+        PowerMockito.mockStatic(BluetoothAdapter.class);
+        PowerMockito.when(BluetoothAdapter.getDefaultAdapter()).thenReturn(null);
 
         mClassUnderTest = new BluetoothConnection(mMockModel, mMockContext);
         setupBluetoothConnectionSocketAndStreamMocks();
@@ -154,6 +152,8 @@ public class BluetoothConnectionTest {
     @Test
     public void  startDiscoveryTest() {
         //given class under test initialized with Model
+        normalBluetoothAdapterInitialization();
+
         Whitebox.setInternalState(mClassUnderTest, "mBluetoothAdapter", mMockAdapter);
         PowerMockito.when(mMockAdapter.isDiscovering()).thenReturn(true);
 
@@ -178,6 +178,8 @@ public class BluetoothConnectionTest {
     @Test
     public void notifyMainPresenterTest() {
         //given class under test initialized with Model
+        normalBluetoothAdapterInitialization();
+
 
         //when notifyMainPresenter() is called
         mClassUnderTest.notifyMainPresenter(TEST_STRING);
@@ -190,6 +192,8 @@ public class BluetoothConnectionTest {
     @Test
     public void notifyDiscoveryPresenter() {
         //given class under test initialized with Model
+        normalBluetoothAdapterInitialization();
+
 
         //when notifyDiscoveryPresenter() is called
         mClassUnderTest.notifyDiscoveryPresenter(TEST_STRING);
@@ -201,6 +205,7 @@ public class BluetoothConnectionTest {
     @Test
     public void updateDeviceStatusTest() {
         //given class under test initialized with Model
+        normalBluetoothAdapterInitialization();
 
         //when updateDeviceStatus() is called
         mClassUnderTest.updateConnectionStatusIndicator(TEST_STRING);
@@ -213,6 +218,7 @@ public class BluetoothConnectionTest {
     @Test
     public void connectToRemoteDeviceTest() {
         //given initialized connection
+        normalBluetoothAdapterInitialization();
         PowerMockito.when(mMockBluetoothSocket.isConnected()).thenReturn(true, true, true, true, true, false);
 
         //when connect is called
@@ -235,14 +241,25 @@ public class BluetoothConnectionTest {
     @Test
     public void bluetoothNotSupportedTest(){
         //TODO implement
-        Assert.fail();;
         //given initialized connection
+        setupReturnNullBluetoothAdapter();
+
+        //when Bluetooth is not supported:
+        //BluetoothAdapter.getDefaultAdapter() returned null
+
+        //main presenter is notified and
+        //bluetooth features are disabled
+        verify(mMockModel, atLeastOnce()).disableBluetoothFeatures();
+        verify(mMockModel, atLeastOnce()).notifyMainPresenter(BluetoothConnection.MSG_BT_NOT_SUPPORTED);
+        verify(mMockModel, atLeastOnce()).updateDeviceStatus(BluetoothConnection.STATUS_NOT_SUPPORTED);
+
     }
 
 
     @Test
     public void subscribeToInputAndOutputStreamTest() {
         //given initialized connection
+        normalBluetoothAdapterInitialization();
         PowerMockito.when(mMockBluetoothSocket.isConnected()).thenReturn(true);
 
         //when connect is called

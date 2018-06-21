@@ -34,7 +34,9 @@ public class BluetoothConnection implements IBluetoothConnection {
     public static final String STATUS_DISCONNECTED = "Disconnected";
     public static final String STATUS_CONNECTED = "Connected";
     public static final String STATUS_ERROR = "Connection Error";
+    public static final String STATUS_NOT_SUPPORTED = "Not supported";
     public static final String MSG_CON_FAILED = "Connection failed";
+    public static final String MSG_BT_NOT_SUPPORTED = "Bluetooth not supported";
 
 
     private BluetoothSocket mBluetoothSocket;
@@ -72,6 +74,8 @@ public class BluetoothConnection implements IBluetoothConnection {
         if(mBluetoothAdapter == null){
             if(mModel != null){
                 mModel.disableBluetoothFeatures();
+                mModel.updateDeviceStatus(STATUS_NOT_SUPPORTED);
+                mModel.notifyMainPresenter(MSG_BT_NOT_SUPPORTED);
             }
         }
     }
