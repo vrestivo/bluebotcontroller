@@ -31,7 +31,6 @@ public class BluetoothConnection implements IBluetoothConnection {
     //                           ^^^^
     // UUID section marked by a "^" points to the device type, in this case
     // a serial device
-
     public static final String STATUS_DISCONNECTED = "Disconnected";
     public static final String STATUS_CONNECTED = "Connected";
     public static final String STATUS_ERROR = "Connection Error";
@@ -55,7 +54,6 @@ public class BluetoothConnection implements IBluetoothConnection {
     private HashSet<BluetoothDevice> mDiscoveredDevices;
 
     private int mConnectionStateCode = BluetoothAdapter.STATE_DISCONNECTED;
-
     private byte[] mInputByteArray = new byte[1024];
 
 
@@ -67,7 +65,6 @@ public class BluetoothConnection implements IBluetoothConnection {
         mInputStreamPublishSubject = PublishSubject.create();
         mOutputStreamPublishSubject = PublishSubject.create();
         initializedBroadcastReceiver();
-
     }
 
     private void initializeAdapter() {
@@ -220,6 +217,7 @@ public class BluetoothConnection implements IBluetoothConnection {
         subscribeToOutputStream();
     }
 
+
     private void cleanUpStreams() {
         if (mOutputStreamDisposable != null && !mOutputStreamDisposable.isDisposed()) {
             mOutputStreamDisposable.dispose();
@@ -310,8 +308,7 @@ public class BluetoothConnection implements IBluetoothConnection {
                                 notifyMainPresenter(STATUS_ERROR);
                                 updateConnectionStatusIndicator(STATUS_ERROR);
                                 disconnect();
-                            }
-                    );
+                            });
         } else {
             cleanUpStreams();
         }
@@ -323,7 +320,6 @@ public class BluetoothConnection implements IBluetoothConnection {
         if (isConnected() && message != null) {
             mOutputStreamPublishSubject.onNext(message);
         }
-
     }
 
 

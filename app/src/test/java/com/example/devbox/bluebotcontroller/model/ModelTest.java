@@ -5,8 +5,10 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.IntentFilter;
 
+import com.example.devbox.bluebotcontroller.presenter.DiscoveryPresenter;
 import com.example.devbox.bluebotcontroller.presenter.IDiscoveryPresenter;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
+import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
 
 import junit.framework.Assert;
 
@@ -45,8 +47,8 @@ public class ModelTest {
     @Before
     public void testSetup(){
         mMockContext = PowerMockito.mock(Context.class);
-        mMockMainPresenter = PowerMockito.mock(MockMainPresenter.class);
-        mMockDiscoveryPresenter = PowerMockito.mock(MockDiscoveryPresenter.class);
+        mMockMainPresenter = PowerMockito.mock(MainPresenter.class);
+        mMockDiscoveryPresenter = PowerMockito.mock(DiscoveryPresenter.class);
         mMockBluetoothConnection = PowerMockito.mock(BluetoothConnection.class);
 
         // prevents method not mocket errors
