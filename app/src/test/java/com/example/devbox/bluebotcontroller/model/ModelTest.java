@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(PowerMockRunner.class)
 @SuppressStaticInitializationFor("com.example.devbox.bluebotcontroller.model.Model")
-@PrepareForTest({Model.class, BluetoothConnection.class, BluetoothAdapter.class})
+@PrepareForTest({Model.class, BluetoothConnection.class, BluetoothAdapter.class, BluetoothBroadcastReceiver.class})
 public class ModelTest {
 
     private final String DEVICE_STATUS = "TESTING";
@@ -50,6 +50,8 @@ public class ModelTest {
         mMockDiscoveryPresenter = PowerMockito.mock(MockDiscoveryPresenter.class);
         mMockBluetoothConnection = PowerMockito.mock(BluetoothConnection.class);
 
+        // prevents method not mocket errors
+        PowerMockito.mock(BluetoothBroadcastReceiver.class);
         IntentFilter mockIntentFilter = PowerMockito.mock(IntentFilter.class);
         try {
             PowerMockito.whenNew(IntentFilter.class).withNoArguments().thenReturn(mockIntentFilter);

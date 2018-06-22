@@ -39,7 +39,7 @@ import static org.powermock.api.mockito.PowerMockito.spy;
 
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BluetoothAdapter.class, BluetoothConnection.class})
+@PrepareForTest({BluetoothAdapter.class, BluetoothConnection.class, BluetoothBroadcastReceiver.class})
 @SuppressStaticInitializationFor("com.example.devbox.bluebotcontroller.model.Model")
 public class BluetoothConnectionTest {
 
@@ -106,6 +106,8 @@ public class BluetoothConnectionTest {
         mMockOutputStream = PowerMockito.mock(OutputStream.class);
         mMockIntentFilter = PowerMockito.mock(IntentFilter.class);
 
+        // prevents method not mocked errors
+        PowerMockito.mock(BluetoothBroadcastReceiver.class);
         try {
             PowerMockito.whenNew(IntentFilter.class).withNoArguments().thenReturn(mMockIntentFilter);
         }
