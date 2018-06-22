@@ -32,7 +32,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     @Override
     public void startBluetoothDiscovery() {
-        Intent discoveryIntent = new Intent(this, DiscoveryView.class);
+        Intent discoveryIntent = new Intent(this, DiscoveryViewActivity.class);
         startActivity(discoveryIntent);
     }
 

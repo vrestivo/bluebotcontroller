@@ -2,14 +2,13 @@ package com.example.devbox.bluebotcontroller.model;
 
 import android.bluetooth.BluetoothDevice;
 
-import java.util.ArrayList;
 import java.util.Set;
 
 public interface IModel {
 
     boolean isBluetoothSupported();
     boolean isBluetoothEnabled();
-    ArrayList<BluetoothDevice> scanForDevices();
+    void scanForDevices();
     Set<BluetoothDevice> getPairedDevices();
     void sendMessageToRemoteDevice(String message);
     void startDiscovery();

@@ -6,7 +6,6 @@ import android.content.Context;
 import com.example.devbox.bluebotcontroller.presenter.IDiscoveryPresenter;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
 
-import java.util.ArrayList;
 import java.util.Set;
 
 public class Model implements IModel {
@@ -63,7 +62,7 @@ public class Model implements IModel {
 
 
     @Override
-    public ArrayList<BluetoothDevice> scanForDevices() {
+    public void scanForDevices() {
         return null;
     }
 
