@@ -11,25 +11,30 @@ import java.util.Set;
  */
 public class MockDiscoveryPresenter implements IDiscoveryPresenter {
 
+
     @Override
     public void loadAvailableDevices(Set<BluetoothDevice> availableDevices) {
         
     }
+
 
     @Override
     public void loadPairedDevices(Set<BluetoothDevice> pairedDevices) {
 
     }
 
+
     @Override
     public void onDeviceSelected(BluetoothDevice selectedDevice) {
 
     }
 
+
     @Override
     public void sendMessageToUI(String mesageToUI) {
 
     }
+
 
     @Override
     public void onDeviceFound() {

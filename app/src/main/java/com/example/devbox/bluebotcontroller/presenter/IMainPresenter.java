@@ -5,8 +5,8 @@ public interface IMainPresenter {
     void sendMessageToUI(String messageToUI);
     void sendMessageToRemoteDevice(String messageToDevice);
     void updateDeviceStatus(String status);
+    void onBluetoothOff();
     void disableBluetoothFeatures();
     void disconnect();
     void cleanup();
-
 }

@@ -174,7 +174,7 @@ public class ModelTest {
         //when main notifyMainPresenter() is called
         mClassUnderTest.notifyMainPresenter(TEST_MESSAGE);
 
-        //the messasge is propagated to UI layer
+        //the message is propagated to UI layer
         Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).sendMessageToUI(TEST_MESSAGE);
     }
 
@@ -219,6 +219,18 @@ public class ModelTest {
 
         //the returned value is false
         Assert.assertFalse(mClassUnderTest.isBluetoothEnabled());
+    }
+
+    @Test
+    public void onBluetoothOffTest(){
+        // given initialized Model
+
+        // when onBluetoothOff is called
+        mClassUnderTest.onBluetoothOff();
+
+        // the call is propagated to main and detail presenters
+        verify(mMockMainPresenter, atLeastOnce()).onBluetoothOff();
+        verify(mMockDiscoveryPresenter, atLeastOnce()).onBluetoothOff();
     }
 
 

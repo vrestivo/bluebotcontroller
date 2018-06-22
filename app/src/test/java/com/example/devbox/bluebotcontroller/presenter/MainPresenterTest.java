@@ -1,5 +1,6 @@
 package com.example.devbox.bluebotcontroller.presenter;
 
+import com.example.devbox.bluebotcontroller.model.Model;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
 import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
 import com.example.devbox.bluebotcontroller.view.IMainView;
@@ -10,8 +11,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.powermock.api.mockito.PowerMockito;
 
 import com.example.devbox.bluebotcontroller.model.IModel;
+import com.example.devbox.bluebotcontroller.view.MainViewActivity;
 
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.reset;
@@ -22,20 +25,14 @@ public class MainPresenterTest {
     private String mTestString = "Test Message";
     private IMainPresenter mMainPresenter;
 
-    @Mock
     private IMainView mMainView;
-    @Mock
     private IModel mModel;
-
-
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
 
 
     @Before
     public void setup(){
-        reset(mMainView);
-        reset(mModel);
+        mMainView = PowerMockito.mock(MainViewActivity.class);
+        mModel = PowerMockito.mock(Model.class);
         mMainPresenter = new MainPresenter(mMainView, mModel);
     }
 

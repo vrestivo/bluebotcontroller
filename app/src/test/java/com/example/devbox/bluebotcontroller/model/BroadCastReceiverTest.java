@@ -259,9 +259,6 @@ public class BroadCastReceiverTest {
         // a BluetoothBroadcastReceiver, and a dummy BluetoothDevice
         initializeIsolated();
         verifyReceiverIsRegistered();
-        BluetoothDevice testDevice = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(TEST_MAC);
-        Assert.assertNotNull(testDevice);
-        Assert.assertEquals(TEST_MAC, testDevice.getAddress());
 
         // when bluetooth is turned off
         Intent intent = new Intent();
@@ -291,6 +288,5 @@ public class BroadCastReceiverTest {
         // the event is propagated to the Model
         Mockito.verify(mMockModel, Mockito.atLeastOnce()).onBluetoothOff();
     }
-
-
+    
 }

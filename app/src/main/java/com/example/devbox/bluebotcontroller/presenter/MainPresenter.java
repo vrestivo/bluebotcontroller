@@ -16,12 +16,14 @@ public class MainPresenter implements IMainPresenter {
         mModel = model;
     }
 
+
     @Override
     public void sendMessageToUI(String messageToUI) {
         if(mMainView!=null){
             mMainView.showMessage(messageToUI);
         }
     }
+
 
     @Override
     public void sendMessageToRemoteDevice(String messageToDevice) {
@@ -30,12 +32,20 @@ public class MainPresenter implements IMainPresenter {
         }
     }
 
+
     @Override
     public void updateDeviceStatus(String status) {
         if(mMainView!=null){
             mMainView.showDeviceStatus(status);
         }
     }
+
+
+    @Override
+    public void onBluetoothOff() {
+
+    }
+
 
     @Override
     public void disableBluetoothFeatures() {
@@ -44,10 +54,12 @@ public class MainPresenter implements IMainPresenter {
         }
     }
 
+
     @Override
     public void disconnect() {
         mModel.disconnect();
     }
+
 
     @Override
     public void cleanup() {
