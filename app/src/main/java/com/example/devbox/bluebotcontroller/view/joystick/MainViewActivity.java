@@ -33,6 +33,12 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     }
 
+
+    @Override
+    public void onBluetoothOff() {
+
+    }
+
     @Override
     public void disableBluetoothFeatures() {
 

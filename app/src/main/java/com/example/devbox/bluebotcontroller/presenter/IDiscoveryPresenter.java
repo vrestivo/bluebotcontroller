@@ -10,8 +10,9 @@ public interface IDiscoveryPresenter {
     void loadAvailableDevices(Set<BluetoothDevice> availableDevices);
     void loadPairedDevices(Set<BluetoothDevice> pairedDevices);
     void onDeviceSelected(BluetoothDevice selectedDevice);
-    void sendMesageToUI(String mesageToUI);
+    void sendMessageToUI(String mesageToUI);
     void onDeviceFound();
+    void onBluetoothOff();
 
 }
 

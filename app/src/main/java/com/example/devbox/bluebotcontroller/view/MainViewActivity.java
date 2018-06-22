@@ -129,4 +129,16 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         // TODO display message to user notifying
         // that the bluetooth is not supported
     }
+
+
+    @Override
+    public void onBluetoothOff() {
+        //TODO implement
+        //TODO disable discovery and send buttons
+    }
+
+
+    
+
+
 }

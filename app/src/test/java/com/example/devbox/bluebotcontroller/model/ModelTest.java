@@ -12,7 +12,6 @@ import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
@@ -186,7 +185,7 @@ public class ModelTest {
         mClassUnderTest.notifyDiscoveryPresenter(TEST_MESSAGE);
 
         //the message is propagated to the UI layer
-        Mockito.verify(mMockDiscoveryPresenter, Mockito.atLeastOnce()).sendMesageToUI(TEST_MESSAGE);
+        Mockito.verify(mMockDiscoveryPresenter, Mockito.atLeastOnce()).sendMessageToUI(TEST_MESSAGE);
     }
 
     @Test

@@ -27,7 +27,7 @@ public class MockDiscoveryPresenter implements IDiscoveryPresenter {
     }
 
     @Override
-    public void sendMesageToUI(String mesageToUI) {
+    public void sendMessageToUI(String mesageToUI) {
 
     }
 
@@ -36,4 +36,9 @@ public class MockDiscoveryPresenter implements IDiscoveryPresenter {
 
     }
 
+
+    @Override
+    public void onBluetoothOff() {
+
+    }
 }

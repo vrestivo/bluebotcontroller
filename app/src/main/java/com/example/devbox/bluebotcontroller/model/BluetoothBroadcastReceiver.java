@@ -89,6 +89,7 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
             switch (state) {
                 case BluetoothAdapter.STATE_OFF: {
                     mBluetoothConnection.disconnect();
+                    mBluetoothConnection.onBluetoothOff();
                     break;
                 }
             }

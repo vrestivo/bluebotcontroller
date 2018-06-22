@@ -24,12 +24,17 @@ public class DiscoveryPresenter implements IDiscoveryPresenter {
     }
 
     @Override
-    public void sendMesageToUI(String mesageToUI) {
+    public void sendMessageToUI(String mesageToUI) {
 
     }
 
     @Override
     public void onDeviceFound() {
 
+    }
+
+    @Override
+    public void onBluetoothOff() {
+        // TODO return to main activity
     }
 }

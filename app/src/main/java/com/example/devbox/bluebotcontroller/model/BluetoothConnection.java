@@ -120,6 +120,7 @@ public class BluetoothConnection implements IBluetoothConnection {
         return mBondedDevices;
     }
 
+
     @Override
     public void startDiscovery() {
         if (mBluetoothAdapter != null) {
@@ -133,12 +134,14 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
+
     @Override
     public void stopDiscovery() {
         if (mBluetoothAdapter != null) {
             mBluetoothAdapter.cancelDiscovery();
         }
     }
+
 
     @Override
     public void onDeviceFound(BluetoothDevice device) {
@@ -149,6 +152,7 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
+
     @Override
     public void notifyMainPresenter(String message) {
         if (mModel != null && message != null) {
@@ -156,12 +160,14 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
+
     @Override
     public void notifyDiscoveryPresenter(String message) {
         if (mModel != null && message != null) {
             mModel.notifyDiscoveryPresenter(message);
         }
     }
+
 
     @Override
     public void updateConnectionStatus(int newStatusCode) {
@@ -178,6 +184,7 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
+
     @Override
     public void updateConnectionStatusIndicator(String status) {
         //TODO Implement
@@ -185,6 +192,7 @@ public class BluetoothConnection implements IBluetoothConnection {
             mModel.updateDeviceStatus(status);
         }
     }
+
 
     @Override
     public void connectToRemoteDevice(BluetoothDevice remoteDevice) {
@@ -203,6 +211,7 @@ public class BluetoothConnection implements IBluetoothConnection {
             }
         }
     }
+
 
     private void setupInputOutputStreams() throws IOException {
         cleanUpStreams();
@@ -232,12 +241,14 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
+
     private void openStreams() throws IOException {
         if (mBluetoothSocket != null && mBluetoothSocket.isConnected()) {
             mBluetoothSocketInputStream = mBluetoothSocket.getInputStream();
             mBluetoothSocketOutputStream = mBluetoothSocket.getOutputStream();
         }
     }
+
 
     private void subscribeToInputStream() {
         Observable<String> inputObservable = Observable.create(
@@ -279,6 +290,7 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
+
     private void subscribeToOutputStream() {
         if (mBluetoothSocket.isConnected()) {
             mOutputStreamDisposable = mOutputStreamPublishSubject
@@ -305,12 +317,21 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
+
     @Override
     public void sendMessageToRemoteDevice(String message) {
         if (isConnected() && message != null) {
             mOutputStreamPublishSubject.onNext(message);
         }
 
+    }
+
+
+    @Override
+    public void onBluetoothOff() {
+        if(mModel!=null){
+            mModel.onBluetoothOff();
+        }
     }
 
     @Override
@@ -327,6 +348,7 @@ public class BluetoothConnection implements IBluetoothConnection {
         updateConnectionStatusIndicator(STATUS_DISCONNECTED);
     }
 
+
     @Override
     public boolean isConnected() {
         if (mBluetoothSocket != null) {
@@ -335,6 +357,7 @@ public class BluetoothConnection implements IBluetoothConnection {
             return false;
         }
     }
+
 
     @Override
     public void unregisterReceiver() {

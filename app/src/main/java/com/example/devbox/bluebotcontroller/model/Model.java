@@ -1,6 +1,5 @@
 package com.example.devbox.bluebotcontroller.model;
 
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 
@@ -126,7 +125,7 @@ public class Model implements IModel {
     @Override
     public void notifyDiscoveryPresenter(String message) {
         if(sDiscoveryPresenter!=null){
-            sDiscoveryPresenter.sendMesageToUI(message);
+            sDiscoveryPresenter.sendMessageToUI(message);
         }
     }
 
@@ -135,6 +134,12 @@ public class Model implements IModel {
         if(sMainPresenter!=null) {
             sMainPresenter.updateDeviceStatus(newStatus);
         }
+    }
+
+
+    @Override
+    public void onBluetoothOff() {
+        //TODO implement
     }
 
     @Override
