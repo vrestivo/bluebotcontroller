@@ -328,11 +328,20 @@ public class BluetoothConnection implements IBluetoothConnection {
 
 
     @Override
+    public void onBluetoothOn() {
+        if(mModel!=null){
+            mModel.onBluetoothOn();
+        }
+    }
+
+
+    @Override
     public void onBluetoothOff() {
         if(mModel!=null){
             mModel.onBluetoothOff();
         }
     }
+
 
     @Override
     public void disconnect() {

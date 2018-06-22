@@ -234,4 +234,17 @@ public class ModelTest {
     }
 
 
+    @Test
+    public void onBluetoothOnTest(){
+        // given initialized Model
+
+        // when onBluetoothOff is called
+        mClassUnderTest.onBluetoothOn();
+
+        //the call is propagated to the MainPresenter
+        verify(mMockMainPresenter, atLeastOnce()).onBluetoothOn();
+
+    }
+
+
 }

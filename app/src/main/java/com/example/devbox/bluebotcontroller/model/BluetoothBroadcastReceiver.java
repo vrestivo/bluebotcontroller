@@ -92,6 +92,10 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
                     mBluetoothConnection.onBluetoothOff();
                     break;
                 }
+                case BluetoothAdapter.STATE_ON: {
+                    mBluetoothConnection.onBluetoothOn();
+                    break;
+                }
             }
     }
 

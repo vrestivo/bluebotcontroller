@@ -129,6 +129,14 @@ public class BroadCastReceiverTest {
     }
 
 
+    private void sendActionStateChangeIntent(int state){
+        Intent intent = new Intent();
+        intent.setAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        intent.putExtra(BluetoothAdapter.EXTRA_STATE, state);
+        mShadowApplication.getApplicationContext().sendBroadcast(intent);
+    }
+
+
     @Test
     public void mockModelInteractionTest() {
         // given initialized BluetoothConnection and mock model
@@ -256,15 +264,12 @@ public class BroadCastReceiverTest {
     @Test
     public void onReceivedActionOffTest() {
         // given initialized mock BluetoothConnection,
-        // a BluetoothBroadcastReceiver, and a dummy BluetoothDevice
+        // a BluetoothBroadcastReceiver
         initializeIsolated();
         verifyReceiverIsRegistered();
 
         // when bluetooth is turned off
-        Intent intent = new Intent();
-        intent.setAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        intent.putExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
-        mShadowApplication.getApplicationContext().sendBroadcast(intent);
+        sendActionStateChangeIntent(BluetoothAdapter.STATE_OFF);
 
         // the connection is closed
         Mockito.verify(mMockBluetoothConnection, Mockito.atLeastOnce()).onBluetoothOff();
@@ -273,20 +278,47 @@ public class BroadCastReceiverTest {
 
 
     @Test
-    public void receivedActionOffPropagatedToModel(){
+    public void receivedActionOffPropagatedToModelTest(){
         // given initialized Bluetooth connection and
         // a BluetoothBroadcastReceiver
         initializeIntegrated();
         verifyReceiverIsRegistered();
 
         // when bluetooth is turned off
-        Intent intent = new Intent();
-        intent.setAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        intent.putExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
-        mShadowApplication.getApplicationContext().sendBroadcast(intent);
+        sendActionStateChangeIntent(BluetoothAdapter.STATE_OFF);
 
         // the event is propagated to the Model
         Mockito.verify(mMockModel, Mockito.atLeastOnce()).onBluetoothOff();
     }
-    
+
+
+    @Test
+    public void onReceivedActionOnTest(){
+        // given initialized mock BluetoothConnection,
+        // a BluetoothBroadcastReceiver
+        initializeIsolated();
+        verifyReceiverIsRegistered();
+
+        // when bluetooth is turned on
+        sendActionStateChangeIntent(BluetoothAdapter.STATE_ON);
+
+        // the connection is closed
+        Mockito.verify(mMockBluetoothConnection, Mockito.atLeastOnce()).onBluetoothOn();
+    }
+
+
+    @Test
+    public void receivedActionOnPropagatedToModelTest(){
+        // given initialized Bluetooth connection and
+        // a BluetoothBroadcastReceiver
+        initializeIntegrated();
+        verifyReceiverIsRegistered();
+
+        // when bluetooth is turned on
+        sendActionStateChangeIntent(BluetoothAdapter.STATE_ON);
+
+        // the event is propagated to the Model
+        Mockito.verify(mMockModel, Mockito.atLeastOnce()).onBluetoothOn();
+    }
+
 }

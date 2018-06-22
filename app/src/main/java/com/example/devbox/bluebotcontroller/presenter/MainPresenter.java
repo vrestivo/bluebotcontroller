@@ -40,6 +40,11 @@ public class MainPresenter implements IMainPresenter {
         }
     }
 
+    @Override
+    public void onBluetoothOn() {
+
+    }
+
 
     @Override
     public void onBluetoothOff() {

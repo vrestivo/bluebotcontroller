@@ -138,8 +138,15 @@ public class Model implements IModel {
 
 
     @Override
+    public void onBluetoothOn() {
+        if(sMainPresenter!=null){
+            sMainPresenter.onBluetoothOn();
+        }
+    }
+
+
+    @Override
     public void onBluetoothOff() {
-        //TODO implement
         if(sDiscoveryPresenter!=null){
             sDiscoveryPresenter.onBluetoothOff();
         }
