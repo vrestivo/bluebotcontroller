@@ -12,6 +12,7 @@ import com.example.devbox.bluebotcontroller.BuildConfig;
 
 import junit.framework.Assert;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
@@ -43,7 +44,27 @@ public class BroadCastReceiverTest {
     private List<ShadowApplication.Wrapper> mRegisteredReceivers;
 
 
-    private void initializeIntegrated(){
+    @After
+    public void testCleanup() {
+        if(mShadowApplication!= null) {
+            cleanupIntegrated();
+            cleanupIsolated();
+        }
+    }
+
+    private void cleanupIntegrated(){
+        if (mBluetoothConnection != null && bluetoothBroadcastReceiverFound(mShadowApplication.getRegisteredReceivers())) {
+            mBluetoothConnection.unregisterReceiver();
+        }
+    }
+
+    private void cleanupIsolated(){
+        if (mBluetoothBroadcastReceiver!=null && bluetoothBroadcastReceiverFound(mShadowApplication.getRegisteredReceivers())){
+            mShadowApplication.getApplicationContext().unregisterReceiver(mBluetoothBroadcastReceiver);
+        }
+    }
+
+    private void initializeIntegrated() {
         mShadowApplication = ShadowApplication.getInstance();
         mMockModel = PowerMockito.mock(Model.class);
         //RuntimeEnvironment.application -- application context
@@ -51,28 +72,27 @@ public class BroadCastReceiverTest {
     }
 
 
-    private void initializeIsolated(){
+    private void initializeIsolated() {
         mShadowApplication = ShadowApplication.getInstance();
         mMockBluetoothConnection = PowerMockito.mock(BluetoothConnection.class);
         mBluetoothBroadcastReceiver = new BluetoothBroadcastReceiver(mMockBluetoothConnection);
 
-        RuntimeEnvironment.application.getApplicationContext()
+        mShadowApplication
                 .registerReceiver(mBluetoothBroadcastReceiver, mBluetoothBroadcastReceiver.generateIntentFilters());
     }
 
 
-    private void verifyReceiverIsRegistered(){
+    private void verifyReceiverIsRegistered() {
         mRegisteredReceivers = mShadowApplication.getRegisteredReceivers();
-
         Assert.assertFalse(mRegisteredReceivers.isEmpty());
         Assert.assertTrue(bluetoothBroadcastReceiverFound(mRegisteredReceivers));
     }
 
 
-    private boolean bluetoothBroadcastReceiverFound(List<ShadowApplication.Wrapper> registeredReceivers){
+    private boolean bluetoothBroadcastReceiverFound(List<ShadowApplication.Wrapper> registeredReceivers) {
         boolean found = false;
-        for(ShadowApplication.Wrapper wrapper : registeredReceivers){
-            if(wrapper.broadcastReceiver.getClass().getSimpleName()
+        for (ShadowApplication.Wrapper wrapper : registeredReceivers) {
+            if (wrapper.broadcastReceiver.getClass().getSimpleName()
                     .equals(BluetoothBroadcastReceiver.class.getSimpleName())) {
                 found = true;
                 break;
@@ -82,26 +102,15 @@ public class BroadCastReceiverTest {
     }
 
 
-    private BluetoothBroadcastReceiver getTestedReceiver(List<ShadowApplication.Wrapper> registeredReceivers){
-        for(ShadowApplication.Wrapper wrapper : registeredReceivers){
-            if(wrapper.broadcastReceiver.getClass().getSimpleName()
-                    .equals(BluetoothBroadcastReceiver.class.getSimpleName())) {
-                return (BluetoothBroadcastReceiver) wrapper.getBroadcastReceiver();
-            }
-        }
-        return null;
-    }
-
-
-    private BluetoothDevice createATestRemoteDevice(){
-        BluetoothDevice testDevice = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(TEST_MAC);
-        Assert.assertNotNull(testDevice);
-        Assert.assertEquals(TEST_MAC, testDevice.getAddress());
+    private BluetoothDevice createATestRemoteDevice(String deviceMAC) {
+        BluetoothDevice testDevice = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(deviceMAC);
+        Assert.assertNotNull(deviceMAC);
+        Assert.assertEquals(deviceMAC, testDevice.getAddress());
         return testDevice;
     }
 
 
-    private Intent createDeviceFoundIntent(BluetoothDevice testDevice){
+    private Intent createDeviceFoundIntent(BluetoothDevice testDevice) {
         Intent intent = new Intent();
         intent.setAction(BluetoothDevice.ACTION_FOUND);
         intent.putExtra(BluetoothDevice.EXTRA_DEVICE, testDevice);
@@ -109,7 +118,7 @@ public class BroadCastReceiverTest {
     }
 
 
-    private Intent createConnectionStateIntent(int stateCode){
+    private Intent createConnectionStateIntent(int stateCode) {
         Intent intent = new Intent();
         intent.setAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
         intent.putExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE, stateCode);
@@ -118,39 +127,37 @@ public class BroadCastReceiverTest {
 
 
     @Test
-    public void mockModelInteractionTest(){
-        //given initialized BluetoothConnection and mock model
+    public void mockModelInteractionTest() {
+        // given initialized BluetoothConnection and mock model
         initializeIntegrated();
 
-        //when the class under test interacts with mock model
+        // when the class under test interacts with mock model
         mBluetoothConnection.notifyMainPresenter("message");
 
-        //interaction can be tracked
+        // interaction is valid
         Mockito.verify(mMockModel, Mockito.atLeastOnce()).notifyMainPresenter("message");
     }
 
 
     @Test
-    public void verifyBluetoothBroadcastReceiverIsRegisteredAndUnregisterTest(){
+    public void verifyBluetoothBroadcastReceiverIsRegisteredAndUnregisterTest() {
         //given initialized BluetoothConnection and mock model
         //when the class is created
         initializeIntegrated();
 
-        //BluetoothBroadcastReceiver is registered
-        ShadowApplication shadowApplication = ShadowApplication.getInstance();
-        List<ShadowApplication.Wrapper> registeredReceivers = shadowApplication.getRegisteredReceivers();
+        // The BluetoothBroadcastReceiver is registered
+        verifyReceiverIsRegistered();
 
-        Assert.assertFalse(registeredReceivers.isEmpty());
-        Assert.assertTrue(bluetoothBroadcastReceiverFound(registeredReceivers));
-
+        // The BluetoothBroadcastReceiver can be unregistered
         mBluetoothConnection.unregisterReceiver();
-        registeredReceivers = shadowApplication.getRegisteredReceivers();
-        Assert.assertTrue(registeredReceivers.isEmpty());
+        mRegisteredReceivers = mShadowApplication.getRegisteredReceivers();
+        Assert.assertTrue(mRegisteredReceivers.isEmpty());
+        Assert.assertFalse(bluetoothBroadcastReceiverFound(mRegisteredReceivers));
     }
 
 
     @Test
-    public void selfUnregisterTest(){
+    public void selfUnregisterTest() {
         // given initialized Bluetooth connection and
         // a BluetoothBroadcastReceiver
         initializeIntegrated();
@@ -166,7 +173,7 @@ public class BroadCastReceiverTest {
 
 
     @Test
-    public void updateConnectionStatusOnConnectedState(){
+    public void updateConnectionStatusOnConnectedState() {
         // given initialized Bluetooth connection and
         // a BluetoothBroadcastReceiver
         initializeIntegrated();
@@ -181,13 +188,11 @@ public class BroadCastReceiverTest {
         InOrder inOrder = Mockito.inOrder(mMockModel);
         inOrder.verify(mMockModel, Mockito.atLeastOnce()).updateDeviceStatus(BluetoothConnection.STATUS_CONNECTED);
         inOrder.verify(mMockModel, Mockito.atLeastOnce()).updateDeviceStatus(BluetoothConnection.STATUS_DISCONNECTED);
-
-        mBluetoothConnection.unregisterReceiver();
     }
 
 
     @Test
-    public void genericBroadcastReceiverTest(){
+    public void genericBroadcastReceiverTest() {
         //given initialized local broadcast manager
         initializeIntegrated();
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(RuntimeEnvironment.application);
@@ -197,7 +202,7 @@ public class BroadCastReceiverTest {
         final boolean[] sent = new boolean[1];
         sent[0] = false;
 
-        final BroadcastReceiver receiver = new BroadcastReceiver(){
+        final BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 sent[0] = true;
@@ -212,14 +217,14 @@ public class BroadCastReceiverTest {
 
 
     @Test
-    public void deviceFoundTest(){
+    public void deviceFoundTest() {
         // given initialized BroadcastReceiver
         // and a mock BluetoothConnection
         initializeIsolated();
         verifyReceiverIsRegistered();
 
         // when device is found
-        BluetoothDevice testDevice = createATestRemoteDevice();
+        BluetoothDevice testDevice = createATestRemoteDevice(TEST_MAC);
         Intent deviceFoundIntent = createDeviceFoundIntent(testDevice);
         mShadowApplication.getApplicationContext().sendBroadcast(deviceFoundIntent);
 
@@ -228,28 +233,25 @@ public class BroadCastReceiverTest {
     }
 
 
-
     @Test
-    public void foundDevicesPropagatedToModelTest(){
+    public void foundDevicesPropagatedToModelTest() {
         // given initialized Bluetooth connection and
         // a BluetoothBroadcastReceiver
         initializeIntegrated();
         verifyReceiverIsRegistered();
 
-        // when action found broadcast is sent
-        BluetoothDevice remoteTestDevice = createATestRemoteDevice();
+        // when bluetooth device is found
+        BluetoothDevice remoteTestDevice = createATestRemoteDevice(TEST_MAC);
         Intent deviceFoundIntent = createDeviceFoundIntent(remoteTestDevice);
         mShadowApplication.getApplicationContext().sendBroadcast(deviceFoundIntent);
 
         // the update is propagated to the model
         Mockito.verify(mMockModel, Mockito.atLeastOnce()).loadAvailableDevices(Matchers.anySet());
-
-        mBluetoothConnection.unregisterReceiver();
     }
 
 
     @Test
-    public void onReceivedActionOffTest(){
+    public void onReceivedActionOffTest() {
         // given initialized mock BluetoothConnection,
         // a BluetoothBroadcastReceiver, and a dummy BluetoothDevice
         initializeIsolated();
@@ -266,8 +268,6 @@ public class BroadCastReceiverTest {
 
         // the connection is closed
         Mockito.verify(mMockBluetoothConnection, Mockito.atLeastOnce()).disconnect();
-
-        mShadowApplication.getApplicationContext().unregisterReceiver(mBluetoothBroadcastReceiver);
     }
 
 }
