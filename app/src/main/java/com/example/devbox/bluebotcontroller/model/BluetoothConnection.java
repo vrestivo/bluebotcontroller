@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.IntentFilter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -90,12 +89,10 @@ public class BluetoothConnection implements IBluetoothConnection {
 
 
     @Override
-    public boolean isBluetoothSupported() {
+    public void verifyBluetoothSupport() {
         if(mBluetoothAdapter == null){
             handleBluetoothNotSupported();
-            return false;
         }
-        return true;
     }
 
     @Override

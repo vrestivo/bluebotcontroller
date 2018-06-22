@@ -43,12 +43,10 @@ public class Model implements IModel {
 
 
     @Override
-    public boolean isBluetoothSupported() {
-        //TODO implement
+    public void verifyBluetoothSupport() {
         if(sBluetoothConnection != null){
-            return sBluetoothConnection.isBluetoothSupported();
+            sBluetoothConnection.verifyBluetoothSupport();
         }
-        return false;
     }
 
 
@@ -63,7 +61,7 @@ public class Model implements IModel {
 
     @Override
     public void scanForDevices() {
-        return null;
+        return;
     }
 
 

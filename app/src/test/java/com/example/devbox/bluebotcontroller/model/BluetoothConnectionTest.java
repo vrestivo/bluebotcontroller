@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.support.annotation.NonNull;
-import android.support.v4.widget.TextViewCompat;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
+import org.mockito.verification.VerificationMode;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
@@ -34,6 +34,7 @@ import io.reactivex.plugins.RxJavaPlugins;
 
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.spy;
 
@@ -272,25 +273,8 @@ public class BluetoothConnectionTest {
 
         //when Bluetooth is not supported:
 
-        //isBluetoothSupported() returns false
-        Assert.assertFalse(mClassUnderTest.isBluetoothSupported());
-
         //main presenter is notified and
         //bluetooth features are disabled
-        verifyUnsupportedDeviceIsHandledCorrectly();
-    }
-
-    @Test
-    public void isBluetoothEnabledRequestWithUnsupportdBluetoothTest(){
-        //given initialized connection
-        setupReturnNullBluetoothAdapter();
-
-        //when Bluetooth is not supported:
-
-        //isBluetoothSupported() returns false
-        Assert.assertFalse(mClassUnderTest.isBluetoothSupported());
-
-        // bluetooth feature are disabled
         verifyUnsupportedDeviceIsHandledCorrectly();
     }
 
@@ -302,8 +286,8 @@ public class BluetoothConnectionTest {
 
         //when Bluetooth is supported:
 
-        //isBluetoothSupported() returns true
-        Assert.assertTrue(mClassUnderTest.isBluetoothSupported());
+        //disableBuetoothFeatures() is not called
+        verify(mMockModel, never()).disableBluetoothFeatures();
     }
 
 
