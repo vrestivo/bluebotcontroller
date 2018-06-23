@@ -1,6 +1,5 @@
 package com.example.devbox.bluebotcontroller.view;
 
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.support.v7.app.AppCompatActivity;
 
@@ -31,7 +30,7 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
     }
 
     @Override
-    public void cleanup() {
+    public void lifecycleCleanup() {
 
     }
 }
