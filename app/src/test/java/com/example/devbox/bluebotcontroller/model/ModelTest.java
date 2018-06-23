@@ -245,8 +245,5 @@ public class ModelTest {
 
         //the call is propagated to the MainPresenter
         verify(mMockMainPresenter, atLeastOnce()).onBluetoothOn();
-
     }
-
-
 }

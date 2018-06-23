@@ -21,6 +21,7 @@ public interface IModel {
     void updateDeviceStatus(String newStatus);
     void onBluetoothOff();
     void onBluetoothOn();
+    void checkBluetoothPermissions();
     void disableBluetoothFeatures();
     void disconnect();
     void cleanup();

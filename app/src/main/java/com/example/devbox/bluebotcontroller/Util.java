@@ -1,10 +1,14 @@
 package com.example.devbox.bluebotcontroller;
 
+import android.Manifest;
 import android.bluetooth.BluetoothDevice;
+import android.content.pm.PackageManager;
+import android.support.v4.content.ContextCompat;
 
 import com.example.devbox.bluebotcontroller.view.DiscoveryActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -74,5 +78,19 @@ public class Util {
             }
         }
     }
+
+    public static List<String> generateNeededBluetoothPermissionsList(){
+        //needed to enable bluetooth
+        List<String> bluetoothPermissions = new ArrayList<>();
+        bluetoothPermissions.add(Manifest.permission.BLUETOOTH);
+        bluetoothPermissions.add(Manifest.permission.BLUETOOTH_ADMIN);
+
+        //needed for scanning
+        bluetoothPermissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        bluetoothPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+
+        return bluetoothPermissions;
+    }
+
 
 }
