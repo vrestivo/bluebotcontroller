@@ -33,7 +33,7 @@ public class Model implements IModel {
         return sModelInstance;
     }
 
-    
+
     public static IModel getInstance(Context applicationContext, IDiscoveryPresenter discoveryPresenter) {
         initModel(applicationContext);
         sDiscoveryPresenter = discoveryPresenter;

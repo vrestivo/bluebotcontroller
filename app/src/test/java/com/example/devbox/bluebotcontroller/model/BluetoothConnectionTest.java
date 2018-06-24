@@ -32,6 +32,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.schedulers.ExecutorScheduler;
 import io.reactivex.plugins.RxJavaPlugins;
 
+import static org.mockito.Matchers.anySet;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
@@ -348,5 +349,33 @@ public class BluetoothConnectionTest {
             e.printStackTrace();
         }
     }
+
+
+    @Test
+    public void getKnownDevicesTest(){
+        // given initialized connection
+        normalBluetoothAdapterInitialization();
+
+        // when known devices are requested
+        mClassUnderTest.getKnownDevices();
+
+        // the list of paired and available devices
+        // is passed to the model
+        verify(mMockModel, atLeastOnce()).loadAvailableDevices(anySet());
+        verify(mMockModel, atLeastOnce()).loadPairedDevices(anySet());
+    }
+
+
+    @Test
+    public void testName(){
+        // given initialized connection
+        normalBluetoothAdapterInitialization();
+
+        // when
+
+        // the
+    }
+
+
 
 }

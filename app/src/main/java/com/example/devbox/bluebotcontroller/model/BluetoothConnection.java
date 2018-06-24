@@ -50,7 +50,7 @@ public class BluetoothConnection implements IBluetoothConnection {
     private Disposable mInputStreamDisposable;
     private BluetoothBroadcastReceiver mBluetoothBroadcastReceiver;
     private HashSet<BluetoothDevice> mDiscoveredDevices;
-    private Set<BluetoothDevice> mBondedDevices;
+    private Set<BluetoothDevice> mPairedDevices;
 
     private int mConnectionStateCode = BluetoothAdapter.STATE_DISCONNECTED;
     private byte[] mInputByteArray = new byte[1024];
@@ -60,6 +60,7 @@ public class BluetoothConnection implements IBluetoothConnection {
         mModel = model;
         mApplicationContext = context;
         mDiscoveredDevices = new HashSet<BluetoothDevice>();
+        mPairedDevices = new HashSet<BluetoothDevice>();
         initializeAdapter();
         mInputStreamPublishSubject = PublishSubject.create();
         mOutputStreamPublishSubject = PublishSubject.create();
@@ -107,16 +108,19 @@ public class BluetoothConnection implements IBluetoothConnection {
 
     @Override
     public void getKnownDevices() {
-        //TODO implement
+        if(mModel!=null && mDiscoveredDevices!=null && mPairedDevices!=null){
+            mModel.loadAvailableDevices(mDiscoveredDevices);
+            mModel.loadPairedDevices(mPairedDevices);
+        }
     }
 
 
     @Override
     public Set<BluetoothDevice> getBondedDevices() {
         if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
-            mBondedDevices = mBluetoothAdapter.getBondedDevices();
+            mPairedDevices = mBluetoothAdapter.getBondedDevices();
         }
-        return mBondedDevices;
+        return mPairedDevices;
     }
 
 
