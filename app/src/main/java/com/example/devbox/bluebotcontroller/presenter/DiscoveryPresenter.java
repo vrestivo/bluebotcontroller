@@ -23,6 +23,11 @@ public class DiscoveryPresenter implements IDiscoveryPresenter {
     }
 
     @Override
+    public void scanForDevices() {
+
+    }
+
+    @Override
     public void loadAvailableDevices(Set<BluetoothDevice> availableDevices) {
 
     }
@@ -49,4 +54,12 @@ public class DiscoveryPresenter implements IDiscoveryPresenter {
             mDiscoveryView.onBluetoothOff();
         }
     }
+
+    @Override
+    public void lifecycleCleanup() {
+        mDiscoveryView = null;
+        mModel = null;
+
+    }
+
 }
