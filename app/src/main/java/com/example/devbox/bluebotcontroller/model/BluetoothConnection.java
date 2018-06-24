@@ -125,6 +125,15 @@ public class BluetoothConnection implements IBluetoothConnection {
 
 
     @Override
+    public void scanForDevices() {
+        // TODO implement
+        // TODO get the a list of paired devices
+        // TODO start discovery
+        // TODO update available devices list as devices are found
+    }
+
+
+    @Override
     public void startDiscovery() {
         if (mBluetoothAdapter != null) {
             if (isConnected()) {
@@ -190,7 +199,6 @@ public class BluetoothConnection implements IBluetoothConnection {
 
     @Override
     public void updateConnectionStatusIndicator(String status) {
-        //TODO Implement
         if (mModel != null && status != null) {
             mModel.updateDeviceStatus(status);
         }

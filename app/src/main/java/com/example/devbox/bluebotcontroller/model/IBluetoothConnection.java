@@ -10,6 +10,7 @@ public interface IBluetoothConnection {
     boolean isBluetoothEnabled();
     Set<BluetoothDevice> getBondedDevices();
     void getKnownDevices();
+    void scanForDevices();
     void startDiscovery();
     void stopDiscovery();
     void onDeviceFound(BluetoothDevice device);

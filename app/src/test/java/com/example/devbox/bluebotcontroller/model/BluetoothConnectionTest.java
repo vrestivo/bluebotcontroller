@@ -162,6 +162,7 @@ public class BluetoothConnectionTest {
         verify(mMockModel, atLeastOnce()).updateDeviceStatus(BluetoothConnection.STATUS_NOT_SUPPORTED);
     }
 
+
     @Test
     public void  startDiscoveryTest() {
         //given class under test initialized with Model

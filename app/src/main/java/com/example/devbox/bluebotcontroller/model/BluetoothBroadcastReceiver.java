@@ -20,6 +20,7 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
         mBluetoothConnection = connection;
     }
 
+
     public IntentFilter generateIntentFilters() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -78,11 +79,13 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
         }
     }
 
+
     private void handleDeviceAdded(BluetoothDevice foundDevice) {
         if (mBluetoothConnection != null) {
             mBluetoothConnection.onDeviceFound(foundDevice);
         }
     }
+
 
     private void handleOnOffState(int state) {
         if (mBluetoothConnection != null)
