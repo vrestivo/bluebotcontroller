@@ -34,14 +34,13 @@ import static org.mockito.Mockito.verify;
 public class ModelTest {
 
     private final String DEVICE_STATUS = "TESTING";
-    private final String TEST_MESSAGE = "TEST MESAGE";
-
+    private final String TEST_MESSAGE = "TEST MESSAGE";
 
     private IModel mClassUnderTest;
     private Context mMockContext;
     private IMainPresenter mMockMainPresenter;
     private IDiscoveryPresenter mMockDiscoveryPresenter;
-    public BluetoothConnection mMockBluetoothConnection;
+    private BluetoothConnection mMockBluetoothConnection;
 
 
     @Before
@@ -51,7 +50,7 @@ public class ModelTest {
         mMockDiscoveryPresenter = PowerMockito.mock(DiscoveryPresenter.class);
         mMockBluetoothConnection = PowerMockito.mock(BluetoothConnection.class);
 
-        // prevents method not mocket errors
+        // prevents method not mocked errors
         PowerMockito.mock(BluetoothBroadcastReceiver.class);
         IntentFilter mockIntentFilter = PowerMockito.mock(IntentFilter.class);
         try {
@@ -60,7 +59,6 @@ public class ModelTest {
         catch (Exception e){
             e.printStackTrace();
         }
-
 
         // assist with model initialization
         BluetoothAdapter mockAdapter = PowerMockito.mock(BluetoothAdapter.class);
@@ -72,11 +70,6 @@ public class ModelTest {
 
         //set static Model.sBluetoothConnection member
         Whitebox.setInternalState(Model.class, mMockBluetoothConnection);
-    }
-
-    @After
-    public void testCleanup(){
-
     }
 
 
@@ -92,8 +85,8 @@ public class ModelTest {
         InOrder inOrder = inOrder(mMockBluetoothConnection);
         inOrder.verify(mMockBluetoothConnection, Mockito.atLeastOnce()).isConnected();
         inOrder.verify(mMockBluetoothConnection, Mockito.atLeastOnce()).startDiscovery();
-
     }
+
 
     @Test
     public void startDiscoveryWhileConnectedTest(){
@@ -111,6 +104,7 @@ public class ModelTest {
         //then discovery is initiated
         inOrder.verify(mMockBluetoothConnection, Mockito.atLeastOnce()).startDiscovery();
     }
+
 
     @Test
     public void stopDiscoveryTest(){
@@ -147,6 +141,7 @@ public class ModelTest {
         Mockito.verify(mMockBluetoothConnection, Mockito.atLeastOnce()).sendMessageToRemoteDevice(TEST_MESSAGE);
     }
 
+
     @Test
     public void connectToRemoteDeviceTest(){
         //Given initialized model
@@ -158,6 +153,7 @@ public class ModelTest {
         //respective the call is propagated to BluetoothConnection
         Mockito.verify(mMockBluetoothConnection, Mockito.atLeastOnce()).connectToRemoteDevice(mockDevice);
     }
+
 
     @Test
     public void statusUpdateTest(){
@@ -180,6 +176,7 @@ public class ModelTest {
         Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).sendMessageToUI(TEST_MESSAGE);
     }
 
+
     @Test
     public void discoveryPresenterNotificationTest(){
         //given initialized Model
@@ -189,6 +186,7 @@ public class ModelTest {
         //the message is propagated to the UI layer
         Mockito.verify(mMockDiscoveryPresenter, Mockito.atLeastOnce()).sendMessageToUI(TEST_MESSAGE);
     }
+
 
     @Test
     public void disableBluetoothFeaturesTest(){
@@ -201,6 +199,7 @@ public class ModelTest {
         verify(mMockMainPresenter, atLeastOnce()).disableBluetoothFeatures();
     }
 
+
     @Test
     public void isBluetoothEnabledWhenEnabledTest(){
         //given initialized Model
@@ -212,6 +211,7 @@ public class ModelTest {
         Assert.assertTrue(mClassUnderTest.isBluetoothEnabled());
     }
 
+
     @Test
     public void isBluetoothEnabledWhenDisabledTest(){
         //given initialized Model
@@ -222,6 +222,7 @@ public class ModelTest {
         //the returned value is false
         Assert.assertFalse(mClassUnderTest.isBluetoothEnabled());
     }
+
 
     @Test
     public void onBluetoothOffTest(){
