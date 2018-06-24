@@ -42,13 +42,17 @@ public class MainPresenter implements IMainPresenter {
 
     @Override
     public void onBluetoothOn() {
-
+        if(mMainView!=null){
+            mMainView.onBluetoothOn();
+        }
     }
 
 
     @Override
     public void onBluetoothOff() {
-
+        if(mMainView!=null){
+            mMainView.onBluetoothOff();
+        }
     }
 
 
@@ -62,7 +66,9 @@ public class MainPresenter implements IMainPresenter {
 
     @Override
     public void disconnect() {
-        mModel.disconnect();
+        if(mModel!=null) {
+            mModel.disconnect();
+        }
     }
 
 

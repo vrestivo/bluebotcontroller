@@ -47,6 +47,10 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     }
 
+    @Override
+    public void onBluetoothOn() {
+
+    }
 
     @Override
     public void onBluetoothOff() {
