@@ -25,6 +25,16 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
     }
 
     @Override
+    public void loadAvailableDevices(Set<BluetoothDevice> pairedDevices) {
+
+    }
+
+    @Override
+    public void displayMessage(String messageToDisplay) {
+
+    }
+
+    @Override
     public void onBluetoothOff() {
 
     }

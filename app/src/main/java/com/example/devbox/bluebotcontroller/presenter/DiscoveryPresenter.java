@@ -16,7 +16,6 @@ public class DiscoveryPresenter implements IDiscoveryPresenter {
     private IModel mModel;
 
 
-
     public DiscoveryPresenter(@NonNull IDiscoveryView discoveryView, @NonNull Context applicationContext) {
         mDiscoveryView = discoveryView;
         mModel = Model.getInstance(applicationContext, this);
@@ -24,29 +23,38 @@ public class DiscoveryPresenter implements IDiscoveryPresenter {
 
     @Override
     public void scanForDevices() {
-
+        if(mModel!=null){
+            mModel.scanForDevices();
+        }
     }
 
     @Override
     public void loadAvailableDevices(Set<BluetoothDevice> availableDevices) {
-
+        if(mDiscoveryView!=null && availableDevices != null && !availableDevices.isEmpty()){
+           mDiscoveryView.loadAvailableDevices(availableDevices);
+        }
     }
 
     @Override
     public void loadPairedDevices(Set<BluetoothDevice> pairedDevices) {
-
+        if(mDiscoveryView!=null && pairedDevices != null && !pairedDevices.isEmpty()){
+            mDiscoveryView.loadPairedDevices(pairedDevices);
+        }
     }
 
     @Override
     public void onDeviceSelected(BluetoothDevice selectedDevice) {
-
+        if(mModel != null && selectedDevice!=null){
+            mModel.connectToDevice(selectedDevice);
+        }
     }
 
     @Override
     public void sendMessageToUI(String messageToUI) {
-
+        if(mDiscoveryView!=null){
+            mDiscoveryView.displayMessage(messageToUI);
+        }
     }
-
 
     @Override
     public void onBluetoothOff() {

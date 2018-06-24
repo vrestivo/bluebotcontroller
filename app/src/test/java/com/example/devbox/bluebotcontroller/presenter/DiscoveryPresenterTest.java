@@ -1,6 +1,7 @@
 package com.example.devbox.bluebotcontroller.presenter;
 
 
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 
 import com.example.devbox.bluebotcontroller.model.IModel;
@@ -13,21 +14,26 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({DiscoveryViewActivity.class, Context.class, Model.class})
 public class DiscoveryPresenterTest {
 
-
+    private final String TEST_STRING = "TEST_STRING";
     private DiscoveryPresenter mClassUnderTest;
     private DiscoveryViewActivity mMockDiscoveryViewActivity;
     private Context mMockContext;
     private Model mMockModel;
+
 
     @Before
     public void testSetup() {
@@ -35,16 +41,35 @@ public class DiscoveryPresenterTest {
         mMockDiscoveryViewActivity = PowerMockito.mock(DiscoveryViewActivity.class);
         mMockContext = PowerMockito.mock(Context.class);
         mClassUnderTest = new DiscoveryPresenter(mMockDiscoveryViewActivity, mMockContext);
+    }
 
 
+    private void insertMockModelAndVerifyInsertion(){
+        mMockModel = PowerMockito.mock(Model.class);
+        Assert.assertNotNull(mMockModel);
+
+        Whitebox.setInternalState(mClassUnderTest, "mModel", mMockModel);
+        Model sameModel = Whitebox.getInternalState(mClassUnderTest, "mModel");
+        Assert.assertSame(mMockModel, sameModel);
+    }
+
+    private Set<BluetoothDevice> generateMockBluetoothDevices(){
+       BluetoothDevice mockDevice1 = PowerMockito.mock(BluetoothDevice.class);
+       BluetoothDevice mockDevice2 = PowerMockito.mock(BluetoothDevice.class);
+       BluetoothDevice mockDevice3 = PowerMockito.mock(BluetoothDevice.class);
+
+        HashSet<BluetoothDevice> mockDeviceSet = new HashSet<>();
+        mockDeviceSet.add(mockDevice1);
+        mockDeviceSet.add(mockDevice2);
+        mockDeviceSet.add(mockDevice3);
+
+        return mockDeviceSet;
     }
 
 
     @Test
     public void InitializationTest() {
-        // given all needed components
-
-        // DiscoveryPresenter is initialized
+        // given DiscoveryPresenter is initialized
 
         // discovery view has been passed to presenter
         DiscoveryViewActivity viewToTest = Whitebox.getInternalState(mClassUnderTest, "mDiscoveryView");
@@ -72,12 +97,7 @@ public class DiscoveryPresenterTest {
     @Test
     public void lifeCycleCleanupTest() {
         // given initialized discovery presenter
-        mMockModel = PowerMockito.mock(Model.class);
-        Assert.assertNotNull(mMockModel);
-
-        Whitebox.setInternalState(mClassUnderTest, "mModel", mMockModel);
-        Model sameModel = Whitebox.getInternalState(mClassUnderTest, "mModel");
-        Assert.assertSame(mMockModel, sameModel);
+        insertMockModelAndVerifyInsertion();
 
         // when liceCycleCleanup() is called
         mClassUnderTest.lifecycleCleanup();
@@ -88,6 +108,72 @@ public class DiscoveryPresenterTest {
         IModel memberModelMustBeNull = Whitebox.getInternalState(mClassUnderTest, "mModel");
         Assert.assertNull(memberModelMustBeNull);
     }
+
+
+    @Test
+    public void scanForDevicesTest() {
+        // given initialized discovery presenter
+        insertMockModelAndVerifyInsertion();
+
+        // when bluetooth scan is initiated
+        mClassUnderTest.scanForDevices();
+
+        // the call is passed to the model
+        Mockito.verify(mMockModel, Mockito.atLeastOnce()).scanForDevices();
+    }
+
+
+    @Test
+    public void sendMessageToUITest() {
+        // given initialized discovery presenter
+
+        // when message is sent to UI
+        mClassUnderTest.sendMessageToUI(TEST_STRING);
+
+        //then
+        Mockito.verify(mMockDiscoveryViewActivity, Mockito.atLeastOnce()).displayMessage(TEST_STRING);
+    }
+
+
+    @Test
+    public void onDeviceSelectedTest() {
+        // given initialized discovery presenter
+        insertMockModelAndVerifyInsertion();
+        BluetoothDevice mockDevice = PowerMockito.mock(BluetoothDevice.class);
+
+        // when device is selected
+        mClassUnderTest.onDeviceSelected(mockDevice);
+
+        // the selection is passed to the model
+        Mockito.verify(mMockModel, Mockito.atLeastOnce()).connectToDevice(mockDevice);
+    }
+
+
+    @Test
+    public void loadPairedDevicesTest() {
+        // given initialized discovery presenter
+        Set<BluetoothDevice> mockDeviceSet = generateMockBluetoothDevices();
+
+        // when loading paired devices
+        mClassUnderTest.loadPairedDevices(mockDeviceSet);
+
+        // the devices are passed to the discovery view
+        Mockito.verify(mMockDiscoveryViewActivity, Mockito.atLeastOnce()).loadPairedDevices(mockDeviceSet);
+    }
+
+
+    @Test
+    public void loadAvailableDevicesTest() {
+        // given initialized discovery presenter
+        Set<BluetoothDevice> mockDeviceSet = generateMockBluetoothDevices();
+
+        // when loading available devices
+        mClassUnderTest.loadAvailableDevices(mockDeviceSet);
+
+        // the devices are passed to the discovery view
+        Mockito.verify(mMockDiscoveryViewActivity, Mockito.atLeastOnce()).loadAvailableDevices(mockDeviceSet);
+    }
+
 
 
     @Test
