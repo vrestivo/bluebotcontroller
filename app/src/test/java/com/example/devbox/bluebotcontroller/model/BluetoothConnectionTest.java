@@ -235,7 +235,7 @@ public class BluetoothConnectionTest {
     public void connectToRemoteDeviceTest() {
         //given initialized connection
         normalBluetoothAdapterInitialization();
-        PowerMockito.when(mMockBluetoothSocket.isConnected()).thenReturn(true, true, true, true, true, false);
+        PowerMockito.when(mMockBluetoothSocket.isConnected()).thenReturn(true);
         PowerMockito.when(mMockAdapter.isDiscovering()).thenReturn(true);
 
         //when connect is called
@@ -369,7 +369,7 @@ public class BluetoothConnectionTest {
         verify(mMockModel, atLeastOnce()).loadAvailableDevices(anySet());
         verify(mMockModel, atLeastOnce()).loadPairedDevices(anySet());
     }
-    
+
 
     @Test
     public void testName(){
