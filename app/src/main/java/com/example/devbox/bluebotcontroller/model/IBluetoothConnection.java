@@ -9,6 +9,7 @@ public interface IBluetoothConnection {
     void verifyBluetoothSupport();
     boolean isBluetoothEnabled();
     Set<BluetoothDevice> getBondedDevices();
+    void getKnownDevices();
     void startDiscovery();
     void stopDiscovery();
     void onDeviceFound(BluetoothDevice device);

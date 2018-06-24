@@ -4,6 +4,7 @@ package com.example.devbox.bluebotcontroller.presenter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 
+import com.example.devbox.bluebotcontroller.TestObjectGenerator;
 import com.example.devbox.bluebotcontroller.model.IModel;
 import com.example.devbox.bluebotcontroller.model.Model;
 import com.example.devbox.bluebotcontroller.view.DiscoveryViewActivity;
@@ -14,14 +15,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @RunWith(PowerMockRunner.class)
@@ -51,19 +50,6 @@ public class DiscoveryPresenterTest {
         Whitebox.setInternalState(mClassUnderTest, "mModel", mMockModel);
         Model sameModel = Whitebox.getInternalState(mClassUnderTest, "mModel");
         Assert.assertSame(mMockModel, sameModel);
-    }
-
-    private Set<BluetoothDevice> generateMockBluetoothDevices(){
-       BluetoothDevice mockDevice1 = PowerMockito.mock(BluetoothDevice.class);
-       BluetoothDevice mockDevice2 = PowerMockito.mock(BluetoothDevice.class);
-       BluetoothDevice mockDevice3 = PowerMockito.mock(BluetoothDevice.class);
-
-        HashSet<BluetoothDevice> mockDeviceSet = new HashSet<>();
-        mockDeviceSet.add(mockDevice1);
-        mockDeviceSet.add(mockDevice2);
-        mockDeviceSet.add(mockDevice3);
-
-        return mockDeviceSet;
     }
 
 
@@ -152,7 +138,7 @@ public class DiscoveryPresenterTest {
     @Test
     public void loadPairedDevicesTest() {
         // given initialized discovery presenter
-        Set<BluetoothDevice> mockDeviceSet = generateMockBluetoothDevices();
+        Set<BluetoothDevice> mockDeviceSet = TestObjectGenerator.generateMockBluetoothDevices();
 
         // when loading paired devices
         mClassUnderTest.loadPairedDevices(mockDeviceSet);
@@ -165,7 +151,7 @@ public class DiscoveryPresenterTest {
     @Test
     public void loadAvailableDevicesTest() {
         // given initialized discovery presenter
-        Set<BluetoothDevice> mockDeviceSet = generateMockBluetoothDevices();
+        Set<BluetoothDevice> mockDeviceSet = TestObjectGenerator.generateMockBluetoothDevices();
 
         // when loading available devices
         mClassUnderTest.loadAvailableDevices(mockDeviceSet);
@@ -174,6 +160,18 @@ public class DiscoveryPresenterTest {
         Mockito.verify(mMockDiscoveryViewActivity, Mockito.atLeastOnce()).loadAvailableDevices(mockDeviceSet);
     }
 
+
+    @Test
+    public void getKnownDevicesTest(){
+        // given initialized view, presenter, and model
+        insertMockModelAndVerifyInsertion();
+
+        // when known devices are request by the view
+        mClassUnderTest.getKnownDevices();
+
+        // the request is passed to the Model
+        Mockito.verify(mMockModel, Mockito.atLeastOnce()).getKnownDevices();
+    }
 
 
     @Test

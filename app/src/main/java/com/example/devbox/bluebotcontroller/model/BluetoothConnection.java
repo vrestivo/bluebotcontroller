@@ -40,7 +40,6 @@ public class BluetoothConnection implements IBluetoothConnection {
 
     private BluetoothSocket mBluetoothSocket;
     private BluetoothAdapter mBluetoothAdapter;
-    private Set<BluetoothDevice> mBondedDevices;
     private IModel mModel;
     private Context mApplicationContext;
     private InputStream mBluetoothSocketInputStream;
@@ -51,6 +50,7 @@ public class BluetoothConnection implements IBluetoothConnection {
     private Disposable mInputStreamDisposable;
     private BluetoothBroadcastReceiver mBluetoothBroadcastReceiver;
     private HashSet<BluetoothDevice> mDiscoveredDevices;
+    private Set<BluetoothDevice> mBondedDevices;
 
     private int mConnectionStateCode = BluetoothAdapter.STATE_DISCONNECTED;
     private byte[] mInputByteArray = new byte[1024];
@@ -94,6 +94,7 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
+
     @Override
     public boolean isBluetoothEnabled() {
         if(mBluetoothAdapter == null) {
@@ -101,6 +102,12 @@ public class BluetoothConnection implements IBluetoothConnection {
             return false;
         }
         return mBluetoothAdapter.isEnabled();
+    }
+
+
+    @Override
+    public void getKnownDevices() {
+        //TODO implement
     }
 
 

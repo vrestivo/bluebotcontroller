@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.IntentFilter;
 
+import com.example.devbox.bluebotcontroller.TestObjectGenerator;
 import com.example.devbox.bluebotcontroller.presenter.DiscoveryPresenter;
 import com.example.devbox.bluebotcontroller.presenter.IDiscoveryPresenter;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
@@ -23,6 +24,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
+
+import java.util.Set;
 
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
@@ -71,6 +74,8 @@ public class ModelTest {
         //set static Model.sBluetoothConnection member
         Whitebox.setInternalState(Model.class, mMockBluetoothConnection);
     }
+
+
 
 
     @Test
@@ -247,4 +252,57 @@ public class ModelTest {
         //the call is propagated to the MainPresenter
         verify(mMockMainPresenter, atLeastOnce()).onBluetoothOn();
     }
+
+
+    @Test
+    public void getKnownDevicesTest() {
+        // given initialized Model
+        
+        // when
+        mClassUnderTest.getKnownDevices();
+
+        //then
+        verify(mMockBluetoothConnection, atLeastOnce()).getKnownDevices();
+    }
+
+
+    @Test
+    public void loadPairedDevicesTest() {
+        // given initialized Model
+        Set<BluetoothDevice> mockPairedDevices = TestObjectGenerator.generateMockBluetoothDevices();
+        Assert.assertNotNull(mockPairedDevices);
+        Assert.assertFalse(mockPairedDevices.isEmpty());
+
+        // when requested to load paired devices
+        mClassUnderTest.loadPairedDevices(mockPairedDevices);
+
+        // the devices are passed to discovery presenter
+        verify(mMockDiscoveryPresenter, atLeastOnce()).loadPairedDevices(mockPairedDevices);
+    }
+
+
+    @Test
+    public void loadAvailableDevicesTest() {
+        // given initialized Model
+        Set<BluetoothDevice> mockAvailableDevices = TestObjectGenerator.generateMockBluetoothDevices();
+        Assert.assertNotNull(mockAvailableDevices);
+        Assert.assertFalse(mockAvailableDevices.isEmpty());
+
+        // when requested to load paired devices
+        mClassUnderTest.loadAvailableDevices(mockAvailableDevices);
+
+        // the devices are passed to discovery presenter
+        verify(mMockDiscoveryPresenter, atLeastOnce()).loadAvailableDevices(mockAvailableDevices);
+    }
+
+
+    @Test
+    public void testName() {
+        // given initialized Model
+
+        // when
+
+        //then
+    }
+
 }

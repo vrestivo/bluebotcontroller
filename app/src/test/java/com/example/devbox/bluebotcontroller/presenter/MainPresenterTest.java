@@ -105,6 +105,7 @@ public class MainPresenterTest {
         Mockito.verify(mMainView, atLeastOnce()).onBluetoothOn();
     }
 
+
     @Test
     public void onBluetoothOffTest(){
         // given initialized view, presenter, and model

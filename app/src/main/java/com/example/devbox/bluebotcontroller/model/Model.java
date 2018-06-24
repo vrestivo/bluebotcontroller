@@ -26,12 +26,14 @@ public class Model implements IModel {
 
     }
 
+
     public static IModel getInstance(Context applicationContext, IMainPresenter mainPresenter) {
         initModel(applicationContext);
         sMainPresenter = mainPresenter;
         return sModelInstance;
     }
 
+    
     public static IModel getInstance(Context applicationContext, IDiscoveryPresenter discoveryPresenter) {
         initModel(applicationContext);
         sDiscoveryPresenter = discoveryPresenter;
@@ -67,13 +69,15 @@ public class Model implements IModel {
 
     @Override
     public void getKnownDevices() {
-        //TODO implement
+        if(sBluetoothConnection!=null){
+            sBluetoothConnection.getKnownDevices();
+        }
     }
 
-    
+
     @Override
     public void scanForDevices() {
-        return;
+        //TODO implement
     }
 
 
@@ -100,15 +104,22 @@ public class Model implements IModel {
         }
     }
 
+
     @Override
     public void loadPairedDevices(Set<BluetoothDevice> pairedDevices) {
-
+        if(sDiscoveryPresenter !=null && pairedDevices!=null){
+            sDiscoveryPresenter.loadPairedDevices(pairedDevices);
+        }
     }
+
 
     @Override
     public void loadAvailableDevices(Set<BluetoothDevice> availableDevices) {
-
+        if(sDiscoveryPresenter!=null && availableDevices != null){
+            sDiscoveryPresenter.loadAvailableDevices(availableDevices);
+        }
     }
+
 
     @Override
     public void sendMessageToRemoteDevice(String message) {
@@ -117,12 +128,14 @@ public class Model implements IModel {
         }
     }
 
+
     @Override
     public void connectToDevice(BluetoothDevice device) {
         if(sBluetoothConnection!=null && device!=null){
             sBluetoothConnection.connectToRemoteDevice(device);
         }
     }
+
 
     @Override
     public void notifyMainPresenter(String message) {
@@ -131,12 +144,14 @@ public class Model implements IModel {
         }
     }
 
+
     @Override
     public void notifyDiscoveryPresenter(String message) {
         if(sDiscoveryPresenter!=null){
             sDiscoveryPresenter.sendMessageToUI(message);
         }
     }
+
 
     @Override
     public void updateDeviceStatus(String newStatus) {
@@ -202,6 +217,7 @@ public class Model implements IModel {
         }
     }
 
+
     @Override
     public void disconnect() {
         if(sBluetoothConnection!=null && sBluetoothConnection.isConnected()){
@@ -209,6 +225,7 @@ public class Model implements IModel {
         }
 
     }
+
 
     @Override
     public void cleanup() {

@@ -30,7 +30,9 @@ public class DiscoveryPresenter implements IDiscoveryPresenter {
 
     @Override
     public void getKnownDevices() {
-
+        if(mModel!= null){
+            mModel.getKnownDevices();
+        }
     }
 
     @Override
