@@ -7,6 +7,7 @@ import java.util.Set;
 public interface IDiscoveryPresenter {
 
     void scanForDevices();
+    void getKnownDevices();
     void loadAvailableDevices(Set<BluetoothDevice> availableDevices);
     void loadPairedDevices(Set<BluetoothDevice> pairedDevices);
     void onDeviceSelected(BluetoothDevice selectedDevice);

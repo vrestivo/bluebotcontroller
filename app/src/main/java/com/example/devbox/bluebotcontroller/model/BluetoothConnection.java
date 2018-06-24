@@ -87,7 +87,6 @@ public class BluetoothConnection implements IBluetoothConnection {
     }
 
 
-
     @Override
     public void verifyBluetoothSupport() {
         if(mBluetoothAdapter == null){
@@ -103,7 +102,6 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
         return mBluetoothAdapter.isEnabled();
     }
-
 
 
     @Override

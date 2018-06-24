@@ -66,6 +66,12 @@ public class Model implements IModel {
 
 
     @Override
+    public void getKnownDevices() {
+        //TODO implement
+    }
+
+    
+    @Override
     public void scanForDevices() {
         return;
     }

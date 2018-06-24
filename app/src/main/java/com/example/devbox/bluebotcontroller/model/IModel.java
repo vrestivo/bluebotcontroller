@@ -13,6 +13,7 @@ public interface IModel {
     void sendMessageToRemoteDevice(String message);
     void startDiscovery();
     void stopDiscovery();
+    void getKnownDevices();
     void loadPairedDevices(Set<BluetoothDevice> pairedDevices);
     void loadAvailableDevices(Set<BluetoothDevice> availableDevices);
     void connectToDevice(BluetoothDevice device);

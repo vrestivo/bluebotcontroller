@@ -29,6 +29,11 @@ public class DiscoveryPresenter implements IDiscoveryPresenter {
     }
 
     @Override
+    public void getKnownDevices() {
+
+    }
+
+    @Override
     public void loadAvailableDevices(Set<BluetoothDevice> availableDevices) {
         if(mDiscoveryView!=null && availableDevices != null && !availableDevices.isEmpty()){
            mDiscoveryView.loadAvailableDevices(availableDevices);

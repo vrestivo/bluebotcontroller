@@ -8,7 +8,6 @@ import java.util.Set;
 public class DiscoveryViewActivity extends AppCompatActivity implements IDiscoveryView {
 
 
-
     @Override
     public void scanForDevices() {
 
@@ -16,6 +15,11 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
 
     @Override
     public void onDeviceFound(BluetoothDevice newDevice) {
+
+    }
+
+    @Override
+    public void getKnownDevices() {
 
     }
 
