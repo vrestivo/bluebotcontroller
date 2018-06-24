@@ -212,6 +212,9 @@ public class BluetoothConnection implements IBluetoothConnection {
                 if (isConnected()) {
                     disconnect();
                 }
+                if(mBluetoothAdapter.isDiscovering()) {
+                    mBluetoothAdapter.cancelDiscovery();
+                }
                 mBluetoothSocket = remoteDevice.createRfcommSocketToServiceRecord(SPP_UUID);
                 setupInputOutputStreams();
                 updateConnectionStatusIndicator(STATUS_CONNECTED);

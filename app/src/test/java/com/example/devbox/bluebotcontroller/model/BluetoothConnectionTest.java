@@ -236,12 +236,16 @@ public class BluetoothConnectionTest {
         //given initialized connection
         normalBluetoothAdapterInitialization();
         PowerMockito.when(mMockBluetoothSocket.isConnected()).thenReturn(true, true, true, true, true, false);
+        PowerMockito.when(mMockAdapter.isDiscovering()).thenReturn(true);
 
         //when connect is called
         mClassUnderTest.connectToRemoteDevice(mMockSelectedBTRemoteDevice);
 
         //a BluetoothSocket is returned and streams are open
         try {
+
+            Mockito.verify(mMockAdapter, atLeastOnce()).cancelDiscovery();
+
             Mockito.verify(mMockSelectedBTRemoteDevice, atLeastOnce())
                     .createRfcommSocketToServiceRecord(BluetoothConnection.SPP_UUID);
 
@@ -365,7 +369,7 @@ public class BluetoothConnectionTest {
         verify(mMockModel, atLeastOnce()).loadAvailableDevices(anySet());
         verify(mMockModel, atLeastOnce()).loadPairedDevices(anySet());
     }
-
+    
 
     @Test
     public void testName(){
