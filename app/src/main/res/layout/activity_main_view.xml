@@ -1,6 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_horizontal"
+    android:orientation="vertical"
+    >
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:layout_gravity="center_horizontal"
+        >
+
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/con_status_title"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_column="1"
+                android:layout_row="1"
+                android:text="@string/status_title" />
+
+            <TextView
+                android:id="@+id/con_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:layout_columnSpan="2"
+                android:layout_row="1"
+                android:text="@string/status_default" />
+
+            <Button
+                android:id="@+id/bt_discover"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:layout_row="2"
+                android:text="@string/button_bt_discover" />
+
+            <Button
+                android:id="@+id/bt_on"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:layout_row="2"
+                android:text="@string/button_bt_on" />
+
+            <Button
+                android:id="@+id/bt_disconnect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="3"
+                android:layout_row="2"
+                android:text="@string/button_bt_disconnect" />
+
+
+            <EditText
+                android:id="@+id/exit_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:layout_columnSpan="2"
+                android:layout_row="3"
+                android:hint="@string/command_edit_text_hint"
+                android:inputType="text" />
+
+            <Button
+                android:id="@+id/bt_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="3"
+                android:layout_row="3"
+                android:text="@string/button_send" />
+
+        </GridLayout>
+
+    </FrameLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        />
+
+    <com.example.devbox.bluebotcontroller.view.joystick.JoystickView
+        android:id="@+id/joystick_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        />
+
 
 </LinearLayout>
