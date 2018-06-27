@@ -84,12 +84,6 @@ public class Model implements IModel {
 
 
     @Override
-    public Set<BluetoothDevice> getPairedDevices() {
-        return null;
-    }
-
-
-    @Override
     public void startDiscovery() {
         if(sBluetoothConnection!=null){
             if(sBluetoothConnection.isConnected()){

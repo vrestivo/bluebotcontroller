@@ -9,7 +9,6 @@ public interface IModel {
     void verifyBluetoothSupport();
     boolean isBluetoothEnabled();
     void scanForDevices();
-    Set<BluetoothDevice> getPairedDevices();
     void sendMessageToRemoteDevice(String message);
     void startDiscovery();
     void stopDiscovery();
