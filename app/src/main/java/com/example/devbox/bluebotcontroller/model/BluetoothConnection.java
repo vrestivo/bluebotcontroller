@@ -105,12 +105,12 @@ public class BluetoothConnection implements IBluetoothConnection {
         return mBluetoothAdapter.isEnabled();
     }
 
-
+    //For lifecycle purposes
     @Override
     public void getKnownDevices() {
-        if(mModel!=null && mDiscoveredDevices!=null && mPairedDevices!=null){
-            mModel.loadAvailableDevices(mDiscoveredDevices);
-            mModel.loadPairedDevices(mPairedDevices);
+        if(mModel!=null){
+            if(mPairedDevices!=null) mModel.loadPairedDevices(mPairedDevices);
+            if(mDiscoveredDevices!=null) mModel.loadAvailableDevices(mDiscoveredDevices);
         }
     }
 
@@ -126,10 +126,8 @@ public class BluetoothConnection implements IBluetoothConnection {
 
     @Override
     public void scanForDevices() {
-        // TODO implement
-        // TODO get the a list of paired devices
-        // TODO start discovery
-        // TODO update available devices list as devices are found
+        mModel.loadPairedDevices(getBondedDevices());
+        startDiscovery();
     }
 
 

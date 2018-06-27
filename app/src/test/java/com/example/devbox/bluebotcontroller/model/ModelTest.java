@@ -297,12 +297,14 @@ public class ModelTest {
 
 
     @Test
-    public void testName() {
+    public void scanForDevicesTest() {
         // given initialized Model
 
-        // when
+        // when scanForDevices() is called
+        mClassUnderTest.scanForDevices();
 
-        //then
+        // the call is propagated to BluetoothConnection class
+        verify(mMockBluetoothConnection, atLeastOnce()).scanForDevices();
     }
 
 }

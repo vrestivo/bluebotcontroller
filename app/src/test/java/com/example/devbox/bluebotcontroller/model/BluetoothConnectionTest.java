@@ -4,8 +4,11 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.annotation.NonNull;
+
+import com.example.devbox.bluebotcontroller.TestObjectGenerator;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,6 +27,8 @@ import org.powermock.reflect.Whitebox;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Scheduler;
@@ -37,6 +42,7 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.spy;
 
 
@@ -292,7 +298,7 @@ public class BluetoothConnectionTest {
 
         //when Bluetooth is supported:
 
-        //disableBuetoothFeatures() is not called
+        //disableBluetoothFeatures() is not called
         verify(mMockModel, never()).disableBluetoothFeatures();
     }
 
@@ -372,15 +378,50 @@ public class BluetoothConnectionTest {
 
 
     @Test
-    public void testName(){
+    public void scanForDevicesReturnsPairedDevicesTest(){
         // given initialized connection
         normalBluetoothAdapterInitialization();
+        Set<BluetoothDevice> mockDevices = TestObjectGenerator.generateMockBluetoothDevices();
+        when(mMockAdapter.getBondedDevices()).thenReturn(mockDevices);
+        when(mMockAdapter.isEnabled()).thenReturn(true);
 
-        // when
 
-        // the
+        // when scan for devices is called
+        mClassUnderTest.scanForDevices();
+
+        // a list of paired devices returned to the user
+        verify(mMockAdapter, atLeastOnce()).getBondedDevices();
+        verify(mMockModel, atLeastOnce()).loadPairedDevices(mockDevices);
     }
 
+    @Test
+    public void discoveryIsCancelledIfAlreadyDiscoveringTest(){
+        // given initialized connection
+        normalBluetoothAdapterInitialization();
+        when(mMockAdapter.isEnabled()).thenReturn(true);
+        when(mMockAdapter.isDiscovering()).thenReturn(true);
 
+        // when scan is initialized
+        mClassUnderTest.startDiscovery();
+
+        // if in progress discovery is stopped
+        verify(mMockAdapter, atLeastOnce()).isDiscovering();
+        verify(mMockAdapter, atLeastOnce()).cancelDiscovery();
+    }
+
+    @Test
+    public void scannedDeviceReceivedAndPassedToModelTest(){
+        // given initialized connection
+        normalBluetoothAdapterInitialization();
+        BluetoothDevice mockDevice = TestObjectGenerator.generateASingleMockBluetoothDevice();
+        Set<BluetoothDevice> expectedDeviceSet = new HashSet<>();
+        expectedDeviceSet.add(mockDevice);
+
+        // when device is received
+        mClassUnderTest.onDeviceFound(mockDevice);
+
+        // device set is passed to model
+        verify(mMockModel, atLeastOnce()).loadAvailableDevices(expectedDeviceSet);
+    }
 
 }

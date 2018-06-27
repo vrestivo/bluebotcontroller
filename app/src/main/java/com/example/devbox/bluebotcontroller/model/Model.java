@@ -77,7 +77,9 @@ public class Model implements IModel {
 
     @Override
     public void scanForDevices() {
-        //TODO implement
+        if(sBluetoothConnection!=null){
+            sBluetoothConnection.scanForDevices();
+        }
     }
 
 

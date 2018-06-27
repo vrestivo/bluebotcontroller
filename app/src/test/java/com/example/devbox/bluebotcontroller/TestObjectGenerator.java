@@ -22,4 +22,9 @@ public final class TestObjectGenerator {
         return mockDeviceSet;
     }
 
+    public static BluetoothDevice generateASingleMockBluetoothDevice(){
+        BluetoothDevice mockDevice = PowerMockito.mock(BluetoothDevice.class);
+        return mockDevice;
+    }
+
 }
