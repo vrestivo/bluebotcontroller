@@ -18,6 +18,13 @@ public class MainPresenter implements IMainPresenter {
 
 
     @Override
+    public void verifyBluetoothSupport() {
+        if(mModel!=null){
+            mModel.verifyBluetoothSupport();
+        }
+    }
+
+    @Override
     public void sendMessageToUI(String messageToUI) {
         if(mMainView!=null){
             mMainView.showMessage(messageToUI);

@@ -118,12 +118,14 @@ public class MainPresenterTest {
 
 
     @Test
-    public void testName(){
+    public void verifyBluetoothSupportTest(){
         // given initialized view, presenter, and model
-        // when
 
-        // th
+        // when asked to verify Bluetooth support
+        mClassUnderTest.verifyBluetoothSupport();
 
+        // the request is passed to Model
+        verify(mModel, atLeastOnce()).verifyBluetoothSupport();
     }
 
 }
