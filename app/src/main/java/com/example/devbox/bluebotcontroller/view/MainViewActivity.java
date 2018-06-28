@@ -8,10 +8,12 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.devbox.bluebotcontroller.R;
+import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
 
 public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     private Button mStartDiscoveryButton;
+    private MainPresenter mMainPresenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,12 +35,14 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     @Override
     public void checkBluetoothPermissions() {
+        if(mMainPresenter!=null){
+            mMainPresenter.checkBluetoothPermissions();
+        }
 
     }
 
     @Override
     public void startBluetoothDiscovery() {
-        //TODO implement
         Intent discoveryActivityIntent =  new Intent(this, DiscoveryViewActivity.class);
         startActivity(discoveryActivityIntent);
     }

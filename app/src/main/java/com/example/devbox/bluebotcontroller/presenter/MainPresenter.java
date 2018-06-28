@@ -16,12 +16,23 @@ public class MainPresenter implements IMainPresenter {
         mModel = model;
     }
 
-
     @Override
     public void verifyBluetoothSupport() {
         if(mModel!=null){
             mModel.verifyBluetoothSupport();
         }
+    }
+
+    @Override
+    public void checkBluetoothPermissions() {
+        if(mModel!=null){
+            mModel.checkBluetoothPermissions();
+        }
+    }
+
+    @Override
+    public void requestBluetoothPermissions() {
+
     }
 
     @Override

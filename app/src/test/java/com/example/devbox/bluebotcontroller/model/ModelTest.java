@@ -11,9 +11,8 @@ import com.example.devbox.bluebotcontroller.presenter.IDiscoveryPresenter;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
 import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

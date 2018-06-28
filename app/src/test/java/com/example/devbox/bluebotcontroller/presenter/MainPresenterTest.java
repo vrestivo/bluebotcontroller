@@ -128,4 +128,17 @@ public class MainPresenterTest {
         verify(mModel, atLeastOnce()).verifyBluetoothSupport();
     }
 
+
+    @Test
+    public void checkBluetoothPermissionsTest(){
+        // given initialized view, presenter, and model
+
+        // when asked to verify permissions
+        mClassUnderTest.checkBluetoothPermissions();
+
+        //the call is propagated to Model layer
+        verify(mModel, atLeastOnce()).checkBluetoothPermissions();
+    }
+
+
 }

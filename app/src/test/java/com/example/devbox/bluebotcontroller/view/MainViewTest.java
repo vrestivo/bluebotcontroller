@@ -6,12 +6,17 @@ import android.widget.Button;
 
 import com.example.devbox.bluebotcontroller.BuildConfig;
 import com.example.devbox.bluebotcontroller.R;
+import com.example.devbox.bluebotcontroller.model.Model;
+import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
@@ -23,13 +28,19 @@ public class MainViewTest {
 
 
     private MainViewActivity mClassUnderTest;
+    private MainPresenter mMockMainPresenter;
 
 
     @Before
-    public void tesSetup(){
+    public void testSetup(){
         mClassUnderTest = Robolectric.setupActivity(MainViewActivity.class);
     }
 
+
+    private void setupMockMainPresenter(){
+        mMockMainPresenter = PowerMockito.mock(MainPresenter.class);
+        Whitebox.setInternalState(mClassUnderTest, "mMainPresenter", mMockMainPresenter);
+    }
 
     @Test
     public void mainViewActivityTest(){
@@ -68,5 +79,16 @@ public class MainViewTest {
     }
 
 
+    @Test
+    public void checkBluetoothPermissionsTestTest(){
+        // given initialized MainViewActivity
+        setupMockMainPresenter();
+
+        // when check for bluetooth permissions is requested
+        mClassUnderTest.checkBluetoothPermissions();
+
+        //the call is passed to presenter
+        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).checkBluetoothPermissions();
+    }
 
 }
