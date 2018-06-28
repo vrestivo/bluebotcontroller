@@ -130,7 +130,7 @@ public class MainViewTest {
 
 
     @Test
-    public  void bluetoothOffTest(){
+    public void bluetoothOffTest(){
         // given initialized MainViewActivity
         setupMockMainPresenter();
 
@@ -139,6 +139,45 @@ public class MainViewTest {
 
         // the request is forwarded to presenter
         Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).disableBluetooth();
+    }
+
+
+    @Test
+    public void onBluetoothOffTest(){
+        // given initialized MainViewActivity
+        setupMockMainPresenter();
+
+        // when bluetooth turns off
+        mClassUnderTest.onBluetoothOff();
+
+        // discovery button is disabled
+        Assert.assertFalse(mClassUnderTest.findViewById(R.id.bt_discover).isEnabled());
+
+        // disconnect button is disabled
+        Assert.assertFalse(mClassUnderTest.findViewById(R.id.bt_disconnect).isEnabled());
+
+        // send button is disabled
+        Assert.assertFalse(mClassUnderTest.findViewById(R.id.bt_send).isEnabled());
+    }
+
+    @Test
+    public void onBluetoothOnTest(){
+        // given initialized MainViewActivity
+        setupMockMainPresenter();
+        mClassUnderTest.onBluetoothOff();
+
+        // when bluetooth turns off
+        mClassUnderTest.onBluetoothOn();
+
+        // discovery button is enabled
+        Assert.assertTrue(mClassUnderTest.findViewById(R.id.bt_discover).isEnabled());
+
+        // disconnect button is enabled
+        Assert.assertTrue(mClassUnderTest.findViewById(R.id.bt_disconnect).isEnabled());
+
+        // send button is enabled
+        Assert.assertTrue(mClassUnderTest.findViewById(R.id.bt_send).isEnabled());
+
     }
 
 }

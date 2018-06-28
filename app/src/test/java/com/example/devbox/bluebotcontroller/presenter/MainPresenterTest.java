@@ -142,6 +142,18 @@ public class MainPresenterTest {
 
 
     @Test
+    public void isBluetoothEnabledTest(){
+        // given initialized view, presenter, and model
+
+        // when checking if bluetooth is enables
+        mClassUnderTest.isBluetoothEnabled();
+
+        // call is passed to model
+        verify(mModel, atLeastOnce()).isBluetoothEnabled();
+    }
+
+
+    @Test
     public void verifyBluetoothSupportTest(){
         // given initialized view, presenter, and model
 

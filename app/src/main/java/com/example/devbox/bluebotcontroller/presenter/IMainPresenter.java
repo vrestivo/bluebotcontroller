@@ -11,6 +11,7 @@ public interface IMainPresenter {
     void disableBluetooth();
     void onBluetoothOn();
     void onBluetoothOff();
+    boolean isBluetoothEnabled();
     void disableBluetoothFeatures();
     void disconnect();
     void cleanup();

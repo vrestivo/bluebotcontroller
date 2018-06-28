@@ -16,6 +16,7 @@ public class MainPresenter implements IMainPresenter {
         mModel = model;
     }
 
+
     @Override
     public void verifyBluetoothSupport() {
         if(mModel!=null){
@@ -30,12 +31,14 @@ public class MainPresenter implements IMainPresenter {
         }
     }
 
+
     @Override
     public void requestBluetoothPermissions() {
         if(mMainView != null){
             mMainView.requestBluetoothPermissions();
         }
     }
+
 
     @Override
     public void sendMessageToUI(String messageToUI) {
@@ -60,6 +63,7 @@ public class MainPresenter implements IMainPresenter {
         }
     }
 
+
     @Override
     public void enableBluetooth() {
         if(mModel!=null){
@@ -67,12 +71,14 @@ public class MainPresenter implements IMainPresenter {
         }
     }
 
+
     @Override
     public void disableBluetooth() {
         if(mModel!=null){
             mModel.disableBluetooth();
         }
     }
+
 
     @Override
     public void onBluetoothOn() {
@@ -87,6 +93,15 @@ public class MainPresenter implements IMainPresenter {
         if(mMainView!=null){
             mMainView.onBluetoothOff();
         }
+    }
+
+
+    @Override
+    public boolean isBluetoothEnabled() {
+        if(mModel!=null){
+            return mModel.isBluetoothEnabled();
+        }
+        return false;
     }
 
 
