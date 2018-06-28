@@ -32,7 +32,9 @@ public class MainPresenter implements IMainPresenter {
 
     @Override
     public void requestBluetoothPermissions() {
-
+        if(mMainView != null){
+            mMainView.requestBluetoothPermissions();
+        }
     }
 
     @Override

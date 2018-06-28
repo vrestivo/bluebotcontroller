@@ -180,6 +180,9 @@ public class Model implements IModel {
     public void checkBluetoothPermissions() {
         if(!bluetoothPermissionsGranted()){
             disableBluetoothFeatures();
+            if(sMainPresenter!=null){
+                sMainPresenter.requestBluetoothPermissions();
+            }
         }
     }
 

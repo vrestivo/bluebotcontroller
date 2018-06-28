@@ -1,5 +1,7 @@
 package com.example.devbox.bluebotcontroller.presenter;
 
+import android.support.v4.widget.TextViewCompat;
+
 import com.example.devbox.bluebotcontroller.model.Model;
 import com.example.devbox.bluebotcontroller.view.IMainView;
 
@@ -138,6 +140,17 @@ public class MainPresenterTest {
 
         //the call is propagated to Model layer
         verify(mModel, atLeastOnce()).checkBluetoothPermissions();
+    }
+
+    @Test
+    public void requestBluetoothPermissionsTest(){
+        // given initialized view, presenter, and model
+
+        // when Models requests permissions
+        mClassUnderTest.requestBluetoothPermissions();
+
+        // the call is propagated to the View layer
+        verify(mMainView, atLeastOnce()).requestBluetoothPermissions();
     }
 
 

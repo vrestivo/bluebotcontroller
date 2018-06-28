@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.os.Process;
 
 import com.example.devbox.bluebotcontroller.TestObjectGenerator;
 import com.example.devbox.bluebotcontroller.presenter.DiscoveryPresenter;
@@ -26,13 +28,17 @@ import org.powermock.reflect.Whitebox;
 
 import java.util.Set;
 
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @SuppressStaticInitializationFor("com.example.devbox.bluebotcontroller.model.Model")
-@PrepareForTest({Model.class, BluetoothConnection.class, BluetoothAdapter.class, BluetoothBroadcastReceiver.class})
+@PrepareForTest({Model.class, BluetoothConnection.class, BluetoothAdapter.class, BluetoothBroadcastReceiver.class, Process.class})
 public class ModelTest {
 
     private final String DEVICE_STATUS = "TESTING";
@@ -304,6 +310,37 @@ public class ModelTest {
 
         // the call is propagated to BluetoothConnection class
         verify(mMockBluetoothConnection, atLeastOnce()).scanForDevices();
+    }
+
+
+    @Test
+    public void bluetoothPermissionsDeniedTest(){
+        // given initialized Model
+        when(mMockContext.checkPermission(anyString(), anyInt(), anyInt())).thenReturn(PackageManager.PERMISSION_DENIED);
+        PowerMockito.mockStatic(Process.class);
+        PowerMockito.when(Process.myPid()).thenReturn(1);
+
+        // when permission check results in denial
+        mClassUnderTest.checkBluetoothPermissions();
+
+        // bluetooth features are disabled and permissions are requested
+        verify(mMockMainPresenter, atLeastOnce()).disableBluetoothFeatures();
+        verify(mMockMainPresenter, atLeastOnce()).requestBluetoothPermissions();
+    }
+
+    @Test
+    public void bluetoothPermissionsGrantedTest(){
+        // given initialized Model
+        when(mMockContext.checkPermission(anyString(), anyInt(), anyInt())).thenReturn(PackageManager.PERMISSION_GRANTED);
+        PowerMockito.mockStatic(Process.class);
+        PowerMockito.when(Process.myPid()).thenReturn(1);
+
+        // when permissions are granted
+        mClassUnderTest.checkBluetoothPermissions();
+
+        // bluetooth features are not disabled and permissions are not requested
+        verify(mMockMainPresenter, never()).disableBluetoothFeatures();
+        verify(mMockMainPresenter, never()).requestBluetoothPermissions();
     }
 
 }

@@ -38,8 +38,8 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         if(mMainPresenter!=null){
             mMainPresenter.checkBluetoothPermissions();
         }
-
     }
+
 
     @Override
     public void startBluetoothDiscovery() {
@@ -47,15 +47,18 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         startActivity(discoveryActivityIntent);
     }
 
+
     @Override
     public void disconnect() {
         //TODO implement
     }
 
+
     @Override
     public void cleanup() {
         //TODO implement
     }
+
 
     @Override
     public void showMessage(String message) {
@@ -89,7 +92,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     @Override
     public void requestBluetoothPermissions() {
-
+        //TODO implement
     }
 
 
