@@ -50,7 +50,9 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     @Override
     public void disconnect() {
-        //TODO implement
+        if(mMainPresenter!=null){
+            mMainPresenter.disconnect();
+        }
     }
 
 
@@ -67,16 +69,23 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     @Override
     public void sendMessageToRemoteDevice(String message) {
-
+        if(mMainPresenter != null && message != null){
+            mMainPresenter.sendMessageToRemoteDevice(message);
+        }
     }
 
     @Override
     public void onBluetoothOn() {
-
+        if(mMainPresenter!=null){
+            mMainPresenter.onBluetoothOn();
+        }
     }
 
     @Override
     public void onBluetoothOff() {
+        if(mMainPresenter!=null){
+            mMainPresenter.onBluetoothOff();
+        }
 
     }
 
@@ -94,6 +103,5 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     public void requestBluetoothPermissions() {
         //TODO implement
     }
-
 
 }

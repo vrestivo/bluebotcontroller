@@ -26,6 +26,7 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 public class MainViewTest {
 
+    private final String TEST_MSG = "TEST";
 
     private MainViewActivity mClassUnderTest;
     private MainPresenter mMockMainPresenter;
@@ -44,7 +45,6 @@ public class MainViewTest {
 
     @Test
     public void mainViewActivityTest(){
-
         Assert.assertNotNull(mClassUnderTest);
         Assert.assertEquals(MainViewActivity.class.getSimpleName(), mClassUnderTest.getClass().getSimpleName());
     }
@@ -89,6 +89,57 @@ public class MainViewTest {
 
         //the call is passed to presenter
         Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).checkBluetoothPermissions();
+    }
+
+    @Test
+    public void sendMessageToRemoteDeviceTest(){
+        // given initialized MainViewActivity
+        setupMockMainPresenter();
+
+        // message is sent to remote device
+        mClassUnderTest.sendMessageToRemoteDevice(TEST_MSG);
+
+        // the call is propagated to the presenter layer
+        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).sendMessageToRemoteDevice(TEST_MSG);
+    }
+
+
+    @Test
+    public void disconnectTest(){
+        // given initialized MainViewActivity
+        setupMockMainPresenter();
+
+        // when user requests to disconnect from remote device
+        mClassUnderTest.disconnect();
+
+        // the request is forwarded to presenter
+        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).disconnect();
+    }
+
+
+    @Test
+    public void bluetoothOnTest(){
+        // given initialized MainViewActivity
+        setupMockMainPresenter();
+
+        // when
+        mClassUnderTest.onBluetoothOn();
+
+        // the request is forwarded to presenter
+        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).onBluetoothOn();
+    }
+
+
+    @Test
+    public  void bluetoothOffTest(){
+        // given initialized MainViewActivity
+        setupMockMainPresenter();
+
+        // when user requested to turn off Bluetooth
+        mClassUnderTest.onBluetoothOff();
+
+        // the request is forwarded to presenter
+        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).onBluetoothOff();
     }
 
 }

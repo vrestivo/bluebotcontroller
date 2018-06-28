@@ -328,6 +328,7 @@ public class ModelTest {
         verify(mMockMainPresenter, atLeastOnce()).requestBluetoothPermissions();
     }
 
+
     @Test
     public void bluetoothPermissionsGrantedTest(){
         // given initialized Model
