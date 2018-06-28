@@ -19,6 +19,8 @@ public interface IModel {
     void notifyMainPresenter(String message);
     void notifyDiscoveryPresenter(String message);
     void updateDeviceStatus(String newStatus);
+    void enableBluetooth();
+    void disableBluetooth();
     void onBluetoothOff();
     void onBluetoothOn();
     void checkBluetoothPermissions();

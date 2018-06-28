@@ -61,6 +61,20 @@ public class MainPresenter implements IMainPresenter {
     }
 
     @Override
+    public void enableBluetooth() {
+        if(mModel!=null){
+            mModel.enableBluetooth();
+        }
+    }
+
+    @Override
+    public void disableBluetooth() {
+        if(mModel!=null){
+            mModel.disableBluetooth();
+        }
+    }
+
+    @Override
     public void onBluetoothOn() {
         if(mMainView!=null){
             mMainView.onBluetoothOn();

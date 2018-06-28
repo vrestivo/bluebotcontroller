@@ -14,6 +14,8 @@ public interface IBluetoothConnection {
     void startDiscovery();
     void stopDiscovery();
     void onDeviceFound(BluetoothDevice device);
+    void enableBluetooth();
+    void disableBluetooth();
     void onBluetoothOff();
     void onBluetoothOn();
     void connectToRemoteDevice(BluetoothDevice remoteDevice);

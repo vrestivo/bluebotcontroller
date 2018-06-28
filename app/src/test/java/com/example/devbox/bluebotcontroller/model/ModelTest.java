@@ -235,6 +235,29 @@ public class ModelTest {
 
 
     @Test
+    public void enableBluetooth(){
+        // given initialized Model
+
+        // when request to enable bluetooth is received
+        mClassUnderTest.enableBluetooth();
+
+        // the request is passed to BluetoothConnection class
+        verify(mMockBluetoothConnection, atLeastOnce()).enableBluetooth();
+    }
+
+    @Test
+    public void disableBluetooth(){
+        // given initialized Model
+
+        // when request to enable bluetooth is received
+        mClassUnderTest.disableBluetooth();
+
+        // the request is passed to BluetoothConnection class
+        verify(mMockBluetoothConnection, atLeastOnce()).disableBluetooth();
+    }
+
+
+    @Test
     public void onBluetoothOffTest(){
         // given initialized Model
 
@@ -263,10 +286,10 @@ public class ModelTest {
     public void getKnownDevicesTest() {
         // given initialized Model
         
-        // when
+        // when list of known devices is requested
         mClassUnderTest.getKnownDevices();
 
-        //then
+        // the request is passed to BluetoothConnection class
         verify(mMockBluetoothConnection, atLeastOnce()).getKnownDevices();
     }
 
@@ -343,5 +366,4 @@ public class ModelTest {
         verify(mMockMainPresenter, never()).disableBluetoothFeatures();
         verify(mMockMainPresenter, never()).requestBluetoothPermissions();
     }
-
 }

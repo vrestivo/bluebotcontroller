@@ -6,7 +6,6 @@ import android.widget.Button;
 
 import com.example.devbox.bluebotcontroller.BuildConfig;
 import com.example.devbox.bluebotcontroller.R;
-import com.example.devbox.bluebotcontroller.model.Model;
 import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
 
 import org.junit.Assert;
@@ -123,10 +122,10 @@ public class MainViewTest {
         setupMockMainPresenter();
 
         // when
-        mClassUnderTest.onBluetoothOn();
+        mClassUnderTest.enableBluetooth();
 
         // the request is forwarded to presenter
-        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).onBluetoothOn();
+        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).enableBluetooth();
     }
 
 
@@ -136,10 +135,10 @@ public class MainViewTest {
         setupMockMainPresenter();
 
         // when user requested to turn off Bluetooth
-        mClassUnderTest.onBluetoothOff();
+        mClassUnderTest.disableBluetooth();
 
         // the request is forwarded to presenter
-        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).onBluetoothOff();
+        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).disableBluetooth();
     }
 
 }

@@ -339,6 +339,24 @@ public class BluetoothConnection implements IBluetoothConnection {
 
 
     @Override
+    public void enableBluetooth() {
+        if(mBluetoothAdapter!=null){
+            if(!isBluetoothEnabled()){
+                mBluetoothAdapter.enable();
+            }
+        }
+    }
+
+    @Override
+    public void disableBluetooth() {
+        if(mBluetoothAdapter!=null){
+            if(isBluetoothEnabled()){
+                mBluetoothAdapter.disable();
+            }
+        }
+    }
+
+    @Override
     public void onBluetoothOn() {
         if(mModel!=null){
             mModel.onBluetoothOn();

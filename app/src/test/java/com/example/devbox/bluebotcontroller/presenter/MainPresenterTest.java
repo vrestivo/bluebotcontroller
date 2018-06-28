@@ -98,9 +98,31 @@ public class MainPresenterTest {
 
 
     @Test
+    public void enableBluetoothTest(){
+        // given initialized view, presenter, and model
+        // when user requests to turn on bluetooth
+        mClassUnderTest.enableBluetooth();
+
+        // the request is passed to model layer
+        verify(mModel, atLeastOnce()).enableBluetooth();
+    }
+
+
+    @Test
+    public void disableBluetoothTest(){
+        // given initialized view, presenter, and model
+        // when user requests to turn on bluetooth
+        mClassUnderTest.disableBluetooth();
+
+        // the request is passed to model layer
+        verify(mModel, atLeastOnce()).disableBluetooth();
+    }
+
+
+    @Test
     public void onBluetoothOnTest(){
         // given initialized view, presenter, and model
-        // when when bluetooth is turned on
+        // when onBluetoothOn() is called
         mClassUnderTest.onBluetoothOn();
 
         // the event is propagated to the main presenter
@@ -111,7 +133,7 @@ public class MainPresenterTest {
     @Test
     public void onBluetoothOffTest(){
         // given initialized view, presenter, and model
-        // when when bluetooth is turned on
+        // when onBluetoothOff() is called
         mClassUnderTest.onBluetoothOff();
 
         // the event is propagated to the main presenter

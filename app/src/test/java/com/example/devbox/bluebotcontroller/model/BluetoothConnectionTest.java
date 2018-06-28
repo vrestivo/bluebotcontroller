@@ -424,4 +424,31 @@ public class BluetoothConnectionTest {
         verify(mMockModel, atLeastOnce()).loadAvailableDevices(expectedDeviceSet);
     }
 
+
+    @Test
+    public void enableBluetooth(){
+        // given initialized connection
+        normalBluetoothAdapterInitialization();
+        when(mMockAdapter.isEnabled()).thenReturn(false);
+
+        // when bluetooth enable request is received
+        mClassUnderTest.enableBluetooth();
+
+        // the BluetoothAdapter.enable() is called
+        verify(mMockAdapter, atLeastOnce()).enable();
+    }
+
+    @Test
+    public void disableBluetooth(){
+        // given initialized connection
+        normalBluetoothAdapterInitialization();
+        when(mMockAdapter.isEnabled()).thenReturn(true);
+
+        // when bluetooth enable request is received
+        mClassUnderTest.disableBluetooth();
+
+        // the BluetoothAdapter.enable() is called
+        verify(mMockAdapter, atLeastOnce()).disable();
+    }
+
 }

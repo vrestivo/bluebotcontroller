@@ -9,6 +9,8 @@ public interface IMainView {
     void showDeviceStatus(String status);
     void requestBluetoothPermissions();
     void disableBluetoothFeatures();
+    void enableBluetooth();
+    void disableBluetooth();
     void onBluetoothOn();
     void onBluetoothOff();
     void checkBluetoothPermissions();

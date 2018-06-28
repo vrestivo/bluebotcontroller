@@ -158,6 +158,22 @@ public class Model implements IModel {
 
 
     @Override
+    public void enableBluetooth() {
+        if(sBluetoothConnection!=null){
+            sBluetoothConnection.enableBluetooth();
+        }
+    }
+
+
+    @Override
+    public void disableBluetooth() {
+        if(sBluetoothConnection!=null){
+            sBluetoothConnection.disableBluetooth();
+        }
+    }
+
+
+    @Override
     public void onBluetoothOn() {
         if(sMainPresenter!=null){
             sMainPresenter.onBluetoothOn();
@@ -181,6 +197,7 @@ public class Model implements IModel {
         if(!bluetoothPermissionsGranted()){
             disableBluetoothFeatures();
             if(sMainPresenter!=null){
+                disableBluetoothFeatures();
                 sMainPresenter.requestBluetoothPermissions();
             }
         }

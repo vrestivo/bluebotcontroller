@@ -8,12 +8,18 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.devbox.bluebotcontroller.R;
-import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
+import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
 
 public class MainViewActivity extends AppCompatActivity implements IMainView {
 
+    private final String BT_DISABLE = "BT OFF";
+    private final String BT_ENABLE = "BT ON";
+
+    private IMainPresenter mMainPresenter;
+    private Button mBluetoothOnOffButton;
     private Button mStartDiscoveryButton;
-    private MainPresenter mMainPresenter;
+    private Button mSendButton;
+    private Button mDisconnectButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -23,6 +29,14 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     }
 
     private void initializeUIElements(){
+        mBluetoothOnOffButton = findViewById(R.id.bt_on);
+        mBluetoothOnOffButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO implement
+            }
+        });
+
         mStartDiscoveryButton = findViewById(R.id.bt_discover);
         mStartDiscoveryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,17 +89,34 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     }
 
     @Override
-    public void onBluetoothOn() {
+    public void enableBluetooth() {
         if(mMainPresenter!=null){
-            mMainPresenter.onBluetoothOn();
+            mMainPresenter.enableBluetooth();
         }
     }
 
     @Override
-    public void onBluetoothOff() {
+    public void disableBluetooth() {
         if(mMainPresenter!=null){
-            mMainPresenter.onBluetoothOff();
+            mMainPresenter.disableBluetooth();
         }
+    }
+
+    @Override
+    public void onBluetoothOn() {
+        //TODO implement
+    }
+
+    private void bluetoothOnUI(){
+
+    }
+
+    @Override
+    public void onBluetoothOff() {
+        //TODO implement
+    }
+
+    private void bluetoothOffUI(){
 
     }
 
