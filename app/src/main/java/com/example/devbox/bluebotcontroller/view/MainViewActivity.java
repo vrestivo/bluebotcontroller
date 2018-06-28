@@ -132,19 +132,15 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     @Override
     public void enableBluetoothFeatures() {
-        // TODO enable bluetooth on/off button
-        // TODO enable the rest of the buttons
+        mBluetoothOnOffButton.setEnabled(true);
+        bluetoothOnUI();
     }
 
 
-    /**
-     * called when Bluetooth permissions are denies
-     * and when bluetooth is not supported
-     */
     @Override
     public void disableBluetoothFeatures() {
-        // TODO disable on/off button
-        // TODO disable the rest of the buttons
+        mBluetoothOnOffButton.setEnabled(false);
+        bluetoothOffUI();
     }
 
 

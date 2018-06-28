@@ -177,7 +177,52 @@ public class MainViewTest {
 
         // send button is enabled
         Assert.assertTrue(mClassUnderTest.findViewById(R.id.bt_send).isEnabled());
-
     }
+
+
+    @Test
+    public void disableBluetoothFeaturesTest(){
+        // given initialized MainViewActivity
+        setupMockMainPresenter();
+
+        // when disableBluetoothFeatures is called
+        mClassUnderTest.disableBluetoothFeatures();
+
+        // bluetooth on/off button is disabled
+        Assert.assertFalse(mClassUnderTest.findViewById(R.id.bt_on).isEnabled());
+
+        // discovery button is disabled
+        Assert.assertFalse(mClassUnderTest.findViewById(R.id.bt_discover).isEnabled());
+
+        // disconnect button is disabled
+        Assert.assertFalse(mClassUnderTest.findViewById(R.id.bt_disconnect).isEnabled());
+
+        // send button is disabled
+        Assert.assertFalse(mClassUnderTest.findViewById(R.id.bt_send).isEnabled());
+    }
+
+    @Test
+    public void enableBluetoothFeaturesTest(){
+        // given initialized MainViewActivity
+        setupMockMainPresenter();
+        mClassUnderTest.disableBluetoothFeatures();
+
+
+        // when disableBluetoothFeatures is called
+        mClassUnderTest.enableBluetoothFeatures();
+
+        // bluetooth on/off button is enabled
+        Assert.assertTrue(mClassUnderTest.findViewById(R.id.bt_on).isEnabled());
+
+        // discovery button is enabled
+        Assert.assertTrue(mClassUnderTest.findViewById(R.id.bt_discover).isEnabled());
+
+        // disconnect button is enabled
+        Assert.assertTrue(mClassUnderTest.findViewById(R.id.bt_disconnect).isEnabled());
+
+        // send button is enabled
+        Assert.assertTrue(mClassUnderTest.findViewById(R.id.bt_send).isEnabled());
+    }
+    
 
 }
