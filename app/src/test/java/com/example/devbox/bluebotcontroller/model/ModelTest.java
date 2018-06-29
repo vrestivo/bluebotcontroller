@@ -405,7 +405,7 @@ public class ModelTest {
         boolean result = mClassUnderTest.isBluetoothSupported();
 
         // correct values are passed
-        junit.framework.Assert.assertFalse(result);
+        junit.framework.Assert.assertTrue(result);
     }
 
     @Test

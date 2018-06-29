@@ -51,14 +51,6 @@ public class Model implements IModel {
 
 
     @Override
-    public void verifyBluetoothSupport() {
-        if(sBluetoothConnection != null){
-            sBluetoothConnection.verifyBluetoothSupport();
-        }
-    }
-
-
-    @Override
     public boolean isBluetoothSupported() {
         if(sBluetoothConnection!=null){
             return sBluetoothConnection.isBluetoothSupported();

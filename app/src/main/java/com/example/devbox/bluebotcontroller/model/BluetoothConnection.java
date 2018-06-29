@@ -89,13 +89,6 @@ public class BluetoothConnection implements IBluetoothConnection {
 
 
     @Override
-    public void verifyBluetoothSupport() {
-        if(mBluetoothAdapter == null){
-            handleBluetoothNotSupported();
-        }
-    }
-
-    @Override
     public boolean isBluetoothSupported() {
         if(mBluetoothAdapter != null){
             return true;

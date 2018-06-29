@@ -173,18 +173,6 @@ public class MainPresenterTest {
 
 
     @Test
-    public void verifyBluetoothSupportTest(){
-        // given initialized view, presenter, and model
-
-        // when asked to verify Bluetooth support
-        mClassUnderTest.verifyBluetoothSupport();
-
-        // the request is passed to Model
-        verify(mMockModel, atLeastOnce()).verifyBluetoothSupport();
-    }
-
-
-    @Test
     public void checkBluetoothPermissionsTest(){
         // given initialized view, presenter, and model
         PowerMockito.mockStatic(Process.class);

@@ -28,12 +28,6 @@ public class MainPresenter implements IMainPresenter {
         return false;
     }
 
-    @Override
-    public void verifyBluetoothSupport() {
-        if(mModel!=null){
-            mModel.verifyBluetoothSupport();
-        }
-    }
 
     @Override
     public void checkBluetoothPermissions() {

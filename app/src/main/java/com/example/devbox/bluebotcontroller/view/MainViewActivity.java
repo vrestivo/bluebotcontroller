@@ -39,15 +39,6 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
 
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if(mMainPresenter!=null){
-            mMainPresenter.verifyBluetoothSupport();
-        }
-    }
-
-
-    @Override
     protected void onPause() {
         super.onPause();
     }
