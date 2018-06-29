@@ -202,11 +202,11 @@ public class MainViewTest {
     }
 
     @Test
-    public void enableBluetoothFeaturesTest(){
+    public void enableBluetoothFeaturesWhenBluetoothIsConnectedTest() {
         // given initialized MainViewActivity
         setupMockMainPresenter();
         mClassUnderTest.disableBluetoothFeatures();
-
+        PowerMockito.when(mMockMainPresenter.isBluetoothEnabled()).thenReturn(true);
 
         // when disableBluetoothFeatures is called
         mClassUnderTest.enableBluetoothFeatures();
@@ -223,6 +223,107 @@ public class MainViewTest {
         // send button is enabled
         Assert.assertTrue(mClassUnderTest.findViewById(R.id.bt_send).isEnabled());
     }
-    
+
+    @Test
+    public void enableBluetoothFeaturesWhenBluetoothIsDisableddTest(){
+        // given initialized MainViewActivity
+        setupMockMainPresenter();
+        mClassUnderTest.disableBluetoothFeatures();
+        PowerMockito.when(mMockMainPresenter.isBluetoothEnabled()).thenReturn(false);
+
+        // when enableBluetoothFeatures is called
+        mClassUnderTest.enableBluetoothFeatures();
+
+        // bluetooth on/off button is enabled
+        Assert.assertTrue(mClassUnderTest.findViewById(R.id.bt_on).isEnabled());
+
+        // discovery button is disabled
+        Assert.assertFalse(mClassUnderTest.findViewById(R.id.bt_discover).isEnabled());
+
+        // disconnect button is disabled
+        Assert.assertFalse(mClassUnderTest.findViewById(R.id.bt_disconnect).isEnabled());
+
+        // send button is disabled
+        Assert.assertFalse(mClassUnderTest.findViewById(R.id.bt_send).isEnabled());
+    }
+
+
+    @Test
+    public void enableBluetoothFeaturesWhenBluetoothIsEnabledTest(){
+        // given initialized MainViewActivity
+        setupMockMainPresenter();
+        mClassUnderTest.disableBluetoothFeatures();
+        PowerMockito.when(mMockMainPresenter.isBluetoothEnabled()).thenReturn(true);
+
+        // when enableBluetoothFeatures is called
+        mClassUnderTest.enableBluetoothFeatures();
+
+        // bluetooth on/off button is enabled
+        Assert.assertTrue(mClassUnderTest.findViewById(R.id.bt_on).isEnabled());
+
+        // discovery button is enabled
+        Assert.assertTrue(mClassUnderTest.findViewById(R.id.bt_discover).isEnabled());
+
+        // disconnect button is enabled
+        Assert.assertTrue(mClassUnderTest.findViewById(R.id.bt_disconnect).isEnabled());
+
+        // send button is enabled
+        Assert.assertTrue(mClassUnderTest.findViewById(R.id.bt_send).isEnabled());
+    }
+
+
+    @Test
+    public void disconnectButtonTest(){
+        // given initialized MainViewActivity
+        setupMockMainPresenter();
+
+        // when disconnect button is pressed
+        mClassUnderTest.findViewById(R.id.bt_disconnect).performClick();
+
+        // disconnect call is passed to the Model
+        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).disconnect();
+    }
+
+
+    @Test
+    public void turnOnBluetoothTest(){
+        // given initialized MainViewActivity
+        setupMockMainPresenter();
+        PowerMockito.when(mMockMainPresenter.isBluetoothEnabled()).thenReturn(false);
+
+        // when bluetooth is off and user turns is on
+        // by pressing bluetooth on/off button
+        mClassUnderTest.findViewById(R.id.bt_on).performClick();
+
+        // bluetooth status is checked
+        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).isBluetoothEnabled();
+
+        // the request is passed to presenter
+        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).enableBluetooth();
+
+        // the button name is set correctly
+        Assert.assertEquals(mClassUnderTest.getString(R.string.button_bt_off), ((Button)mClassUnderTest.findViewById(R.id.bt_on)).getText().toString());
+    }
+
+    @Test
+    public void turnOffBluetooth(){
+        // given initialized MainViewActivity
+        setupMockMainPresenter();
+        PowerMockito.when(mMockMainPresenter.isBluetoothEnabled()).thenReturn(true);
+
+        // when bluetooth is on and user turns is off
+        // by pressing bluetooth on/off button
+        mClassUnderTest.findViewById(R.id.bt_on).performClick();
+
+        // bluetooth status is checked
+        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).isBluetoothEnabled();
+
+        // the request is passed to presenter
+        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).disableBluetooth();
+
+        // the button name is set correctly
+        Assert.assertEquals(mClassUnderTest.getString(R.string.button_bt_on), ((Button)mClassUnderTest.findViewById(R.id.bt_on)).getText().toString());
+    }
+
 
 }

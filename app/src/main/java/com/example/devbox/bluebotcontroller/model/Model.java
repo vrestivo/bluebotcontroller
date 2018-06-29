@@ -197,7 +197,6 @@ public class Model implements IModel {
         if(!bluetoothPermissionsGranted()){
             disableBluetoothFeatures();
             if(sMainPresenter!=null){
-                disableBluetoothFeatures();
                 sMainPresenter.requestBluetoothPermissions();
             }
         }

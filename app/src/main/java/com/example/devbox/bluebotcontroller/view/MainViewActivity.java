@@ -33,7 +33,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         mBluetoothOnOffButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO implement
+                toggleBluetooth();
             }
         });
 
@@ -46,8 +46,31 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         });
 
         mDisconnectButton = findViewById(R.id.bt_disconnect);
+        mDisconnectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mMainPresenter!=null){
+                    mMainPresenter.disconnect();
+                }
+            }
+        });
 
         mSendButton = findViewById(R.id.bt_send);
+    }
+
+
+    private void toggleBluetooth(){
+        //TODO implement
+        if(mMainPresenter!=null){
+            if(mMainPresenter.isBluetoothEnabled()){
+                mMainPresenter.disableBluetooth();
+                mBluetoothOnOffButton.setText(R.string.button_bt_on);
+            }
+            else {
+                mMainPresenter.enableBluetooth();
+                mBluetoothOnOffButton.setText(R.string.button_bt_off);
+            }
+        }
     }
 
 
@@ -124,6 +147,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     }
 
     private void bluetoothOffUI(){
+        mBluetoothOnOffButton.setText(R.string.button_bt_on);
         mStartDiscoveryButton.setEnabled(false);
         mDisconnectButton.setEnabled(false);
         mSendButton.setEnabled(false);
@@ -133,7 +157,14 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     @Override
     public void enableBluetoothFeatures() {
         mBluetoothOnOffButton.setEnabled(true);
-        bluetoothOnUI();
+        if(mMainPresenter!=null) {
+            if(mMainPresenter.isBluetoothEnabled()){
+                bluetoothOnUI();
+            }
+            else {
+                bluetoothOffUI();
+            }
+        }
     }
 
 
