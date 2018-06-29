@@ -1,19 +1,22 @@
 package com.example.devbox.bluebotcontroller.presenter;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.example.devbox.bluebotcontroller.model.Model;
 import com.example.devbox.bluebotcontroller.view.IMainView;
 
 import com.example.devbox.bluebotcontroller.model.IModel;
+import com.example.devbox.bluebotcontroller.view.MainViewActivity;
 
 public class MainPresenter implements IMainPresenter {
 
     private IMainView mMainView;
     private IModel mModel;
 
-    public MainPresenter(@NonNull IMainView mainView, @NonNull IModel model) {
+    public MainPresenter(@NonNull IMainView mainView, @NonNull Context applicationContext) {
         mMainView = mainView;
-        mModel = model;
+        mModel = Model.getInstance(applicationContext, this);
     }
 
 

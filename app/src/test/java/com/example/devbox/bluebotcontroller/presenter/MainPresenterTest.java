@@ -1,14 +1,21 @@
 package com.example.devbox.bluebotcontroller.presenter;
 
-import android.support.v4.widget.TextViewCompat;
+import android.content.Context;
+import android.os.Process;
 
+import com.example.devbox.bluebotcontroller.model.BluetoothBroadcastReceiver;
 import com.example.devbox.bluebotcontroller.model.Model;
 import com.example.devbox.bluebotcontroller.view.IMainView;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import com.example.devbox.bluebotcontroller.model.IModel;
 import com.example.devbox.bluebotcontroller.view.MainViewActivity;
@@ -16,20 +23,29 @@ import com.example.devbox.bluebotcontroller.view.MainViewActivity;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Model.class, Process.class})
+@SuppressStaticInitializationFor("com/example/devbox/bluebotcontroller/model/Model.java")
 public class MainPresenterTest {
 
     private String mTestString = "Test Message";
     private IMainPresenter mClassUnderTest;
 
     private IMainView mMainView;
-    private IModel mModel;
+    private IModel mMockModel;
 
 
     @Before
-    public void setup(){
+    public void setup() throws Exception {
+        PowerMockito.mockStatic(Process.class);
+        PowerMockito.mockStatic(BluetoothBroadcastReceiver.class);
+        PowerMockito.mockStatic(Model.class);
+        Context mockContext = PowerMockito.mock(Context.class);
         mMainView = PowerMockito.mock(MainViewActivity.class);
-        mModel = PowerMockito.mock(Model.class);
-        mClassUnderTest = new MainPresenter(mMainView, mModel);
+        mClassUnderTest = new MainPresenter(mMainView, mockContext);
+
+        mMockModel = PowerMockito.mock(Model.class);
+        Whitebox.setInternalState(mClassUnderTest, "mModel", mMockModel);
     }
 
 
@@ -50,7 +66,7 @@ public class MainPresenterTest {
         mClassUnderTest.cleanup();
 
         // IModel.cleanup() is invoked
-        verify(mModel).cleanup();
+        verify(mMockModel).cleanup();
     }
 
 
@@ -61,7 +77,7 @@ public class MainPresenterTest {
         mClassUnderTest.sendMessageToRemoteDevice(mTestString);
 
         // it is propagated all the way to the model
-        verify(mModel).sendMessageToRemoteDevice(mTestString);
+        verify(mMockModel).sendMessageToRemoteDevice(mTestString);
     }
 
 
@@ -82,7 +98,7 @@ public class MainPresenterTest {
         // when disconnect() is called
         mClassUnderTest.disconnect();
 
-        verify(mModel).disconnect();
+        verify(mMockModel).disconnect();
     }
 
 
@@ -104,7 +120,7 @@ public class MainPresenterTest {
         mClassUnderTest.enableBluetooth();
 
         // the request is passed to model layer
-        verify(mModel, atLeastOnce()).enableBluetooth();
+        verify(mMockModel, atLeastOnce()).enableBluetooth();
     }
 
 
@@ -115,7 +131,7 @@ public class MainPresenterTest {
         mClassUnderTest.disableBluetooth();
 
         // the request is passed to model layer
-        verify(mModel, atLeastOnce()).disableBluetooth();
+        verify(mMockModel, atLeastOnce()).disableBluetooth();
     }
 
 
@@ -149,7 +165,7 @@ public class MainPresenterTest {
         mClassUnderTest.isBluetoothEnabled();
 
         // call is passed to model
-        verify(mModel, atLeastOnce()).isBluetoothEnabled();
+        verify(mMockModel, atLeastOnce()).isBluetoothEnabled();
     }
 
 
@@ -161,19 +177,21 @@ public class MainPresenterTest {
         mClassUnderTest.verifyBluetoothSupport();
 
         // the request is passed to Model
-        verify(mModel, atLeastOnce()).verifyBluetoothSupport();
+        verify(mMockModel, atLeastOnce()).verifyBluetoothSupport();
     }
 
 
     @Test
     public void checkBluetoothPermissionsTest(){
         // given initialized view, presenter, and model
+        PowerMockito.mockStatic(Process.class);
+        PowerMockito.when(Process.myPid()).thenReturn(1);
 
         // when asked to verify permissions
         mClassUnderTest.checkBluetoothPermissions();
 
         //the call is propagated to Model layer
-        verify(mModel, atLeastOnce()).checkBluetoothPermissions();
+        verify(mMockModel, atLeastOnce()).checkBluetoothPermissions();
     }
 
     @Test
