@@ -60,7 +60,9 @@ public class Model implements IModel {
 
     @Override
     public boolean isBluetoothSupported() {
-        //TODO implement
+        if(sBluetoothConnection!=null){
+            return sBluetoothConnection.isBluetoothSupported();
+        }
         return false;
     }
 

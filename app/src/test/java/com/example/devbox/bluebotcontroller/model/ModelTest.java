@@ -373,4 +373,53 @@ public class ModelTest {
         verify(mMockMainPresenter, never()).disableBluetoothFeatures();
         verify(mMockMainPresenter, never()).requestBluetoothPermissions();
     }
+
+    @Test
+    public void isBluetoothSupportedTest(){
+        // given initialized Model
+
+        // when isBluetoothSupported() is called
+        mClassUnderTest.isBluetoothSupported();
+
+        //call is propagated to BluetoothConnection class
+        verify(mMockBluetoothConnection, atLeastOnce()).isBluetoothSupported();
+    }
+
+    @Test
+    public void isBluetoothSupportedBluetoothConnectionReturnsFalseTest(){
+        // given initialized Model
+        PowerMockito.when(mMockBluetoothConnection.isBluetoothSupported()).thenReturn(false);
+
+        // when isBluetoothSupported() is called
+        boolean result = mClassUnderTest.isBluetoothSupported();
+
+        // correct values are passed
+        junit.framework.Assert.assertFalse(result);
+    }
+
+    @Test
+    public void isBluetoothSupportedBluetoothConnectionReturnsTrueTest(){
+        PowerMockito.when(mMockBluetoothConnection.isBluetoothSupported()).thenReturn(true);
+
+        // when isBluetoothSupported() is called
+        boolean result = mClassUnderTest.isBluetoothSupported();
+
+        // correct values are passed
+        junit.framework.Assert.assertFalse(result);
+    }
+
+    @Test
+    public void nullBluetoothConnection(){
+        // given initialized Model
+
+        // when BluetoothConnection is null
+        mMockBluetoothConnection = null;
+        Whitebox.setInternalState(Model.class, "sBluetoothConnection", mMockBluetoothConnection);
+        // and isBluetoothSupported() is called
+        boolean result = mClassUnderTest.isBluetoothSupported();
+
+        // false is returned
+        junit.framework.Assert.assertFalse(result);
+    }
+
 }
