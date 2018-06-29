@@ -30,10 +30,11 @@ public class MainPresenter implements IMainPresenter {
 
 
     @Override
-    public void checkBluetoothPermissions() {
+    public boolean bluetoothPermissionsGranted() {
         if(mModel!=null){
-            mModel.checkBluetoothPermissions();
+           return mModel.bluetoothPermissionsGranted();
         }
+        return false;
     }
 
 

@@ -35,6 +35,24 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     protected void onStart() {
         super.onStart();
         initializeMainPresenter();
+        initializeBluetooth();
+    }
+
+    private void initializeBluetooth(){
+        if(mMainPresenter!=null){
+            if(mMainPresenter.isBluetoothSupported()){
+                // check permissions
+                if(mMainPresenter.bluetoothPermissionsGranted()){
+                    //todo enable UI
+                }
+                else {
+                    //todo disable UI
+                    //todo request permissions
+                }
+            }
+            disableBluetoothFeatures();
+
+        }
     }
 
 
@@ -106,14 +124,6 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
                 mMainPresenter.enableBluetooth();
                 mBluetoothOnOffButton.setText(R.string.button_bt_off);
             }
-        }
-    }
-
-
-    @Override
-    public void checkBluetoothPermissions() {
-        if(mMainPresenter!=null){
-            mMainPresenter.checkBluetoothPermissions();
         }
     }
 

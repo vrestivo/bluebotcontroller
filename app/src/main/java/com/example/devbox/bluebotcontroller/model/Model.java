@@ -212,8 +212,8 @@ public class Model implements IModel {
         return true;
     }
 
-
-    private boolean bluetoothPermissionsGranted(){
+    @Override
+    public boolean bluetoothPermissionsGranted(){
         //Needed to turn Turn On/Off Bluetooth
         List<String> neededBluetoothPermissions = Util.generateNeededBluetoothPermissionsList();
 

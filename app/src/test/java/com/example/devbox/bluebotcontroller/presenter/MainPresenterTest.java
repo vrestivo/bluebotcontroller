@@ -179,10 +179,10 @@ public class MainPresenterTest {
         PowerMockito.when(Process.myPid()).thenReturn(1);
 
         // when asked to verify permissions
-        mClassUnderTest.checkBluetoothPermissions();
+        mClassUnderTest.bluetoothPermissionsGranted();
 
         //the call is propagated to Model layer
-        verify(mMockModel, atLeastOnce()).checkBluetoothPermissions();
+        verify(mMockModel, atLeastOnce()).bluetoothPermissionsGranted();
     }
 
     @Test

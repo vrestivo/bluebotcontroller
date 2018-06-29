@@ -14,5 +14,4 @@ public interface IMainView {
     void disableBluetooth();
     void onBluetoothOn();
     void onBluetoothOff();
-    void checkBluetoothPermissions();
 }

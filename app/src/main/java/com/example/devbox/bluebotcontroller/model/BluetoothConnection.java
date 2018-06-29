@@ -70,6 +70,7 @@ public class BluetoothConnection implements IBluetoothConnection {
     private void initializeAdapter() {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(mBluetoothAdapter == null){
+            //TODO refactor
             handleBluetoothNotSupported();
         }
     }
@@ -99,6 +100,7 @@ public class BluetoothConnection implements IBluetoothConnection {
     @Override
     public boolean isBluetoothEnabled() {
         if(mBluetoothAdapter == null) {
+            //TODO refactor
             handleBluetoothNotSupported();
             return false;
         }

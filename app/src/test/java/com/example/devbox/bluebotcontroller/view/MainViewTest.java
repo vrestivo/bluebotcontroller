@@ -90,18 +90,6 @@ public class MainViewTest {
 
 
     @Test
-    public void checkBluetoothPermissionsTestTest(){
-        // given initialized MainViewActivity
-        setupMockMainPresenter();
-
-        // when check for bluetooth permissions is requested
-        mClassUnderTest.checkBluetoothPermissions();
-
-        //the call is passed to presenter
-        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).checkBluetoothPermissions();
-    }
-
-    @Test
     public void sendMessageToRemoteDeviceTest(){
         // given initialized MainViewActivity
         setupMockMainPresenter();
@@ -370,5 +358,38 @@ public class MainViewTest {
         Assert.assertNull(Whitebox.getInternalState(mClassUnderTestController.get(), mMainPresenterFieldName));
         mClassUnderTestController.destroy();
     }
+
+    @Test
+    public void checkBluetoothPermissionsWhenBluetoothIsSupportedTest(){
+        // given initialized MainViewActivity and MainPresenter
+        createActivityControllerAndMockPresenter();
+        PowerMockito.when(mMockMainPresenter.isBluetoothSupported()).thenReturn(true);
+        Bundle bundle = new Bundle();
+        mClassUnderTestController.create();
+        Whitebox.setInternalState(mClassUnderTestController.get(), mMainPresenterFieldName, mMockMainPresenter);
+
+        // when checking if bleutooth is available
+        mClassUnderTestController.start();
+
+        // then permissions are checked
+        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).bluetoothPermissionsGranted();
+    }
+
+    @Test
+    public void bluetoothPermissionsAreNotCheckedWhenBluetoothIsNotSupportedTest(){
+        // given initialized MainViewActivity and MainPresenter
+        createActivityControllerAndMockPresenter();
+        PowerMockito.when(mMockMainPresenter.isBluetoothSupported()).thenReturn(false);
+        Bundle bundle = new Bundle();
+        mClassUnderTestController.create();
+        Whitebox.setInternalState(mClassUnderTestController.get(), mMainPresenterFieldName, mMockMainPresenter);
+
+        // when checking bluetooth is not supported
+        mClassUnderTestController.start();
+
+        // then permissions are NOT checked
+        Mockito.verify(mMockMainPresenter, Mockito.never()).bluetoothPermissionsGranted();
+    }
+
 
 }
