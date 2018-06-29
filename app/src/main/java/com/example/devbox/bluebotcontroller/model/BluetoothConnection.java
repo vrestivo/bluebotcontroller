@@ -97,7 +97,10 @@ public class BluetoothConnection implements IBluetoothConnection {
 
     @Override
     public boolean isBluetoothSupported() {
-        return true;
+        if(mBluetoothAdapter != null){
+            return true;
+        }
+        return false;
     }
 
     @Override

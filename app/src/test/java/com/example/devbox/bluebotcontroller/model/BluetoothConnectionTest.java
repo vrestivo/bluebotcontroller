@@ -450,4 +450,29 @@ public class BluetoothConnectionTest {
         verify(mMockAdapter, atLeastOnce()).disable();
     }
 
+    @Test
+    public void isBluetoothSupportedWhenSupportedTest(){
+        // given initialized connection
+        normalBluetoothAdapterInitialization();
+
+        // when bluetooth is supported
+        boolean result = mClassUnderTest.isBluetoothSupported();
+
+        // true is returned
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void isBluetoothSupportedWhenNotSupportedTest(){
+        // given initialized connection
+        setupReturnNullBluetoothAdapter();
+
+        // when bluetooth is supported
+        boolean result = mClassUnderTest.isBluetoothSupported();
+
+        // true is returned
+        Assert.assertFalse(result);
+    }
+
+
 }
