@@ -2,6 +2,7 @@ package com.example.devbox.bluebotcontroller.view;
 
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.widget.Button;
 
 import com.example.devbox.bluebotcontroller.BuildConfig;
@@ -19,6 +20,7 @@ import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 
 @Config(constants = BuildConfig.class)
@@ -29,6 +31,8 @@ public class MainViewTest {
 
     private MainViewActivity mClassUnderTest;
     private MainPresenter mMockMainPresenter;
+    private ActivityController <MainViewActivity> mClassUnderTestController;
+    private String mMainPresenterFieldName = "mMainPresenter";
 
 
     @Before
@@ -39,8 +43,15 @@ public class MainViewTest {
 
     private void setupMockMainPresenter(){
         mMockMainPresenter = PowerMockito.mock(MainPresenter.class);
-        Whitebox.setInternalState(mClassUnderTest, "mMainPresenter", mMockMainPresenter);
+        Whitebox.setInternalState(mClassUnderTest, mMainPresenterFieldName, mMockMainPresenter);
     }
+
+
+    private void createActivityControllerAndMockPresenter(){
+        mMockMainPresenter = PowerMockito.mock(MainPresenter.class);
+        mClassUnderTestController = Robolectric.buildActivity(MainViewActivity.class);
+    }
+
 
     @Test
     public void mainViewActivityTest(){
@@ -325,5 +336,39 @@ public class MainViewTest {
         Assert.assertEquals(mClassUnderTest.getString(R.string.button_bt_on), ((Button)mClassUnderTest.findViewById(R.id.bt_on)).getText().toString());
     }
 
+    @Test
+    public void mainPresenterInitializationTest(){
+        // given initialized MainViewActivity
+
+        // when main view activity is started
+        Assert.assertNotNull(mClassUnderTest);
+
+        // main presenter is initialized
+        Assert.assertNotNull(Whitebox.getInternalState(mClassUnderTest,mMainPresenterFieldName));
+        mMainPresenterFieldName = "mMainPresenter";
+        Assert.assertEquals(
+                MainPresenter.class.getCanonicalName(),
+                Whitebox.getInternalState(mClassUnderTest, mMainPresenterFieldName).getClass().getCanonicalName()
+        );
+    }
+
+    @Test
+    public void mainPresenterLifecycleCleanupTest(){
+        // given initialized MainViewActivity and MainPresenter
+        createActivityControllerAndMockPresenter();
+        Bundle bundle = new Bundle();
+        mClassUnderTestController.create().start();
+        Whitebox.setInternalState(mClassUnderTestController.get(), mMainPresenterFieldName, mMockMainPresenter);
+        mClassUnderTestController.restoreInstanceState(bundle).resume().visible();
+
+        // when onStop() is called
+        mClassUnderTestController.saveInstanceState(bundle).pause().stop();
+
+        // MainPresenter.cleanup() is called
+        // and mMainPresenter is set to null;
+        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).cleanup();
+        Assert.assertNull(Whitebox.getInternalState(mClassUnderTestController.get(), mMainPresenterFieldName));
+        mClassUnderTestController.destroy();
+    }
 
 }

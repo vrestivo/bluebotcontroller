@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import com.example.devbox.bluebotcontroller.R;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
+import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
 
 public class MainViewActivity extends AppCompatActivity implements IMainView {
 
@@ -26,6 +27,31 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_view);
         initializeUIElements();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        initializeMainPresenter();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        presenterLifecycleCleanup();
+    }
+
+    private void initializeMainPresenter(){
+        if(mMainPresenter==null){
+            mMainPresenter = new MainPresenter(this, getApplicationContext());
+        }
+    }
+
+    private void presenterLifecycleCleanup(){
+        if(mMainPresenter!=null){
+            mMainPresenter.cleanup();
+            mMainPresenter = null;
+        }
     }
 
     private void initializeUIElements(){
