@@ -53,6 +53,14 @@ public class MainViewTest {
     }
 
 
+    private void createActvityControllerAndMockPresenterInitializedAtOnCreate(){
+        createActivityControllerAndMockPresenter();
+        Bundle bundle = new Bundle();
+        mClassUnderTestController.create();
+        Whitebox.setInternalState(mClassUnderTestController.get(), mMainPresenterFieldName, mMockMainPresenter);
+    }
+
+
     @Test
     public void mainViewActivityTest(){
         Assert.assertNotNull(mClassUnderTest);
@@ -362,13 +370,10 @@ public class MainViewTest {
     @Test
     public void checkBluetoothPermissionsWhenBluetoothIsSupportedTest(){
         // given initialized MainViewActivity and MainPresenter
-        createActivityControllerAndMockPresenter();
+        createActvityControllerAndMockPresenterInitializedAtOnCreate();
         PowerMockito.when(mMockMainPresenter.isBluetoothSupported()).thenReturn(true);
-        Bundle bundle = new Bundle();
-        mClassUnderTestController.create();
-        Whitebox.setInternalState(mClassUnderTestController.get(), mMainPresenterFieldName, mMockMainPresenter);
 
-        // when checking if bleutooth is available
+        // when checking if bluetooth is available
         mClassUnderTestController.start();
 
         // then permissions are checked
@@ -378,11 +383,9 @@ public class MainViewTest {
     @Test
     public void bluetoothPermissionsAreNotCheckedWhenBluetoothIsNotSupportedTest(){
         // given initialized MainViewActivity and MainPresenter
-        createActivityControllerAndMockPresenter();
+        createActvityControllerAndMockPresenterInitializedAtOnCreate();
         PowerMockito.when(mMockMainPresenter.isBluetoothSupported()).thenReturn(false);
-        Bundle bundle = new Bundle();
-        mClassUnderTestController.create();
-        Whitebox.setInternalState(mClassUnderTestController.get(), mMainPresenterFieldName, mMockMainPresenter);
+
 
         // when checking bluetooth is not supported
         mClassUnderTestController.start();
@@ -390,8 +393,6 @@ public class MainViewTest {
         // then permissions are NOT checked
         Mockito.verify(mMockMainPresenter, Mockito.never()).bluetoothPermissionsGranted();
     }
-
-    @Test
 
 
 }

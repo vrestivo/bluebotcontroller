@@ -2,6 +2,7 @@ package com.example.devbox.bluebotcontroller.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -13,6 +14,8 @@ import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
 import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
 
 public class MainViewActivity extends AppCompatActivity implements IMainView {
+
+    public static final int BT_PERM_REQ_CODE = 87;
 
     private final String BT_DISABLE = "BT OFF";
     private final String BT_ENABLE = "BT ON";
@@ -69,7 +72,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         initializeBluetoothFeatures();
     }
 
-    
+
     private void initializeBluetoothFeatures(){
         if(mMainPresenter!=null){
             if(mMainPresenter.isBluetoothSupported()){
@@ -96,8 +99,15 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     @Override
     protected void onStop() {
         super.onStop();
-        presenterLifecycleCleanup();
+        cleanup();
     }
+
+    @Override
+    public void cleanup() {
+        presenterLifecycleCleanup();
+        //TODO clean up joystick thread
+    }
+
 
 
     private void initializeMainPresenter(){
@@ -144,10 +154,6 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     }
 
 
-    @Override
-    public void cleanup() {
-        //TODO implement
-    }
 
 
     @Override
@@ -183,6 +189,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         bluetoothOnUI();
     }
 
+
     private void bluetoothOnUI(){
         mStartDiscoveryButton.setEnabled(true);
         mDisconnectButton.setEnabled(true);
@@ -190,10 +197,12 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     }
 
+
     @Override
     public void onBluetoothOff() {
         bluetoothOffUI();
     }
+
 
     private void bluetoothOffUI(){
         mBluetoothOnOffButton.setText(R.string.button_bt_on);
@@ -229,9 +238,18 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     }
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        //TODO check if all permissions are granted
+        //TODO if granted bluetooth features
+        //TODO else disable bluetooth features
+    }
+
+
     @Override
     public void requestBluetoothPermissions() {
-        //TODO implement
+        //TODO request permissions
     }
 
 }
