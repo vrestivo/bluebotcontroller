@@ -20,7 +20,10 @@ import org.powermock.reflect.Whitebox;
 import com.example.devbox.bluebotcontroller.model.IModel;
 import com.example.devbox.bluebotcontroller.view.MainViewActivity;
 
+import junit.framework.Assert;
+
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
 @RunWith(PowerMockRunner.class)
@@ -205,5 +208,52 @@ public class MainPresenterTest {
         verify(mMainView, atLeastOnce()).requestBluetoothPermissions();
     }
 
+    @Test
+    public void isBluetoothSupportedTest(){
+        // given initialized view, presenter, and model
+
+        // when isBluetoothSupported() is called
+        mClassUnderTest.isBluetoothSupported();
+
+        // the call is propagated to the Model
+        verify(mMockModel, atLeastOnce()).isBluetoothSupported();
+    }
+
+    @Test
+    public void isBluetoothSupportedModelReturnsFalseTest(){
+        // given initialized view, presenter, and model
+        PowerMockito.when(mMockModel.isBluetoothSupported()).thenReturn(false);
+
+        // when isBluetoothSupported() is called
+        boolean result = mClassUnderTest.isBluetoothSupported();
+
+        // correct values are passed
+        Assert.assertFalse(result);
+    }
+
+    @Test
+    public void isBluetoothSupportedModelReturnsTrueTest(){
+        // given initialized view, presenter, and model
+        PowerMockito.when(mMockModel.isBluetoothSupported()).thenReturn(true);
+
+        // when isBluetoothSupported() is called
+        boolean result = mClassUnderTest.isBluetoothSupported();
+
+        // correct values are passed
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void isBluetoothSupportedOnNullModelReturnsFalseTest(){
+        // given initialized view, presenter, and model
+        mMockModel = null; // avoids method abmiguity in setInternalState();
+        Whitebox.setInternalState(mClassUnderTest, "mModel", mMockModel);
+
+        // when isBluetoothSupported() is called
+        boolean result = mClassUnderTest.isBluetoothSupported();
+
+        // correct values are passed
+        Assert.assertFalse(result);
+    }
 
 }

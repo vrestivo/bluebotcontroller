@@ -22,6 +22,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     private Button mSendButton;
     private Button mDisconnectButton;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,17 +30,35 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         initializeUIElements();
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
         initializeMainPresenter();
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mMainPresenter!=null){
+            mMainPresenter.verifyBluetoothSupport();
+        }
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+
     @Override
     protected void onStop() {
         super.onStop();
         presenterLifecycleCleanup();
     }
+
 
     private void initializeMainPresenter(){
         if(mMainPresenter==null){
