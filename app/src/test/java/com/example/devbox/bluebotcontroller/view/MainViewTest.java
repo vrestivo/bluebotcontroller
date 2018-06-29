@@ -224,7 +224,7 @@ public class MainViewTest {
     }
 
     @Test
-    public void enableBluetoothFeaturesWhenBluetoothIsDisableddTest(){
+    public void enableBluetoothFeaturesWhenBluetoothIsDisabledTest(){
         // given initialized MainViewActivity
         setupMockMainPresenter();
         mClassUnderTest.disableBluetoothFeatures();
@@ -390,6 +390,8 @@ public class MainViewTest {
         // then permissions are NOT checked
         Mockito.verify(mMockMainPresenter, Mockito.never()).bluetoothPermissionsGranted();
     }
+
+    @Test
 
 
 }
