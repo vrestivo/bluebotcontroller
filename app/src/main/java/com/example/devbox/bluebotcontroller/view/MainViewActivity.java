@@ -1,6 +1,7 @@
 package com.example.devbox.bluebotcontroller.view;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,8 +11,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.devbox.bluebotcontroller.R;
+import com.example.devbox.bluebotcontroller.Util;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
 import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
+
+import java.util.List;
 
 public class MainViewActivity extends AppCompatActivity implements IMainView {
 
@@ -34,7 +38,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         initializeUIElements();
     }
 
-    private void initializeUIElements(){
+    private void initializeUIElements() {
         mBluetoothOnOffButton = findViewById(R.id.bt_on);
         mBluetoothOnOffButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,7 +59,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         mDisconnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mMainPresenter!=null){
+                if (mMainPresenter != null) {
                     mMainPresenter.disconnect();
                 }
             }
@@ -73,17 +77,16 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     }
 
 
-    private void initializeBluetoothFeatures(){
-        if(mMainPresenter!=null){
-            if(mMainPresenter.isBluetoothSupported()){
-                // check permissions
-                if(mMainPresenter.bluetoothPermissionsGranted()){
+    private void initializeBluetoothFeatures() {
+        if (mMainPresenter != null) {
+            if (mMainPresenter.isBluetoothSupported()) {
+                if (mMainPresenter.bluetoothPermissionsGranted()) {
                     enableBluetoothFeatures();
-                }
-                else {
+                } else {
                     disableBluetoothFeatures();
                     requestBluetoothPermissions();
                 }
+                return;
             }
             disableBluetoothFeatures();
         }
@@ -109,29 +112,27 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     }
 
 
-
-    private void initializeMainPresenter(){
-        if(mMainPresenter==null){
+    private void initializeMainPresenter() {
+        if (mMainPresenter == null) {
             mMainPresenter = new MainPresenter(this, getApplicationContext());
         }
     }
 
-    private void presenterLifecycleCleanup(){
-        if(mMainPresenter!=null){
+
+    private void presenterLifecycleCleanup() {
+        if (mMainPresenter != null) {
             mMainPresenter.cleanup();
             mMainPresenter = null;
         }
     }
 
 
-    private void toggleBluetooth(){
-        //TODO implement
-        if(mMainPresenter!=null){
-            if(mMainPresenter.isBluetoothEnabled()){
+    private void toggleBluetooth() {
+        if (mMainPresenter != null) {
+            if (mMainPresenter.isBluetoothEnabled()) {
                 mMainPresenter.disableBluetooth();
                 mBluetoothOnOffButton.setText(R.string.button_bt_on);
-            }
-            else {
+            } else {
                 mMainPresenter.enableBluetooth();
                 mBluetoothOnOffButton.setText(R.string.button_bt_off);
             }
@@ -141,45 +142,43 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     @Override
     public void startBluetoothDiscovery() {
-        Intent discoveryActivityIntent =  new Intent(this, DiscoveryViewActivity.class);
+        Intent discoveryActivityIntent = new Intent(this, DiscoveryViewActivity.class);
         startActivity(discoveryActivityIntent);
     }
 
 
     @Override
     public void disconnect() {
-        if(mMainPresenter!=null){
+        if (mMainPresenter != null) {
             mMainPresenter.disconnect();
         }
     }
 
 
-
-
     @Override
     public void showMessage(String message) {
-        if(message!=null) {
+        if (message != null) {
             Toast.makeText(this, message, Toast.LENGTH_SHORT);
         }
     }
 
     @Override
     public void sendMessageToRemoteDevice(String message) {
-        if(mMainPresenter != null && message != null){
+        if (mMainPresenter != null && message != null) {
             mMainPresenter.sendMessageToRemoteDevice(message);
         }
     }
 
     @Override
     public void enableBluetooth() {
-        if(mMainPresenter!=null){
+        if (mMainPresenter != null) {
             mMainPresenter.enableBluetooth();
         }
     }
 
     @Override
     public void disableBluetooth() {
-        if(mMainPresenter!=null){
+        if (mMainPresenter != null) {
             mMainPresenter.disableBluetooth();
         }
     }
@@ -190,7 +189,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     }
 
 
-    private void bluetoothOnUI(){
+    private void bluetoothOnUI() {
         mStartDiscoveryButton.setEnabled(true);
         mDisconnectButton.setEnabled(true);
         mSendButton.setEnabled(true);
@@ -204,7 +203,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     }
 
 
-    private void bluetoothOffUI(){
+    private void bluetoothOffUI() {
         mBluetoothOnOffButton.setText(R.string.button_bt_on);
         mStartDiscoveryButton.setEnabled(false);
         mDisconnectButton.setEnabled(false);
@@ -215,11 +214,10 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     @Override
     public void enableBluetoothFeatures() {
         mBluetoothOnOffButton.setEnabled(true);
-        if(mMainPresenter!=null) {
-            if(mMainPresenter.isBluetoothEnabled()){
+        if (mMainPresenter != null) {
+            if (mMainPresenter.isBluetoothEnabled()) {
                 bluetoothOnUI();
-            }
-            else {
+            } else {
                 bluetoothOffUI();
             }
         }
@@ -241,9 +239,26 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        //TODO check if all permissions are granted
-        //TODO if granted bluetooth features
-        //TODO else disable bluetooth features
+        switch (requestCode) {
+            case BT_PERM_REQ_CODE: {
+                if (grantResults.length == Util.generateNeededBluetoothPermissionsList().size()) {
+                    managePermissionResults(grantResults);
+                    return;
+                }
+                disableBluetoothFeatures();
+            }
+        }
+    }
+
+
+    private void managePermissionResults(int[] grandResults) {
+        for (int resultCode : grandResults) {
+            if (resultCode == PackageManager.PERMISSION_DENIED) {
+                disableBluetoothFeatures();
+                return;
+            }
+        }
+        enableBluetoothFeatures();
     }
 
 

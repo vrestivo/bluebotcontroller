@@ -2,11 +2,13 @@ package com.example.devbox.bluebotcontroller.view;
 
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Button;
 
 import com.example.devbox.bluebotcontroller.BuildConfig;
 import com.example.devbox.bluebotcontroller.R;
+import com.example.devbox.bluebotcontroller.Util;
 import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
 
 import org.junit.Assert;
@@ -392,6 +394,64 @@ public class MainViewTest {
 
         // then permissions are NOT checked
         Mockito.verify(mMockMainPresenter, Mockito.never()).bluetoothPermissionsGranted();
+    }
+
+
+    @Test
+    public void onRequestedPermissionsGrantedTest(){
+        // given initialized MainActivity
+        createActvityControllerAndMockPresenterInitializedAtOnCreate();
+        PowerMockito.when(mMockMainPresenter.isBluetoothEnabled()).thenReturn(false);
+        String[] permissions = new String[4];
+        Util.generateNeededBluetoothPermissionsList().toArray(permissions);
+        int[] granted = {0,0,0,0}; // 0 is permission granted
+
+
+        // when requested permissions are granted
+        mClassUnderTestController.get()
+                .onRequestPermissionsResult(MainViewActivity.BT_PERM_REQ_CODE, permissions, granted);
+
+
+        // the bluetooth features are in enabled as expected
+        // bluetooth on/off button is enabled
+        Assert.assertTrue(mClassUnderTestController.get().findViewById(R.id.bt_on).isEnabled());
+
+        // discovery button is disabled
+        Assert.assertFalse(mClassUnderTestController.get().findViewById(R.id.bt_discover).isEnabled());
+
+        // disconnect button is disabled
+        Assert.assertFalse(mClassUnderTestController.get().findViewById(R.id.bt_disconnect).isEnabled());
+
+        // send button is disabled
+        Assert.assertFalse(mClassUnderTestController.get().findViewById(R.id.bt_send).isEnabled());
+    }
+
+    @Test
+    public void onRequestedPermissionsDeniedTest(){
+        // given initialized MainActivity
+        createActvityControllerAndMockPresenterInitializedAtOnCreate();
+        PowerMockito.when(mMockMainPresenter.isBluetoothEnabled()).thenReturn(false);
+        String[] permissions = new String[4];
+        Util.generateNeededBluetoothPermissionsList().toArray(permissions);
+        int[] granted = {-1,-1,-1,-1}; // 0 is permission denied
+
+
+        // when requested permissions are granted
+        mClassUnderTestController.get()
+                .onRequestPermissionsResult(MainViewActivity.BT_PERM_REQ_CODE, permissions, granted);
+
+
+        // the bluetooth features are disabled
+        Assert.assertFalse(mClassUnderTestController.get().findViewById(R.id.bt_on).isEnabled());
+
+        // discovery button is disabled
+        Assert.assertFalse(mClassUnderTestController.get().findViewById(R.id.bt_discover).isEnabled());
+
+        // disconnect button is disabled
+        Assert.assertFalse(mClassUnderTestController.get().findViewById(R.id.bt_disconnect).isEnabled());
+
+        // send button is disabled
+        Assert.assertFalse(mClassUnderTestController.get().findViewById(R.id.bt_send).isEnabled());
     }
 
 
