@@ -92,5 +92,12 @@ public class Util {
         return bluetoothPermissions;
     }
 
+    public static String[] getStringArrayWithBleutoothPermissions(){
+        List<String> permissions = generateNeededBluetoothPermissionsList();
+        String[] results = new String[permissions.size()];
+        permissions.toArray(results);
+        return results;
+    }
+
 
 }
