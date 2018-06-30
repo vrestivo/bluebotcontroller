@@ -2,9 +2,7 @@ package com.example.devbox.bluebotcontroller.view;
 
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 
 import com.example.devbox.bluebotcontroller.BuildConfig;
@@ -56,7 +54,7 @@ public class MainViewTest {
     }
 
 
-    private void createActvityControllerAndMockPresenterInitializedAtOnCreate(){
+    private void createActivityControllerAndMockPresenterInitializedAtOnCreate(){
         createActivityControllerAndMockPresenter();
         Bundle bundle = new Bundle();
         mClassUnderTestController.create();
@@ -373,7 +371,7 @@ public class MainViewTest {
     @Test
     public void checkBluetoothPermissionsWhenBluetoothIsSupportedTest(){
         // given initialized MainViewActivity and MainPresenter
-        createActvityControllerAndMockPresenterInitializedAtOnCreate();
+        createActivityControllerAndMockPresenterInitializedAtOnCreate();
         PowerMockito.when(mMockMainPresenter.isBluetoothSupported()).thenReturn(true);
 
         // when checking if bluetooth is available
@@ -386,7 +384,7 @@ public class MainViewTest {
     @Test
     public void bluetoothPermissionsAreNotCheckedWhenBluetoothIsNotSupportedTest(){
         // given initialized MainViewActivity and MainPresenter
-        createActvityControllerAndMockPresenterInitializedAtOnCreate();
+        createActivityControllerAndMockPresenterInitializedAtOnCreate();
         PowerMockito.when(mMockMainPresenter.isBluetoothSupported()).thenReturn(false);
 
 
@@ -401,7 +399,7 @@ public class MainViewTest {
     @Test
     public void onRequestedPermissionsGrantedTest(){
         // given initialized MainActivity
-        createActvityControllerAndMockPresenterInitializedAtOnCreate();
+        createActivityControllerAndMockPresenterInitializedAtOnCreate();
         PowerMockito.when(mMockMainPresenter.isBluetoothEnabled()).thenReturn(false);
         String[] permissions = new String[4];
         Util.generateNeededBluetoothPermissionsList().toArray(permissions);
@@ -430,7 +428,7 @@ public class MainViewTest {
     @Test
     public void onRequestedPermissionsDeniedTest(){
         // given initialized MainActivity
-        createActvityControllerAndMockPresenterInitializedAtOnCreate();
+        createActivityControllerAndMockPresenterInitializedAtOnCreate();
         PowerMockito.when(mMockMainPresenter.isBluetoothEnabled()).thenReturn(false);
         String[] permissions = new String[4];
         Util.generateNeededBluetoothPermissionsList().toArray(permissions);
