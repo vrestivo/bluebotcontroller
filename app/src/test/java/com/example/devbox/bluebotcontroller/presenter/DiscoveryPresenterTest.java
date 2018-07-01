@@ -175,12 +175,15 @@ public class DiscoveryPresenterTest {
 
 
     @Test
-    public void testName() {
+    public void isBluetoothEnabledTest() {
         // given initialized discovery presenter
+        insertMockModelAndVerifyInsertion();
 
-        // when
+        // when isBluetoohtEnabled() is called
+        mClassUnderTest.isBluetoothEnabled();
 
-        //then
+        // the call is propagated to model
+        Mockito.verify(mMockModel, Mockito.atLeastOnce()).isBluetoothEnabled();
     }
 
 

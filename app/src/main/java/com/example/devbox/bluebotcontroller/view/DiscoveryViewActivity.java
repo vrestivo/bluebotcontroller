@@ -46,11 +46,22 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(!isBluetoothEnabled()) bluetoothOffUI();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         lifecycleCleanup();
     }
 
+    @Override
+    public boolean isBluetoothEnabled() {
+        if(mDiscoveryPresenter!=null) return mDiscoveryPresenter.isBluetoothEnabled();
+        return false;
+    }
 
     @Override
     public void scanForDevices() {
@@ -90,6 +101,7 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
     }
 
     private void bluetoothOffUI(){
+        // TODO disable device lists
         if(mScanButton!=null) mScanButton.setEnabled(false);
     }
 

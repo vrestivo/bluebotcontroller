@@ -164,7 +164,32 @@ public class DiscoveryViewActivityTest {
 
         // scan action is passed to presenter
         Mockito.verify(mMockPresenter, Mockito.atLeastOnce()).scanForDevices();
+    }
 
+    @Test
+    public void isBluetoothEnabledTest(){
+        // given initialized DiscoveryViewActivity class
+        initializeDiscoveryViewActivityWithMockPresenter();
+
+        // when isBluetoothEnabledIsCalled(0
+        mClassUnderTest.get().isBluetoothEnabled();
+
+        // the call is propagated to presenter
+        Mockito.verify(mMockPresenter, Mockito.atLeastOnce()).isBluetoothEnabled();
+    }
+
+
+    @Test
+    public void onStartDisableScanButtonIfBluetoothIsDisabled(){
+        // given initialized DiscoveryViewActivity class
+        initializeDiscoveryViewActivityWithMockPresenter();
+        PowerMockito.when(mMockPresenter.isBluetoothEnabled()).thenReturn(false);
+
+        // when bluetooth is disabled in
+        mClassUnderTest.resume();
+
+        // then scan features are disabled
+        Assert.assertFalse(mClassUnderTest.get().findViewById(R.id.button_scan).isEnabled());
     }
 
 }

@@ -22,6 +22,12 @@ public class DiscoveryPresenter implements IDiscoveryPresenter {
     }
 
     @Override
+    public boolean isBluetoothEnabled() {
+        if(mModel!=null) return mModel.isBluetoothEnabled();
+        return false;
+    }
+
+    @Override
     public void scanForDevices() {
         if(mModel!=null){
             mModel.scanForDevices();

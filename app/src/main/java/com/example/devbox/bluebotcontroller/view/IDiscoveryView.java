@@ -5,7 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import java.util.Set;
 
 public interface IDiscoveryView {
-
+    boolean isBluetoothEnabled();
     void scanForDevices();
     void onDeviceFound(BluetoothDevice newDevice);
     void getKnownDevices();
