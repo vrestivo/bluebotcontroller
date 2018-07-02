@@ -67,17 +67,17 @@ public class BluetoothDeviceAdapterTest {
         // given initialized adapter with mock callback
         // and a single mock device
         initializeAdapterWithMockCallbackAndOneDevice();
-        Set<BluetoothDevice> mockDevides = TestObjectGenerator.generateMockBluetoothDevices();
+        Set<BluetoothDevice> mockDevices = TestObjectGenerator.generateMockBluetoothDevices();
 
         // when the list is updated
-        mClassUnderTest.updateDeviceDataSet(mockDevides);
+        mClassUnderTest.updateDeviceDataSet(mockDevices);
 
         // count reflects the new element amount
-        Assert.assertEquals(mockDevides.size(), mClassUnderTest.getItemCount());
+        Assert.assertEquals(mockDevices.size(), mClassUnderTest.getItemCount());
 
         // all elements are present in the new list
         List<BluetoothDevice> devicesUnderTest = Whitebox.getInternalState(mClassUnderTest, "mDeviceList");
-        for(BluetoothDevice device: mockDevides){
+        for(BluetoothDevice device: mockDevices){
             Assert.assertTrue(devicesUnderTest.contains(device));
         }
     }

@@ -99,7 +99,7 @@ public class DiscoveryActivity extends AppCompatActivity {
 
 
         mScanButton = (Button) findViewById(R.id.button_scan);
-        mPairedDevicesView = (ListView) findViewById(R.id.devices_paired_lv);
+        mPairedDevicesView = (ListView) findViewById(R.id.devices_paired_rv);
         mAvailableDevicesView = (ListView) findViewById(R.id.devices_available_lv);
 
         Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();

@@ -1,11 +1,13 @@
 package com.example.devbox.bluebotcontroller.view;
 
 
+import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.devbox.bluebotcontroller.BuildConfig;
 import com.example.devbox.bluebotcontroller.R;
+import com.example.devbox.bluebotcontroller.TestObjectGenerator;
 import com.example.devbox.bluebotcontroller.presenter.DiscoveryPresenter;
 
 import org.junit.Assert;
@@ -21,6 +23,8 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
+
+import java.util.Set;
 
 @Config(constants = BuildConfig.class)
 @PrepareForTest({Toast.class})
@@ -100,7 +104,7 @@ public class DiscoveryViewActivityTest {
         // when initialization is complete
 
         // all expected device lists are present
-        Assert.assertNotNull(mClassUnderTest.get().findViewById(R.id.devices_paired_lv));
+        Assert.assertNotNull(mClassUnderTest.get().findViewById(R.id.devices_paired_rv));
         Assert.assertNotNull(mClassUnderTest.get().findViewById(R.id.devices_available_lv));
     }
 
@@ -191,5 +195,40 @@ public class DiscoveryViewActivityTest {
         // then scan features are disabled
         Assert.assertFalse(mClassUnderTest.get().findViewById(R.id.button_scan).isEnabled());
     }
+
+    @Test
+    public void pairedDevicesInitializationTest(){
+        // given initialized DiscoveryViewActivity class
+        initializeDiscoveryViewActivityWithMockPresenter();
+
+        // when activity is inflated
+
+        // paired devices recycler view is present
+        Assert.assertNotNull(mClassUnderTest.get().findViewById(R.id.devices_paired_rv));
+
+        // paired devices adapter is not null
+        BluetoothDeviceAdapter adapter = Whitebox.getInternalState(mClassUnderTest.get(), "mPairedDevicesAdapter");
+        Assert.assertNotNull(adapter);
+
+        // adapter returns device count of zero
+        Assert.assertEquals(0, adapter.getItemCount());
+    }
+
+    @Test
+    public void paredDevicesUpdateDeviceListTest(){
+        // given initialized DiscoveryViewActivity class
+        initializeDiscoveryViewActivityWithMockPresenter();
+        Set<BluetoothDevice> mockDeviceSet = TestObjectGenerator.generateMockBluetoothDevices();
+
+        // when loadPairedDevices() is called
+        mClassUnderTest.get().loadPairedDevices(mockDeviceSet);
+
+        // device count is correct
+        BluetoothDeviceAdapter adapter = Whitebox.getInternalState(mClassUnderTest.get(), "mPairedDevicesAdapter");
+        Assert.assertEquals(mockDeviceSet.size(), adapter.getItemCount());
+    }
+
+
+
 
 }

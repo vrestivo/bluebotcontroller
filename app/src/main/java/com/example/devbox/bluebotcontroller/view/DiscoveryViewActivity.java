@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -13,10 +15,12 @@ import com.example.devbox.bluebotcontroller.presenter.DiscoveryPresenter;
 
 import java.util.Set;
 
-public class DiscoveryViewActivity extends AppCompatActivity implements IDiscoveryView {
+public class DiscoveryViewActivity extends AppCompatActivity implements IDiscoveryView, BluetoothDeviceAdapter.OnDeviceSelected{
 
     private DiscoveryPresenter mDiscoveryPresenter;
     private Button mScanButton;
+    private RecyclerView mPairedDevices;
+    private BluetoothDeviceAdapter mPairedDevicesAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,6 +39,15 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
             }
         });
         //TODO finish UI unitialization
+        initializeRecyclerViewsAndAdapters();
+    }
+
+    private void initializeRecyclerViewsAndAdapters(){
+        mPairedDevices = findViewById(R.id.devices_paired_rv);
+        mPairedDevices.setLayoutManager(new LinearLayoutManager(this));
+        mPairedDevicesAdapter = new BluetoothDeviceAdapter(this);
+        mPairedDevices.setAdapter(mPairedDevicesAdapter);
+        //TODO initialize available devices list
     }
 
     @Override
@@ -69,6 +82,13 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
     }
 
     @Override
+    public void onDeviceClick(BluetoothDevice device) {
+        if(device!=null){
+            // TODO implement
+        }
+    }
+
+    @Override
     public void onDeviceFound(BluetoothDevice newDevice) {
 
     }
@@ -80,7 +100,9 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
 
     @Override
     public void loadPairedDevices(Set<BluetoothDevice> pairedDevices) {
-
+        if(mPairedDevicesAdapter!=null && pairedDevices!=null){
+            mPairedDevicesAdapter.updateDeviceDataSet(pairedDevices);
+        }
     }
 
     @Override

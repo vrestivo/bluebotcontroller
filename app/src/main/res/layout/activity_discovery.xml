@@ -30,8 +30,8 @@
                 android:text="@string/title_paired_devices" />
 
 
-            <ListView
-                android:id="@+id/devices_paired_lv"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/devices_paired_rv"
                 style="@style/DeviceListView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
