@@ -10,7 +10,10 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 
+import java.util.Observable;
+
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
 public class RxJavaTest {
@@ -40,6 +43,9 @@ public class RxJavaTest {
 
     }
 
+    public void echoThread(){
+        System.out.println("On Thread: " + Thread.currentThread().getName());
+    }
 
 
 }

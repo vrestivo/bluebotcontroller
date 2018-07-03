@@ -422,4 +422,32 @@ public class ModelTest {
         junit.framework.Assert.assertFalse(result);
     }
 
+    @Test
+    public void isConnectedTestReturnsFalseWhenBluetoothConnectionClassIsNull(){
+        // given initialized Model
+
+        // when BluetoothConnection is null
+        BluetoothConnection nullConnection = null;
+        Whitebox.setInternalState(Model.class, "sBluetoothConnection", nullConnection);
+        // and isConnected() called
+        Assert.assertNull(Whitebox.getInternalState(Model.class, "sBluetoothConnection"));
+
+        // returns False
+        Assert.assertFalse(mClassUnderTest.isConnected());
+    }
+
+    @Test
+    public void isConnectedTest(){
+        // given initialized Model
+
+        // when isConnected() is called
+
+        // it returns expected values
+        PowerMockito.when(mMockBluetoothConnection.isConnected()).thenReturn(true);
+        Assert.assertTrue(mClassUnderTest.isConnected());
+
+        PowerMockito.when(mMockBluetoothConnection.isConnected()).thenReturn(false);
+        Assert.assertFalse(mClassUnderTest.isConnected());
+    }
+
 }

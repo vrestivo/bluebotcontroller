@@ -69,6 +69,14 @@ public class Model implements IModel {
 
 
     @Override
+    public boolean isConnected() {
+        if(sBluetoothConnection!=null){
+            return sBluetoothConnection.isConnected();
+        }
+        return false;
+    }
+
+    @Override
     public void getKnownDevices() {
         if(sBluetoothConnection!=null){
             sBluetoothConnection.getKnownDevices();

@@ -9,14 +9,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.devbox.bluebotcontroller.R;
 import com.example.devbox.bluebotcontroller.Util;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
 import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
-
-import java.util.List;
 
 public class MainViewActivity extends AppCompatActivity implements IMainView {
 
@@ -30,7 +29,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     private Button mStartDiscoveryButton;
     private Button mSendButton;
     private Button mDisconnectButton;
-
+    private TextView mConnectionStatus;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +39,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     }
 
     private void initializeUIElements() {
+        mConnectionStatus = findViewById(R.id.con_status);
         mBluetoothOnOffButton = findViewById(R.id.bt_on);
         mBluetoothOnOffButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,7 +77,6 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         initializeBluetoothFeatures();
     }
 
-
     private void initializeBluetoothFeatures() {
         if (mMainPresenter != null) {
             if (mMainPresenter.isBluetoothSupported()) {
@@ -94,11 +93,21 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     }
 
 
+    private void setConnectionIndicator() {
+        if (mMainPresenter != null) {
+            if (mMainPresenter.isConnected()) {
+                mConnectionStatus.setText(R.string.status_connected);
+            } else {
+                mConnectionStatus.setText(R.string.status_default);
+            }
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+        setConnectionIndicator();
     }
-
 
 
     @Override
@@ -242,7 +251,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     @Override
     public void showDeviceStatus(String status) {
-
+        if (mConnectionStatus != null && status != null) mConnectionStatus.setText(status);
     }
 
 

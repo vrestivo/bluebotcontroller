@@ -117,14 +117,13 @@ public class BluetoothConnectionTest {
         PowerMockito.mock(BluetoothBroadcastReceiver.class);
         try {
             PowerMockito.whenNew(IntentFilter.class).withNoArguments().thenReturn(mMockIntentFilter);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
-    private void normalBluetoothAdapterInitialization(){
+    private void normalBluetoothAdapterInitialization() {
         PowerMockito.mockStatic(BluetoothAdapter.class);
         PowerMockito.when(BluetoothAdapter.getDefaultAdapter()).thenReturn(mMockAdapter);
 
@@ -133,13 +132,14 @@ public class BluetoothConnectionTest {
     }
 
 
-    private void setupReturnNullBluetoothAdapter(){
+    private void setupReturnNullBluetoothAdapter() {
         PowerMockito.mockStatic(BluetoothAdapter.class);
         PowerMockito.when(BluetoothAdapter.getDefaultAdapter()).thenReturn(null);
 
         mClassUnderTest = new BluetoothConnection(mMockModel, mMockContext);
         setupBluetoothConnectionSocketAndStreamMocks();
     }
+
 
     private void setupBluetoothConnectionSocketAndStreamMocks() {
         mMockSelectedBTRemoteDevice = PowerMockito.mock(BluetoothDevice.class);
@@ -161,7 +161,7 @@ public class BluetoothConnectionTest {
     }
 
 
-    private void verifyUnsupportedDeviceIsHandledCorrectly(){
+    private void verifyUnsupportedDeviceIsHandledCorrectly() {
         verify(mMockModel, atLeastOnce()).disableBluetoothFeatures();
         verify(mMockModel, atLeastOnce()).notifyMainPresenter(BluetoothConnection.MSG_BT_NOT_SUPPORTED);
         verify(mMockModel, atLeastOnce()).updateDeviceStatus(BluetoothConnection.STATUS_NOT_SUPPORTED);
@@ -169,7 +169,7 @@ public class BluetoothConnectionTest {
 
 
     @Test
-    public void  startDiscoveryTest() {
+    public void startDiscoveryTest() {
         //given class under test initialized with Model
         normalBluetoothAdapterInitialization();
 
@@ -243,12 +243,11 @@ public class BluetoothConnectionTest {
         PowerMockito.when(mMockBluetoothSocket.isConnected()).thenReturn(true);
         PowerMockito.when(mMockAdapter.isDiscovering()).thenReturn(true);
 
-        //when connect is called
+        //when connectToRemoteDevice() is called
         mClassUnderTest.connectToRemoteDevice(mMockSelectedBTRemoteDevice);
 
         //a BluetoothSocket is returned and streams are open
         try {
-
             Mockito.verify(mMockAdapter, atLeastOnce()).cancelDiscovery();
 
             Mockito.verify(mMockSelectedBTRemoteDevice, atLeastOnce())
@@ -264,7 +263,25 @@ public class BluetoothConnectionTest {
 
 
     @Test
-    public void bluetoothUnsupportedOnInitializationTest(){
+    public void connectToRemoteDeviceConnectCallTest() throws IOException {
+        //given initialized connection
+        normalBluetoothAdapterInitialization();
+        PowerMockito.when(mMockBluetoothSocket.isConnected()).thenReturn(false);
+        PowerMockito.when(mMockAdapter.isDiscovering()).thenReturn(true);
+
+        // when connect is called
+        mClassUnderTest.connectToRemoteDevice(mMockSelectedBTRemoteDevice);
+
+        // the createRfcommSocketToServiceRecord() is called
+        Mockito.verify(mMockSelectedBTRemoteDevice, atLeastOnce())
+                .createRfcommSocketToServiceRecord(BluetoothConnection.SPP_UUID);
+        // the connect() is called on the returned socket
+        Mockito.verify(mMockBluetoothSocket, atLeastOnce()).connect();
+    }
+
+
+    @Test
+    public void bluetoothUnsupportedOnInitializationTest() {
         //given initialized connection
         setupReturnNullBluetoothAdapter();
 
@@ -291,7 +308,7 @@ public class BluetoothConnectionTest {
 
 
     @Test
-    public void isBluetoothSupportedTest(){
+    public void isBluetoothSupportedTest() {
         //given initialized connection
         normalBluetoothAdapterInitialization();
 
@@ -303,7 +320,7 @@ public class BluetoothConnectionTest {
 
 
     @Test
-    public void isBluetoothEnabledReturnsTrueTest(){
+    public void isBluetoothEnabledReturnsTrueTest() {
         //given initialized connection
         normalBluetoothAdapterInitialization();
         PowerMockito.when(mMockAdapter.isEnabled()).thenReturn(true);
@@ -316,7 +333,7 @@ public class BluetoothConnectionTest {
 
 
     @Test
-    public void isBluetoothEnabledReturnsFalse(){
+    public void isBluetoothEnabledReturnsFalse() {
         //given initialized connection
         normalBluetoothAdapterInitialization();
         PowerMockito.when(mMockAdapter.isEnabled()).thenReturn(false);
@@ -329,40 +346,34 @@ public class BluetoothConnectionTest {
 
 
     @Test
-    public void subscribeToInputAndOutputStreamTest() {
+    public void subscribeToInputAndOutputStreamTest() throws IOException, InterruptedException {
         //given initialized connection
         normalBluetoothAdapterInitialization();
+        //keeps the while loop going in subscribeToInputStream()
         PowerMockito.when(mMockBluetoothSocket.isConnected()).thenReturn(true);
+        PowerMockito.when(mMockInputStream.available()).thenReturn(1);
 
         //when connect is called
         mClassUnderTest.connectToRemoteDevice(mMockSelectedBTRemoteDevice);
         mClassUnderTest.sendMessageToRemoteDevice(TEST_STRING);
 
         //allow thread time to finish work
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Thread.sleep(1000);
 
         mClassUnderTest.disconnect();
 
-        try {
-            verify(mMockBluetoothSocket, atLeastOnce()).getInputStream();
-            verify(mMockBluetoothSocket, atLeastOnce()).getOutputStream();
-            verify(mMockBluetoothSocket, atLeastOnce()).close();
-            verify(mMockInputStream, atLeastOnce()).read(mTestInputArray);
-            verify(mMockInputStream, atLeastOnce()).close();
-            verify(mMockOutputStream, atLeastOnce()).close();
-            verify(mMockOutputStream, atLeastOnce()).write(TEST_STRING.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        verify(mMockBluetoothSocket, atLeastOnce()).getInputStream();
+        verify(mMockBluetoothSocket, atLeastOnce()).getOutputStream();
+        verify(mMockBluetoothSocket, atLeastOnce()).close();
+        verify(mMockInputStream, atLeastOnce()).read(mTestInputArray);
+        verify(mMockInputStream, atLeastOnce()).close();
+        verify(mMockOutputStream, atLeastOnce()).close();
+        verify(mMockOutputStream, atLeastOnce()).write(TEST_STRING.getBytes());
     }
 
 
     @Test
-    public void getKnownDevicesTest(){
+    public void getKnownDevicesTest() {
         // given initialized connection
         normalBluetoothAdapterInitialization();
 
@@ -377,7 +388,7 @@ public class BluetoothConnectionTest {
 
 
     @Test
-    public void scanForDevicesReturnsPairedDevicesTest(){
+    public void scanForDevicesReturnsPairedDevicesTest() {
         // given initialized connection
         normalBluetoothAdapterInitialization();
         Set<BluetoothDevice> mockDevices = TestObjectGenerator.generateMockBluetoothDevices();
@@ -394,7 +405,7 @@ public class BluetoothConnectionTest {
     }
 
     @Test
-    public void discoveryIsCancelledIfAlreadyDiscoveringTest(){
+    public void discoveryIsCancelledIfAlreadyDiscoveringTest() {
         // given initialized connection
         normalBluetoothAdapterInitialization();
         when(mMockAdapter.isEnabled()).thenReturn(true);
@@ -409,7 +420,7 @@ public class BluetoothConnectionTest {
     }
 
     @Test
-    public void scannedDeviceReceivedAndPassedToModelTest(){
+    public void scannedDeviceReceivedAndPassedToModelTest() {
         // given initialized connection
         normalBluetoothAdapterInitialization();
         BluetoothDevice mockDevice = TestObjectGenerator.generateASingleMockBluetoothDevice();
@@ -425,7 +436,7 @@ public class BluetoothConnectionTest {
 
 
     @Test
-    public void enableBluetooth(){
+    public void enableBluetooth() {
         // given initialized connection
         normalBluetoothAdapterInitialization();
         when(mMockAdapter.isEnabled()).thenReturn(false);
@@ -438,7 +449,7 @@ public class BluetoothConnectionTest {
     }
 
     @Test
-    public void disableBluetooth(){
+    public void disableBluetooth() {
         // given initialized connection
         normalBluetoothAdapterInitialization();
         when(mMockAdapter.isEnabled()).thenReturn(true);
@@ -451,7 +462,7 @@ public class BluetoothConnectionTest {
     }
 
     @Test
-    public void isBluetoothSupportedWhenSupportedTest(){
+    public void isBluetoothSupportedWhenSupportedTest() {
         // given initialized connection
         normalBluetoothAdapterInitialization();
 
@@ -463,7 +474,7 @@ public class BluetoothConnectionTest {
     }
 
     @Test
-    public void isBluetoothSupportedWhenNotSupportedTest(){
+    public void isBluetoothSupportedWhenNotSupportedTest() {
         // given initialized connection
         setupReturnNullBluetoothAdapter();
 

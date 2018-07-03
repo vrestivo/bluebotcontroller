@@ -90,7 +90,9 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
 
     private void handleOnOffState(int state) {
         if (mBluetoothConnection != null)
-            switch (state) {
+            System.out.println("DEBUG: _in BTReceiver handleState: " + state);
+
+        switch (state) {
                 case BluetoothAdapter.STATE_OFF: {
                     mBluetoothConnection.disconnect();
                     mBluetoothConnection.onBluetoothOff();
@@ -98,6 +100,18 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
                 }
                 case BluetoothAdapter.STATE_ON: {
                     mBluetoothConnection.onBluetoothOn();
+                    break;
+                }
+                case BluetoothAdapter.STATE_CONNECTED: {
+                    mBluetoothConnection.updateConnectionStatus(BluetoothAdapter.STATE_CONNECTED);
+                    break;
+                }
+                case BluetoothAdapter.STATE_DISCONNECTED: {
+                    mBluetoothConnection.updateConnectionStatus(BluetoothAdapter.STATE_DISCONNECTED);
+                    break;
+                }
+                case BluetoothAdapter.ERROR:{
+                    mBluetoothConnection.updateConnectionStatus(BluetoothAdapter.ERROR);
                     break;
                 }
             }

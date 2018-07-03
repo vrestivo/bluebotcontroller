@@ -64,6 +64,7 @@ public class MainPresenter implements IMainPresenter {
 
     @Override
     public void updateDeviceStatus(String status) {
+
         if(mMainView!=null){
             mMainView.showDeviceStatus(status);
         }
@@ -110,6 +111,13 @@ public class MainPresenter implements IMainPresenter {
         return false;
     }
 
+    @Override
+    public boolean isConnected() {
+        if(mModel!=null){
+            return mModel.isConnected();
+        }
+        return false;
+    }
 
     @Override
     public void disableBluetoothFeatures() {
@@ -133,4 +141,5 @@ public class MainPresenter implements IMainPresenter {
         mModel.cleanupMainPresenter();
         mModel = null;
     }
+
 }

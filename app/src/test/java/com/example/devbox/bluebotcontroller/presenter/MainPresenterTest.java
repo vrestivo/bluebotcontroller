@@ -244,4 +244,17 @@ public class MainPresenterTest {
         Assert.assertFalse(result);
     }
 
+
+    @Test
+    public void isConnectedWhenModelINullTest(){
+        // given initialized view, presenter, and null model
+        mMockModel = null;
+        Whitebox.setInternalState(mClassUnderTest, "mModel", mMockModel);
+
+        // when isConnected() is called
+
+        // returns false
+        Assert.assertFalse(mClassUnderTest.isConnected());
+    }
+
 }

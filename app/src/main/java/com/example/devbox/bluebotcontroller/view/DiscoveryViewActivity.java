@@ -90,9 +90,11 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
 
     @Override
     public void onDeviceClick(BluetoothDevice device) {
-        if(device!=null){
-            // TODO implement
+        if(mDiscoveryPresenter != null && device!=null){
+            mDiscoveryPresenter.onDeviceSelected(device);
         }
+        lifecycleCleanup();
+        finish();
     }
 
     @Override

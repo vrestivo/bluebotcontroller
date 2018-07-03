@@ -7,7 +7,8 @@
 
     <!-- status indicator strings -->
     <string name="status_title">Connection:</string>
-    <string name="status_default">Not Connected</string>
+    <string name="status_default">Disconnected</string>
+    <string name="status_connected">Connected</string>
 
 
     <!-- button names -->

@@ -4,6 +4,7 @@ package com.example.devbox.bluebotcontroller.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.devbox.bluebotcontroller.BuildConfig;
 import com.example.devbox.bluebotcontroller.R;
@@ -76,6 +77,7 @@ public class MainViewTest {
         // when the activity is started
 
         // all expected elements are present
+        Assert.assertNotNull(mClassUnderTest.findViewById(R.id.con_status));
         Assert.assertNotNull(mClassUnderTest.findViewById(R.id.bt_on));
         Assert.assertNotNull(mClassUnderTest.findViewById(R.id.bt_disconnect));
         Assert.assertNotNull(mClassUnderTest.findViewById(R.id.bt_discover));
@@ -451,6 +453,48 @@ public class MainViewTest {
 
         // send button is disabled
         Assert.assertFalse(mClassUnderTestController.get().findViewById(R.id.bt_send).isEnabled());
+    }
+
+    @Test
+    public void showDeviceStatusTest(){
+        // given initialized MainViewActivity and MainPresenter
+        createActivityControllerAndMockPresenterInitializedAtOnCreate();
+
+        // when showDeviceStatus() is called
+        mClassUnderTestController.get().showDeviceStatus(TEST_MSG);
+
+        // the status indicator has correct text
+        Assert.assertEquals(TEST_MSG, ((TextView)mClassUnderTestController.get().findViewById(R.id.con_status)).getText());
+    }
+
+
+    @Test
+    public void setConnectionIndicatorWhenConnectedTest(){
+        // given initialized MainViewActivity and MainPresenter
+        createActivityControllerAndMockPresenterInitializedAtOnCreate();
+        PowerMockito.when(mMockMainPresenter.isConnected()).thenReturn(true);
+        mClassUnderTestController.start().resume();
+
+        // when connected and setConnectionIndicator() is called
+
+        // the status indicator has correct text
+        Assert.assertEquals(mClassUnderTestController.get().getString(R.string.status_connected),
+                ((TextView)mClassUnderTestController.get().findViewById(R.id.con_status)).getText());
+    }
+
+
+    @Test
+    public void setConnectionIndicatorWhenDisconnectedTest(){
+        // given initialized MainViewActivity and MainPresenter
+        createActivityControllerAndMockPresenterInitializedAtOnCreate();
+        PowerMockito.when(mMockMainPresenter.isConnected()).thenReturn(false);
+        mClassUnderTestController.start().resume();
+
+        // when disconnected and setConnectionIndicator() is called
+
+        // the status indicator has correct text
+        Assert.assertEquals(mClassUnderTestController.get().getString(R.string.status_default),
+                ((TextView)mClassUnderTestController.get().findViewById(R.id.con_status)).getText());
     }
 
 
