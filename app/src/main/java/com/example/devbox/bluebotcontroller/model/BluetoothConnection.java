@@ -49,7 +49,7 @@ public class BluetoothConnection implements IBluetoothConnection {
     private Disposable mOutputStreamDisposable;
     private Disposable mInputStreamDisposable;
     private BluetoothBroadcastReceiver mBluetoothBroadcastReceiver;
-    private HashSet<BluetoothDevice> mDiscoveredDevices;
+    private Set<BluetoothDevice> mDiscoveredDevices;
     private Set<BluetoothDevice> mPairedDevices;
 
     private int mConnectionStateCode = BluetoothAdapter.STATE_DISCONNECTED;
@@ -72,6 +72,9 @@ public class BluetoothConnection implements IBluetoothConnection {
         if(mBluetoothAdapter == null){
             //TODO refactor
             handleBluetoothNotSupported();
+        }
+        else {
+            mPairedDevices = mBluetoothAdapter.getBondedDevices();
         }
     }
 
@@ -96,6 +99,7 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
         return false;
     }
+
 
     @Override
     public boolean isBluetoothEnabled() {
@@ -158,9 +162,8 @@ public class BluetoothConnection implements IBluetoothConnection {
     @Override
     public void onDeviceFound(BluetoothDevice device) {
         if(device!=null){
-            if(mDiscoveredDevices.add(device)){
-                mModel.loadAvailableDevices(mDiscoveredDevices);
-            }
+            mDiscoveredDevices.add(device);
+            if(mModel!=null) mModel.loadAvailableDevices(mDiscoveredDevices);
         }
     }
 

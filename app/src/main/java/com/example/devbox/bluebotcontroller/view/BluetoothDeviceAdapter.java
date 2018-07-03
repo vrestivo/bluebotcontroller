@@ -37,8 +37,8 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDevice
         if(newDevices!=null && newDevices.size()>0){
             mDeviceList.clear();
             mDeviceList.addAll(newDevices);
-            notifyDataSetChanged();
         }
+        notifyDataSetChanged();
     }
 
 

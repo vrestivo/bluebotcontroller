@@ -39,6 +39,7 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
         if (intent != null) {
             String action = intent.getAction();
 
+            System.out.println("DEBUG: _in BTReceiver: " + action);
 
             switch (action) {
                 case BluetoothBroadcastReceiver.ACTION_SELF_UNREGISTER: {
