@@ -112,7 +112,7 @@ public class Model implements IModel {
 
     @Override
     public void loadAvailableDevices(Set<BluetoothDevice> availableDevices) {
-        if(sDiscoveryPresenter!=null && availableDevices != null){
+        if(sDiscoveryPresenter != null && availableDevices != null){
             sDiscoveryPresenter.loadAvailableDevices(availableDevices);
         }
     }
@@ -242,6 +242,15 @@ public class Model implements IModel {
 
     }
 
+    @Override
+    public void cleanupMainPresenter() {
+        sMainPresenter = null;
+    }
+
+    @Override
+    public void cleanupDiscoveryPresenter() {
+        sDiscoveryPresenter = null;
+    }
 
     @Override
     public void cleanup() {

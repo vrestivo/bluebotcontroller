@@ -130,7 +130,7 @@ public class MainPresenter implements IMainPresenter {
     @Override
     public void cleanup() {
         mMainView = null;
-        mModel.cleanup();
+        mModel.cleanupMainPresenter();
         mModel = null;
     }
 }

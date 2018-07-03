@@ -89,6 +89,7 @@ public class DiscoveryPresenterTest {
         mClassUnderTest.lifecycleCleanup();
 
         //then view and model are set to null
+        Mockito.verify(mMockModel, Mockito.atLeastOnce()).cleanupDiscoveryPresenter();
         IDiscoveryView memberViewMustBeNull = Whitebox.getInternalState(mClassUnderTest, "mDiscoveryView");
         Assert.assertNull(memberViewMustBeNull);
         IModel memberModelMustBeNull = Whitebox.getInternalState(mClassUnderTest, "mModel");

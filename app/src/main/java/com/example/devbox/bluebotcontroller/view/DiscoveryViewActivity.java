@@ -59,7 +59,7 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
     @Override
     protected void onStart() {
         super.onStart();
-        if(mDiscoveryPresenter==null){
+        if(mDiscoveryPresenter == null){
             mDiscoveryPresenter = new DiscoveryPresenter(this, getApplicationContext());
         }
         getKnownDevices();

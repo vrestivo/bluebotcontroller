@@ -69,7 +69,7 @@ public class MainPresenterTest {
         mClassUnderTest.cleanup();
 
         // IModel.cleanup() is invoked
-        verify(mMockModel).cleanup();
+        verify(mMockModel).cleanupMainPresenter();
     }
 
 

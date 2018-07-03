@@ -43,7 +43,7 @@ public class DiscoveryPresenter implements IDiscoveryPresenter {
 
     @Override
     public void loadAvailableDevices(Set<BluetoothDevice> availableDevices) {
-        if(mDiscoveryView!=null && availableDevices != null && !availableDevices.isEmpty()){
+        if(mDiscoveryView != null && availableDevices != null && !availableDevices.isEmpty()){
            mDiscoveryView.loadAvailableDevices(availableDevices);
         }
     }
@@ -78,9 +78,9 @@ public class DiscoveryPresenter implements IDiscoveryPresenter {
 
     @Override
     public void lifecycleCleanup() {
+        if(mModel!=null) mModel.cleanupDiscoveryPresenter();
         mDiscoveryView = null;
         mModel = null;
-
     }
 
 }

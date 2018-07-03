@@ -27,6 +27,8 @@ public interface IModel {
     void checkBluetoothPermissions();
     void disableBluetoothFeatures();
     void disconnect();
+    void cleanupMainPresenter();
+    void cleanupDiscoveryPresenter();
     void cleanup();
 
 }

@@ -163,7 +163,9 @@ public class BluetoothConnection implements IBluetoothConnection {
     public void onDeviceFound(BluetoothDevice device) {
         if(device!=null){
             mDiscoveredDevices.add(device);
-            if(mModel!=null) mModel.loadAvailableDevices(mDiscoveredDevices);
+            if(mModel!=null) {
+                mModel.loadAvailableDevices(mDiscoveredDevices);
+            }
         }
     }
 
