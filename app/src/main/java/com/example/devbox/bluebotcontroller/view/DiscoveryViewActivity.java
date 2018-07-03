@@ -20,7 +20,9 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
     private DiscoveryPresenter mDiscoveryPresenter;
     private Button mScanButton;
     private RecyclerView mPairedDevices;
+    private RecyclerView mAvailableDevices;
     private BluetoothDeviceAdapter mPairedDevicesAdapter;
+    private BluetoothDeviceAdapter mAvailableDevicesAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,7 +40,7 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
                 scanForDevices();
             }
         });
-        //TODO finish UI unitialization
+        //TODO finish UI initialization
         initializeRecyclerViewsAndAdapters();
     }
 
@@ -48,6 +50,10 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
         mPairedDevicesAdapter = new BluetoothDeviceAdapter(this);
         mPairedDevices.setAdapter(mPairedDevicesAdapter);
         //TODO initialize available devices list
+        mAvailableDevices = findViewById(R.id.devices_available_rv);
+        mAvailableDevices.setLayoutManager(new LinearLayoutManager(this));
+        mAvailableDevicesAdapter = new BluetoothDeviceAdapter(this);
+        mAvailableDevices.setAdapter(mAvailableDevicesAdapter);
     }
 
     @Override
@@ -56,6 +62,7 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
         if(mDiscoveryPresenter==null){
             mDiscoveryPresenter = new DiscoveryPresenter(this, getApplicationContext());
         }
+        getKnownDevices();
     }
 
     @Override
@@ -106,8 +113,10 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
     }
 
     @Override
-    public void loadAvailableDevices(Set<BluetoothDevice> pairedDevices) {
-
+    public void loadAvailableDevices(Set<BluetoothDevice> availableDevices) {
+        if(mAvailableDevicesAdapter!=null && availableDevices!=null){
+            mAvailableDevicesAdapter.updateDeviceDataSet(availableDevices);
+        }
     }
 
     @Override

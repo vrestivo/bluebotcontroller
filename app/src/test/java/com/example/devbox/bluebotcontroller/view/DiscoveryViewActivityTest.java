@@ -105,7 +105,7 @@ public class DiscoveryViewActivityTest {
 
         // all expected device lists are present
         Assert.assertNotNull(mClassUnderTest.get().findViewById(R.id.devices_paired_rv));
-        Assert.assertNotNull(mClassUnderTest.get().findViewById(R.id.devices_available_lv));
+        Assert.assertNotNull(mClassUnderTest.get().findViewById(R.id.devices_available_rv));
     }
 
     @Test
@@ -228,7 +228,37 @@ public class DiscoveryViewActivityTest {
         Assert.assertEquals(mockDeviceSet.size(), adapter.getItemCount());
     }
 
+    @Test
+    public void availableDevicesInitializationTest(){
+        // given initialized DiscoveryViewActivity class
+        initializeDiscoveryViewActivityWithMockPresenter();
 
+        // when activity is inflated
+
+        // available devices recycler view is present
+        Assert.assertNotNull(mClassUnderTest.get().findViewById(R.id.devices_available_rv));
+
+        // available devices adapter is not null
+        BluetoothDeviceAdapter adapter = Whitebox.getInternalState(mClassUnderTest.get(), "mAvailableDevicesAdapter");
+        Assert.assertNotNull(adapter);
+
+        // adapter returns device count of zero
+        Assert.assertEquals(0, adapter.getItemCount());
+    }
+
+    @Test
+    public void availableDevicesUpdateDeviceListTest(){
+        // given initialized DiscoveryViewActivity class
+        initializeDiscoveryViewActivityWithMockPresenter();
+        Set<BluetoothDevice> mockDeviceSet = TestObjectGenerator.generateMockBluetoothDevices();
+
+        // when loadAvailableDevices() is called
+        mClassUnderTest.get().loadAvailableDevices(mockDeviceSet);
+
+        // device count is correct
+        BluetoothDeviceAdapter adapter = Whitebox.getInternalState(mClassUnderTest.get(), "mAvailableDevicesAdapter");
+        Assert.assertEquals(mockDeviceSet.size(), adapter.getItemCount());
+    }
 
 
 }

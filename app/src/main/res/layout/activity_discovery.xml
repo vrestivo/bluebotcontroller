@@ -61,8 +61,8 @@
                 android:text="@string/title_available_devices" />
 
 
-            <ListView
-                android:id="@+id/devices_available_lv"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/devices_available_rv"
                 style="@style/DeviceListView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
