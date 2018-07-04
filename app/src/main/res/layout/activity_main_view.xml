@@ -62,7 +62,7 @@
 
 
             <EditText
-                android:id="@+id/exit_text"
+                android:id="@+id/edit_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="1"

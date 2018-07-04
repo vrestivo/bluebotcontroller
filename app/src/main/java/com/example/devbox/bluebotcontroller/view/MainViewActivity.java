@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +17,8 @@ import com.example.devbox.bluebotcontroller.R;
 import com.example.devbox.bluebotcontroller.Util;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
 import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
+import com.example.devbox.bluebotcontroller.view.joystick.JoystickHandlerThread;
+import com.example.devbox.bluebotcontroller.view.joystick.JoystickView;
 
 public class MainViewActivity extends AppCompatActivity implements IMainView {
 
@@ -30,6 +33,10 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     private Button mSendButton;
     private Button mDisconnectButton;
     private TextView mConnectionStatus;
+    private EditText mExitText;
+    private JoystickView mJoystickView;
+    private JoystickHandlerThread mJoystickThread;
+    private String mTextBuffer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,7 +73,24 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
             }
         });
 
+        mExitText = findViewById(R.id.edit_text);
+
         mSendButton = findViewById(R.id.bt_send);
+        mSendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getTextAndSendToRemoteDevice();
+            }
+        });
+
+        mJoystickView = findViewById(R.id.joystick_view);
+    }
+
+    private void getTextAndSendToRemoteDevice(){
+        if(mExitText!=null){
+            mTextBuffer = mExitText.getText().toString();
+            sendMessageToRemoteDevice(mTextBuffer);
+        }
     }
 
 

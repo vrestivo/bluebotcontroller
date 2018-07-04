@@ -24,7 +24,7 @@ public class JoystickView extends View {
     private float mYDistanceToCenter;
     private float mNormalizedResultant;
 
-    private Paint mJoysticBoundsPaint;
+    private Paint mJoystickBoundsPaint;
     private Paint mHandlePaint;
     private Circle mHandle;
     private Circle mBounds;
@@ -51,8 +51,8 @@ public class JoystickView extends View {
 
 
     private void initJoystick(Context context) {
-        mJoysticBoundsPaint = new Paint();
-        mJoysticBoundsPaint.setColor(mBackgroundColor);
+        mJoystickBoundsPaint = new Paint();
+        mJoystickBoundsPaint.setColor(mBackgroundColor);
 
         mHandlePaint = new Paint();
         mHandlePaint.setColor(mHandleColor);
@@ -103,18 +103,20 @@ public class JoystickView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        drawJoysticBound(canvas);
+        drawJoystickBound(canvas);
         drawJoystickHandle(canvas);
     }
 
-    private void drawJoysticBound(Canvas canvas) {
+
+    private void drawJoystickBound(Canvas canvas) {
         canvas.drawCircle(
                 mBounds.getCenterX(),
                 mBounds.getCenterY(),
                 mBounds.getRadius(),
-                mJoysticBoundsPaint
+                mJoystickBoundsPaint
         );
     }
+
 
     private void drawJoystickHandle(Canvas canvas) {
         canvas.drawCircle(
@@ -124,6 +126,7 @@ public class JoystickView extends View {
                 mHandlePaint
         );
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -162,8 +165,6 @@ public class JoystickView extends View {
                 return true;
             }
         }
-
-
         return false;
     }
 
@@ -217,7 +218,6 @@ public class JoystickView extends View {
 
                 return true;
             }
-
             return false;
         }
     }

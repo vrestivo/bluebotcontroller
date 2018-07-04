@@ -129,7 +129,7 @@ public class MainFragment extends Fragment {
         mButtonSend = (Button) rootView.findViewById(R.id.bt_send);
         mButtonDisconnect = (Button) rootView.findViewById(R.id.bt_disconnect);
         mJoystickView = (JoystickView) rootView.findViewById(R.id.joystick_view);
-        mEnterCommandField = (EditText) rootView.findViewById(R.id.exit_text);
+        mEnterCommandField = (EditText) rootView.findViewById(R.id.edit_text);
         mConnectionStatusIndicator = (TextView) rootView.findViewById(R.id.con_status);
 
         mIsBluetoothOn = mBluetoothAdapter.isEnabled();

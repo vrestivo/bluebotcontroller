@@ -4,6 +4,7 @@ package com.example.devbox.bluebotcontroller.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.devbox.bluebotcontroller.BuildConfig;
@@ -77,12 +78,14 @@ public class MainViewTest {
         // when the activity is started
 
         // all expected elements are present
+        Assert.assertNotNull(mClassUnderTest.findViewById(R.id.edit_text));
+        Assert.assertNotNull(mClassUnderTest.findViewById(R.id.joystick_view));
         Assert.assertNotNull(mClassUnderTest.findViewById(R.id.con_status));
         Assert.assertNotNull(mClassUnderTest.findViewById(R.id.bt_on));
         Assert.assertNotNull(mClassUnderTest.findViewById(R.id.bt_disconnect));
         Assert.assertNotNull(mClassUnderTest.findViewById(R.id.bt_discover));
         Assert.assertNotNull(mClassUnderTest.findViewById(R.id.bt_send));
-        Assert.assertNotNull(mClassUnderTest.findViewById(R.id.exit_text));
+        Assert.assertNotNull(mClassUnderTest.findViewById(R.id.edit_text));
     }
 
     @Test
@@ -496,6 +499,29 @@ public class MainViewTest {
         Assert.assertEquals(mClassUnderTestController.get().getString(R.string.status_default),
                 ((TextView)mClassUnderTestController.get().findViewById(R.id.con_status)).getText());
     }
+
+
+    @Test
+    public void sendTextToRemoteDevice(){
+        // given initialized MainViewActivity and MainPresenter
+        createActivityControllerAndMockPresenterInitializedAtOnCreate();
+        PowerMockito.when(mMockMainPresenter.isConnected()).thenReturn(false);
+        mClassUnderTestController.start().resume();
+        EditText editText = mClassUnderTestController.get().findViewById(R.id.edit_text);
+        editText.setText(TEST_MSG);
+
+        // when send button is pressed
+        mClassUnderTestController.get().findViewById(R.id.bt_send).performClick();
+
+        // data from text view is retrieved
+        Assert.assertEquals(TEST_MSG,
+                Whitebox.getInternalState(mClassUnderTestController.get(), "mTextBuffer"));
+
+        // data is sent to remote device
+        Mockito.verify(mMockMainPresenter, Mockito.atLeastOnce()).sendMessageToRemoteDevice(TEST_MSG);
+    }
+
+
 
 
 }
