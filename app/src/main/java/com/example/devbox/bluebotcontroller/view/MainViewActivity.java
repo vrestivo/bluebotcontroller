@@ -37,12 +37,15 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     private JoystickView mJoystickView;
     private JoystickHandlerThread mJoystickThread;
     private String mTextBuffer;
+    private String mMessageFormat;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_view);
         initializeUIElements();
+        mMessageFormat = getString(R.string.message_format_string);
+        mJoystickThread = new JoystickHandlerThread(JoystickHandlerThread.NAME);
     }
 
     private void initializeUIElements() {
@@ -131,12 +134,14 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     protected void onResume() {
         super.onResume();
         setConnectionIndicator();
+        if(mJoystickThread!=null) mJoystickThread.start();
     }
 
 
     @Override
     protected void onPause() {
         super.onPause();
+        if(mJoystickThread!=null) mJoystickThread.quit();
     }
 
 

@@ -11,6 +11,7 @@ import com.example.devbox.bluebotcontroller.BuildConfig;
 import com.example.devbox.bluebotcontroller.R;
 import com.example.devbox.bluebotcontroller.Util;
 import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
+import com.example.devbox.bluebotcontroller.view.joystick.JoystickHandlerThread;
 
 import org.junit.Assert;
 
@@ -522,6 +523,42 @@ public class MainViewTest {
     }
 
 
+    @Test
+    public void joystickThreadStartTets(){
+        // given initialized MainViewActivity and MainPresenter
+        createActivityControllerAndMockPresenterInitializedAtOnCreate();
+        PowerMockito.when(mMockMainPresenter.isConnected()).thenReturn(false);
 
+        // when activity is resumed
+        mClassUnderTestController.start().resume();
+
+        // joystick thread is not null and alive
+        JoystickHandlerThread joystickHandlerThread =
+                Whitebox.getInternalState(mClassUnderTestController.get(), "mJoystickThread");
+
+        Assert.assertNotNull(joystickHandlerThread);
+        Assert.assertTrue(joystickHandlerThread.isAlive());
+
+        //when activity is paused
+        mClassUnderTestController.pause();
+        mClassUnderTestController.stop();
+    }
+
+    @Test
+    public void joystickThreadStopTest(){
+        // given initialized MainViewActivity and MainPresenter
+        createActivityControllerAndMockPresenterInitializedAtOnCreate();
+        PowerMockito.when(mMockMainPresenter.isConnected()).thenReturn(false);
+
+        // when activity is paused
+        mClassUnderTestController.start().resume().pause();
+
+        // joystick thread is not null and stopped
+        JoystickHandlerThread joystickHandlerThread =
+                Whitebox.getInternalState(mClassUnderTestController.get(), "mJoystickThread");
+        Assert.assertNotNull(joystickHandlerThread);
+        Assert.assertFalse(joystickHandlerThread.isAlive());
+        mClassUnderTestController.stop();
+    }
 
 }
