@@ -112,8 +112,6 @@ public class MainFragment extends Fragment {
             //exit the app if bluetooth is not available
             mainActivity.finish();
         }
-
-
     }
 
     @Nullable
@@ -229,11 +227,11 @@ public class MainFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mIsBluetoothOn = mBluetoothAdapter.isEnabled();
-        mJoysticHandlerThread = new JoystickHandlerThread(JoystickHandlerThread.NAME);
+        //mJoysticHandlerThread = new JoystickHandlerThread(JoystickHandlerThread.NAME);
         mJoysticHandlerThread.start();
 
         if (mBluetoothThread != null) {
-            mJoysticHandlerThread.setBluetoothThread(mBluetoothThread);
+            //mJoysticHandlerThread.setBluetoothThread(mBluetoothThread);
         }
 
         if (mIsBluetoothOn) {
@@ -270,6 +268,7 @@ public class MainFragment extends Fragment {
         Log.v(LOG_TAG, "_in onSaveInstanceState");
         super.onSaveInstanceState(outState);
     }
+/*
 
 
     @Override
@@ -310,6 +309,7 @@ public class MainFragment extends Fragment {
         }
     }
 
+*/
 
     public void handleMessage(Message msg) {
         switch (msg.what) {

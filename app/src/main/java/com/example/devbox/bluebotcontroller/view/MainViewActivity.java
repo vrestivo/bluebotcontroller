@@ -3,6 +3,7 @@ package com.example.devbox.bluebotcontroller.view;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -37,15 +38,16 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     private JoystickView mJoystickView;
     private JoystickHandlerThread mJoystickThread;
     private String mTextBuffer;
-    private String mMessageFormat;
+    private String mMessageFormatString;
+    private Handler mMainHandler;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        mMainHandler = new Handler();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_view);
         initializeUIElements();
-        mMessageFormat = getString(R.string.message_format_string);
-        mJoystickThread = new JoystickHandlerThread(JoystickHandlerThread.NAME);
+        mMessageFormatString = getString(R.string.message_format_string);
     }
 
     private void initializeUIElements() {
@@ -89,8 +91,47 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         mJoystickView = findViewById(R.id.joystick_view);
     }
 
-    private void getTextAndSendToRemoteDevice(){
-        if(mExitText!=null){
+    private void setupJoystickCallbacks() {
+        if (mJoystickView != null && mJoystickThread != null) {
+            mJoystickView.setJoystickDragListener(new JoystickView.OnJoystickDragListener() {
+                @Override
+                public void onJoystickUpdate(float x, float y, float resultant, boolean keepSending) {
+                    sendJoystickInput(x, y, resultant, keepSending);
+                }
+            });
+
+            mJoystickView.setStopSendingListener(new JoystickView.StopSendingJoysticDataListener() {
+                @Override
+                public void onStopSending() {
+                    if (mJoystickThread != null && mJoystickThread.isAlive()) {
+                        mJoystickThread.setKeepSending(false);
+                    }
+                }
+            });
+        }
+    }
+
+    private void sendJoystickInput(float x, float y, float resultant, boolean keepSending) {
+        String messageToSend = String.format(mMessageFormatString, x, y, resultant);
+        if (mJoystickThread != null && mJoystickThread.isAlive()) {
+            mJoystickThread.setDataToSend(messageToSend);
+            if (keepSending){
+                System.out.println(messageToSend);
+                mJoystickThread.setKeepSending(keepSending);
+                if(!mJoystickThread.isSending()) {
+                    mJoystickThread.getHandler().obtainMessage(JoystickHandlerThread.SEND_MSG, messageToSend).sendToTarget();
+                }
+                else {
+                    mJoystickThread.setDataToSend(messageToSend);
+                }
+                return;
+            }
+            mJoystickThread.setKeepSending(false);
+        }
+    }
+
+    private void getTextAndSendToRemoteDevice() {
+        if (mExitText != null) {
             mTextBuffer = mExitText.getText().toString();
             sendMessageToRemoteDevice(mTextBuffer);
         }
@@ -102,6 +143,9 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         super.onStart();
         initializeMainPresenter();
         initializeBluetoothFeatures();
+        mJoystickThread = new JoystickHandlerThread(JoystickHandlerThread.NAME, this);
+        setupJoystickCallbacks();
+
     }
 
     private void initializeBluetoothFeatures() {
@@ -134,14 +178,14 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     protected void onResume() {
         super.onResume();
         setConnectionIndicator();
-        if(mJoystickThread!=null) mJoystickThread.start();
+        if (mJoystickThread != null) mJoystickThread.start();
     }
 
 
     @Override
     protected void onPause() {
         super.onPause();
-        if(mJoystickThread!=null) mJoystickThread.quit();
+        if (mJoystickThread != null) mJoystickThread.quit();
     }
 
 
@@ -209,7 +253,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     }
 
     @Override
-    public void sendMessageToRemoteDevice(String message) {
+    public synchronized void sendMessageToRemoteDevice(String message) {
         if (mMainPresenter != null && message != null) {
             mMainPresenter.sendMessageToRemoteDevice(message);
         }

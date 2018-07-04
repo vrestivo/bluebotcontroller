@@ -323,7 +323,6 @@ public class BluetoothConnection implements IBluetoothConnection {
                                 }
                             },
                             error -> {
-                                //TODO
                                 disconnect();
                             }
                     );
