@@ -17,7 +17,6 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
         mBluetoothConnection = connection;
     }
 
-
     public IntentFilter generateIntentFilters() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -27,10 +26,10 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
         intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
         intentFilter.addAction(BluetoothBroadcastReceiver.ACTION_SELF_UNREGISTER);
         intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
         intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         return intentFilter;
     }
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -62,26 +61,29 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
                     }
                     break;
                 }
+                case BluetoothDevice.ACTION_ACL_CONNECTED: {
+                    if (mBluetoothConnection != null) {
+                        mBluetoothConnection.updateConnectionStatus(BluetoothAdapter.STATE_CONNECTED);
+                    }
+                    break;
+                }
                 case BluetoothDevice.ACTION_ACL_DISCONNECTED: {
-                    if(mBluetoothConnection!=null) mBluetoothConnection.disconnect();
+                    if (mBluetoothConnection != null) mBluetoothConnection.disconnect();
                     break;
                 }
             }
         }
     }
 
-
     private void handleConnectionStateChange(Intent intent) {
         if (intent != null && intent.hasExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE)) {
             int state = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE,
                     BluetoothAdapter.STATE_DISCONNECTED);
-
             if (mBluetoothConnection != null) {
                 mBluetoothConnection.updateConnectionStatus(state);
             }
         }
     }
-
 
     private void handleDeviceAdded(BluetoothDevice foundDevice) {
         if (mBluetoothConnection != null) {
@@ -89,35 +91,21 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
         }
     }
 
-
     private void handleOnOffState(int state) {
         if (mBluetoothConnection != null)
             System.out.println("DEBUG: _in BTReceiver handleState: " + state);
 
         switch (state) {
-                case BluetoothAdapter.STATE_OFF: {
-                    mBluetoothConnection.disconnect();
-                    mBluetoothConnection.onBluetoothOff();
-                    break;
-                }
-                case BluetoothAdapter.STATE_ON: {
-                    mBluetoothConnection.onBluetoothOn();
-                    break;
-                }
-                case BluetoothAdapter.STATE_CONNECTED: {
-                    mBluetoothConnection.updateConnectionStatus(BluetoothAdapter.STATE_CONNECTED);
-                    break;
-                }
-                case BluetoothAdapter.STATE_DISCONNECTED: {
-                    mBluetoothConnection.updateConnectionStatus(BluetoothAdapter.STATE_DISCONNECTED);
-                    break;
-                }
-                case BluetoothAdapter.ERROR:{
-                    mBluetoothConnection.updateConnectionStatus(BluetoothAdapter.ERROR);
-                    break;
-                }
+            case BluetoothAdapter.STATE_OFF: {
+                mBluetoothConnection.disconnect();
+                mBluetoothConnection.onBluetoothOff();
+                break;
             }
+            case BluetoothAdapter.STATE_ON: {
+                mBluetoothConnection.onBluetoothOn();
+                break;
+            }
+        }
     }
-
 
 }

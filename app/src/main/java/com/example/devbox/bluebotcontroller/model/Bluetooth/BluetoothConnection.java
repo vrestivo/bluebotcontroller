@@ -22,8 +22,6 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
 public class BluetoothConnection implements IBluetoothConnection {
-
-
     //NOTE this is SPP (Serial Port Profile) UUID
     //see the link below
     //https://developer.android.com/reference/android/bluetooth/BluetoothDevice.html#createRfcommSocketToServiceRecord%28java.util.UUID%29
@@ -36,7 +34,6 @@ public class BluetoothConnection implements IBluetoothConnection {
     public static final String STATUS_CONNECTED = "Connected";
     public static final String STATUS_ERROR = "Connection Error";
     public static final String STATUS_NOT_SUPPORTED = "Not supported";
-    public static final String MSG_CON_FAILED = "Connection failed";
     public static final String MSG_BT_NOT_SUPPORTED = "Bluetooth not supported";
 
 
@@ -61,8 +58,8 @@ public class BluetoothConnection implements IBluetoothConnection {
     public BluetoothConnection(IModel model, Context context) {
         mModel = model;
         mApplicationContext = context;
-        mDiscoveredDevices = new HashSet<BluetoothDevice>();
-        mPairedDevices = new HashSet<BluetoothDevice>();
+        mDiscoveredDevices = new HashSet<>();
+        mPairedDevices = new HashSet<>();
         initializeAdapter();
         mInputStreamPublishSubject = PublishSubject.create();
         mOutputStreamPublishSubject = PublishSubject.create();
@@ -93,7 +90,6 @@ public class BluetoothConnection implements IBluetoothConnection {
         mApplicationContext.registerReceiver(mBluetoothBroadcastReceiver, mBluetoothBroadcastReceiver.generateIntentFilters());
     }
 
-
     @Override
     public boolean isBluetoothSupported() {
         if (mBluetoothAdapter != null) {
@@ -101,7 +97,6 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
         return false;
     }
-
 
     @Override
     public boolean isBluetoothEnabled() {
@@ -113,7 +108,6 @@ public class BluetoothConnection implements IBluetoothConnection {
         return mBluetoothAdapter.isEnabled();
     }
 
-
     //For lifecycle purposes
     @Override
     public void getKnownDevices() {
@@ -123,7 +117,6 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
-
     @Override
     public Set<BluetoothDevice> getBondedDevices() {
         if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
@@ -132,14 +125,12 @@ public class BluetoothConnection implements IBluetoothConnection {
         return mPairedDevices;
     }
 
-
     @Override
     public void scanForDevices() {
         if(isConnected()) disconnect();
         mModel.loadPairedDevices(getBondedDevices());
         startDiscovery();
     }
-
 
     @Override
     public void startDiscovery() {
@@ -154,14 +145,12 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
-
     @Override
     public void stopDiscovery() {
         if (mBluetoothAdapter != null) {
             mBluetoothAdapter.cancelDiscovery();
         }
     }
-
 
     @Override
     public void onDeviceFound(BluetoothDevice device) {
@@ -173,7 +162,6 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
-
     @Override
     public void notifyMainPresenter(String message) {
         if (mModel != null && message != null) {
@@ -181,14 +169,12 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
-
     @Override
     public void notifyDiscoveryPresenter(String message) {
         if (mModel != null && message != null) {
             mModel.notifyDiscoveryPresenter(message);
         }
     }
-
 
     @Override
     public void updateConnectionStatus(int newStatusCode) {
@@ -205,7 +191,6 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
-
     @Override
     public void updateConnectionStatusIndicator(String status) {
         if (mModel != null && status != null) {
@@ -213,21 +198,14 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
-
     @Override
     public void connectToRemoteDevice(BluetoothDevice remoteDevice) {
         if (remoteDevice != null) {
-            //           try {
-            if (isConnected()) {
-                disconnect();
-            }
-            if (mBluetoothAdapter.isDiscovering()) {
-                mBluetoothAdapter.cancelDiscovery();
-            }
+            if (isConnected()) disconnect();
+            if (mBluetoothAdapter.isDiscovering()) mBluetoothAdapter.cancelDiscovery();
             connectReactively(remoteDevice);
         }
     }
-
 
     private void connectReactively(BluetoothDevice remoteDevice) {
         Observable.fromCallable(() -> initializeBluetoothConnection(remoteDevice))
@@ -242,10 +220,8 @@ public class BluetoothConnection implements IBluetoothConnection {
                 );
     }
 
-
     private synchronized boolean initializeBluetoothConnection(BluetoothDevice remoteDevice) throws IOException {
         BluetoothSocket tempSocket = remoteDevice.createRfcommSocketToServiceRecord(SPP_UUID);
-        System.out.println("DEBUG: _in connect: " + Thread.currentThread().getName());
         if(tempSocket!=null){
             mBluetoothSocket = tempSocket;
             if(!mBluetoothSocket.isConnected()) mBluetoothSocket.connect();
@@ -255,14 +231,12 @@ public class BluetoothConnection implements IBluetoothConnection {
         return false;
     }
 
-
     private void setupInputOutputStreams() throws IOException {
         cleanUpStreams();
         openStreams();
         subscribeToInputStream();
         subscribeToOutputStream();
     }
-
 
     private void cleanUpStreams() {
         if (mOutputStreamDisposable != null && !mOutputStreamDisposable.isDisposed()) {
@@ -273,18 +247,11 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
 
         try {
-            if (mBluetoothSocketInputStream != null) {
-                mBluetoothSocketInputStream.close();
-            }
-
-            if (mBluetoothSocketOutputStream != null) {
-                mBluetoothSocketOutputStream.close();
-            }
+            if (mBluetoothSocketInputStream != null) mBluetoothSocketInputStream.close();
+            if (mBluetoothSocketOutputStream != null) mBluetoothSocketOutputStream.close();
         } catch (IOException ioException) {
-            //TODO handle the exception
         }
     }
-
 
     private void openStreams() throws IOException {
         if (mBluetoothSocket != null && mBluetoothSocket.isConnected()) {
@@ -292,7 +259,6 @@ public class BluetoothConnection implements IBluetoothConnection {
             mBluetoothSocketOutputStream = mBluetoothSocket.getOutputStream();
         }
     }
-
 
     private void subscribeToInputStream() {
         Observable<String> inputObservable = Observable.create(
@@ -333,7 +299,6 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
-
     private void subscribeToOutputStream() {
         if (mBluetoothSocket.isConnected()) {
             mOutputStreamDisposable = mOutputStreamPublishSubject
@@ -359,14 +324,12 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
-
     @Override
     public void sendMessageToRemoteDevice(String message) {
         if (isConnected() && message != null) {
             mOutputStreamPublishSubject.onNext(message);
         }
     }
-
 
     @Override
     public void enableBluetooth() {
@@ -393,14 +356,12 @@ public class BluetoothConnection implements IBluetoothConnection {
         }
     }
 
-
     @Override
     public void onBluetoothOff() {
         if (mModel != null) {
             mModel.onBluetoothOff();
         }
     }
-
 
     @Override
     public void disconnect() {
@@ -410,12 +371,10 @@ public class BluetoothConnection implements IBluetoothConnection {
                 mBluetoothSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();
-                //TODO update device error status
             }
         }
         updateConnectionStatusIndicator(STATUS_DISCONNECTED);
     }
-
 
     @Override
     public boolean isConnected() {
@@ -425,7 +384,6 @@ public class BluetoothConnection implements IBluetoothConnection {
             return false;
         }
     }
-
 
     @Override
     public void unregisterReceiver() {
