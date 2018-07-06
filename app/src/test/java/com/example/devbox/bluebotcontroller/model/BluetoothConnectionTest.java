@@ -4,11 +4,12 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.annotation.NonNull;
 
 import com.example.devbox.bluebotcontroller.TestObjectGenerator;
+import com.example.devbox.bluebotcontroller.model.Bluetooth.BluetoothBroadcastReceiver;
+import com.example.devbox.bluebotcontroller.model.Bluetooth.BluetoothConnection;
 
 import org.junit.Assert;
 import org.junit.Before;

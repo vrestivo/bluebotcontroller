@@ -1,13 +1,13 @@
 package com.example.devbox.bluebotcontroller.model;
 
-import android.Manifest;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Process;
-import android.support.v4.content.ContextCompat;
 
 import com.example.devbox.bluebotcontroller.Util;
+import com.example.devbox.bluebotcontroller.model.Bluetooth.BluetoothConnection;
+import com.example.devbox.bluebotcontroller.model.Bluetooth.IBluetoothConnection;
 import com.example.devbox.bluebotcontroller.presenter.IDiscoveryPresenter;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
 

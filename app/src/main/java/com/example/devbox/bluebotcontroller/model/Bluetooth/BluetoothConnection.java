@@ -1,9 +1,11 @@
-package com.example.devbox.bluebotcontroller.model;
+package com.example.devbox.bluebotcontroller.model.Bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+
+import com.example.devbox.bluebotcontroller.model.IModel;
 
 import java.io.IOException;
 import java.io.InputStream;

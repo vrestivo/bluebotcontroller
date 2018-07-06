@@ -7,8 +7,8 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Process;
 
-import com.example.devbox.bluebotcontroller.model.BluetoothBroadcastReceiver;
-import com.example.devbox.bluebotcontroller.model.BluetoothConnection;
+import com.example.devbox.bluebotcontroller.model.Bluetooth.BluetoothBroadcastReceiver;
+import com.example.devbox.bluebotcontroller.model.Bluetooth.BluetoothConnection;
 import com.example.devbox.bluebotcontroller.model.IModel;
 import com.example.devbox.bluebotcontroller.model.Model;
 import com.example.devbox.bluebotcontroller.presenter.MainPresenter;

@@ -9,6 +9,8 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.example.devbox.bluebotcontroller.BuildConfig;
+import com.example.devbox.bluebotcontroller.model.Bluetooth.BluetoothBroadcastReceiver;
+import com.example.devbox.bluebotcontroller.model.Bluetooth.BluetoothConnection;
 
 import junit.framework.Assert;
 

@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.os.Process;
 
 import com.example.devbox.bluebotcontroller.TestObjectGenerator;
+import com.example.devbox.bluebotcontroller.model.Bluetooth.BluetoothBroadcastReceiver;
+import com.example.devbox.bluebotcontroller.model.Bluetooth.BluetoothConnection;
 import com.example.devbox.bluebotcontroller.presenter.DiscoveryPresenter;
 import com.example.devbox.bluebotcontroller.presenter.IDiscoveryPresenter;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;

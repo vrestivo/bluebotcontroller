@@ -3,7 +3,7 @@ package com.example.devbox.bluebotcontroller.presenter;
 import android.content.Context;
 import android.os.Process;
 
-import com.example.devbox.bluebotcontroller.model.BluetoothBroadcastReceiver;
+import com.example.devbox.bluebotcontroller.model.Bluetooth.BluetoothBroadcastReceiver;
 import com.example.devbox.bluebotcontroller.model.Model;
 import com.example.devbox.bluebotcontroller.view.IMainView;
 
@@ -23,7 +23,6 @@ import com.example.devbox.bluebotcontroller.view.MainViewActivity;
 import junit.framework.Assert;
 
 import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
 @RunWith(PowerMockRunner.class)

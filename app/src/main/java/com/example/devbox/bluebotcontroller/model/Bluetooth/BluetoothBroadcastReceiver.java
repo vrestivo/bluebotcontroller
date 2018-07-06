@@ -1,4 +1,4 @@
-package com.example.devbox.bluebotcontroller.model;
+package com.example.devbox.bluebotcontroller.model.Bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -6,9 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.icu.text.SymbolTable;
-
-import com.example.devbox.bluebotcontroller.exceptions.BluebotException;
 
 public class BluetoothBroadcastReceiver extends BroadcastReceiver {
 
