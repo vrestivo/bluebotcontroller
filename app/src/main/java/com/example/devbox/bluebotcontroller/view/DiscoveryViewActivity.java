@@ -29,7 +29,6 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discovery);
         initializeUI();
-        // TODO get known devices
     }
 
     private void initializeUI(){
@@ -40,7 +39,6 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
                 scanForDevices();
             }
         });
-        //TODO finish UI initialization
         initializeRecyclerViewsAndAdapters();
     }
 
@@ -49,7 +47,6 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
         mPairedDevices.setLayoutManager(new LinearLayoutManager(this));
         mPairedDevicesAdapter = new BluetoothDeviceAdapter(this);
         mPairedDevices.setAdapter(mPairedDevicesAdapter);
-        //TODO initialize available devices list
         mAvailableDevices = findViewById(R.id.devices_available_rv);
         mAvailableDevices.setLayoutManager(new LinearLayoutManager(this));
         mAvailableDevicesAdapter = new BluetoothDeviceAdapter(this);
@@ -97,10 +94,6 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
         finish();
     }
 
-    @Override
-    public void onDeviceFound(BluetoothDevice newDevice) {
-
-    }
 
     @Override
     public void getKnownDevices() {

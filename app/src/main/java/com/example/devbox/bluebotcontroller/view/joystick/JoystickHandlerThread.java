@@ -9,14 +9,15 @@ import com.example.devbox.bluebotcontroller.model.BluetoothThread;
 import com.example.devbox.bluebotcontroller.view.IMainView;
 
 /**
- * Created by devbox on 12/9/17.
+ * Class to handle continuous press input
+ * from the JoystickView.
  */
 
 public class JoystickHandlerThread extends HandlerThread {
 
     public static String NAME = "JoystickHandlerThread_name";
     public static int SEND_MSG = 999;
-    public int SEND_DELAY = 20;
+    public static final int SEND_DELAY = 20;
     private Handler mHandler;
     private IMainView mMainViewActivity;
     private boolean mKeepSending;
@@ -45,7 +46,6 @@ public class JoystickHandlerThread extends HandlerThread {
         };
     }
 
-
     private void sendData() {
         mSending = true;
         while (mKeepSending && mMainViewActivity != null) {
@@ -62,22 +62,17 @@ public class JoystickHandlerThread extends HandlerThread {
         Log.v(LOG_TAG, "_in handleMessage() sending: " + mDataToSend + "DONE!");
     }
 
-
     public void setDataToSend(String data){
         mDataToSend = data;
     }
-
 
     public void setKeepSending(boolean flag) {
         mKeepSending = flag;
     }
 
-
     public boolean isSending(){
         return mSending;
     }
-
-
 
     public Handler getHandler() {
         return mHandler;
@@ -85,7 +80,6 @@ public class JoystickHandlerThread extends HandlerThread {
 
     @Override
     public boolean quit() {
-
         setKeepSending(false);
         mMainViewActivity = null;
         return super.quit();
