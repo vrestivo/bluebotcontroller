@@ -94,7 +94,6 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
         finish();
     }
 
-
     @Override
     public void getKnownDevices() {
         if(mDiscoveryPresenter!=null) mDiscoveryPresenter.getKnownDevices();

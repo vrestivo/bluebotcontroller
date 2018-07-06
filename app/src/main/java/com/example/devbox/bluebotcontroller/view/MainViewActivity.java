@@ -24,10 +24,6 @@ import com.example.devbox.bluebotcontroller.view.joystick.JoystickView;
 public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     public static final int BT_PERM_REQ_CODE = 87;
-
-    private final String BT_DISABLE = "BT OFF";
-    private final String BT_ENABLE = "BT ON";
-
     private IMainPresenter mMainPresenter;
     private Button mBluetoothOnOffButton;
     private Button mStartDiscoveryButton;
@@ -51,44 +47,40 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     }
 
     private void initializeUIElements() {
+        findViews();
+        setInputListeners();
+    }
+
+    private void findViews(){
         mConnectionStatus = findViewById(R.id.con_status);
         mBluetoothOnOffButton = findViewById(R.id.bt_on);
+        mStartDiscoveryButton = findViewById(R.id.bt_discover);
+        mDisconnectButton = findViewById(R.id.bt_disconnect);
+        mExitText = findViewById(R.id.edit_text);
+        mSendButton = findViewById(R.id.bt_send);
+        mJoystickView = findViewById(R.id.joystick_view);
+    }
+
+    private void setInputListeners(){
         mBluetoothOnOffButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                toggleBluetooth();
-            }
+            public void onClick(View v) { toggleBluetooth();}
         });
 
-        mStartDiscoveryButton = findViewById(R.id.bt_discover);
         mStartDiscoveryButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                startBluetoothDiscovery();
-            }
+            public void onClick(View v) { startBluetoothDiscovery();}
         });
 
-        mDisconnectButton = findViewById(R.id.bt_disconnect);
         mDisconnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (mMainPresenter != null) {
-                    mMainPresenter.disconnect();
-                }
-            }
+            public void onClick(View v) { if (mMainPresenter != null) mMainPresenter.disconnect();}
         });
 
-        mExitText = findViewById(R.id.edit_text);
-
-        mSendButton = findViewById(R.id.bt_send);
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                getTextAndSendToRemoteDevice();
-            }
+            public void onClick(View v) {getTextAndSendToRemoteDevice();}
         });
-
-        mJoystickView = findViewById(R.id.joystick_view);
     }
 
     private void setupJoystickCallbacks() {
@@ -116,7 +108,6 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         if (mJoystickThread != null && mJoystickThread.isAlive()) {
             mJoystickThread.setDataToSend(messageToSend);
             if (keepSending){
-                System.out.println(messageToSend);
                 mJoystickThread.setKeepSending(keepSending);
                 if(!mJoystickThread.isSending()) {
                     mJoystickThread.getHandler().obtainMessage(JoystickHandlerThread.SEND_MSG, messageToSend).sendToTarget();
@@ -137,7 +128,6 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         }
     }
 
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -145,7 +135,12 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         initializeBluetoothFeatures();
         mJoystickThread = new JoystickHandlerThread(JoystickHandlerThread.NAME, this);
         setupJoystickCallbacks();
+    }
 
+    private void initializeMainPresenter() {
+        if (mMainPresenter == null) {
+            mMainPresenter = new MainPresenter(this, getApplicationContext());
+        }
     }
 
     private void initializeBluetoothFeatures() {
@@ -164,6 +159,13 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setConnectionIndicator();
+        if (mJoystickThread != null) mJoystickThread.start();
+    }
+
     private void setConnectionIndicator() {
         if (mMainPresenter != null) {
             if (mMainPresenter.isConnected()) {
@@ -175,19 +177,10 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        setConnectionIndicator();
-        if (mJoystickThread != null) mJoystickThread.start();
-    }
-
-
-    @Override
     protected void onPause() {
         super.onPause();
         if (mJoystickThread != null) mJoystickThread.quit();
     }
-
 
     @Override
     protected void onStop() {
@@ -198,16 +191,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     @Override
     public void cleanup() {
         presenterLifecycleCleanup();
-        //TODO clean up joystick thread
     }
-
-
-    private void initializeMainPresenter() {
-        if (mMainPresenter == null) {
-            mMainPresenter = new MainPresenter(this, getApplicationContext());
-        }
-    }
-
 
     private void presenterLifecycleCleanup() {
         if (mMainPresenter != null) {
@@ -215,7 +199,6 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
             mMainPresenter = null;
         }
     }
-
 
     private void toggleBluetooth() {
         if (mMainPresenter != null) {
@@ -229,27 +212,20 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         }
     }
 
-
     @Override
     public void startBluetoothDiscovery() {
         Intent discoveryActivityIntent = new Intent(this, DiscoveryViewActivity.class);
         startActivity(discoveryActivityIntent);
     }
 
-
     @Override
     public void disconnect() {
-        if (mMainPresenter != null) {
-            mMainPresenter.disconnect();
-        }
+        if (mMainPresenter != null) { mMainPresenter.disconnect(); }
     }
-
 
     @Override
     public void showMessage(String message) {
-        if (message != null) {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT);
-        }
+        if (message != null) { Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }
     }
 
     @Override
@@ -261,38 +237,28 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     @Override
     public void enableBluetooth() {
-        if (mMainPresenter != null) {
-            mMainPresenter.enableBluetooth();
-        }
+        if (mMainPresenter != null) { mMainPresenter.enableBluetooth(); }
     }
 
     @Override
     public void disableBluetooth() {
-        if (mMainPresenter != null) {
-            mMainPresenter.disableBluetooth();
-        }
+        if (mMainPresenter != null) { mMainPresenter.disableBluetooth(); }
     }
 
     @Override
-    public void onBluetoothOn() {
-        bluetoothOnUI();
-    }
-
+    public void onBluetoothOn() { bluetoothOnUI(); }
 
     private void bluetoothOnUI() {
         mBluetoothOnOffButton.setText(R.string.button_bt_off);
         mStartDiscoveryButton.setEnabled(true);
         mDisconnectButton.setEnabled(true);
         mSendButton.setEnabled(true);
-
     }
-
 
     @Override
     public void onBluetoothOff() {
         bluetoothOffUI();
     }
-
 
     private void bluetoothOffUI() {
         mBluetoothOnOffButton.setText(R.string.button_bt_on);
@@ -300,7 +266,6 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         mDisconnectButton.setEnabled(false);
         mSendButton.setEnabled(false);
     }
-
 
     @Override
     public void enableBluetoothFeatures() {
@@ -314,19 +279,16 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         }
     }
 
-
     @Override
     public void disableBluetoothFeatures() {
         mBluetoothOnOffButton.setEnabled(false);
         bluetoothOffUI();
     }
 
-
     @Override
     public void showDeviceStatus(String status) {
         if (mConnectionStatus != null && status != null) mConnectionStatus.setText(status);
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -341,7 +303,6 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         }
     }
 
-
     private void managePermissionResults(int[] grandResults) {
         for (int resultCode : grandResults) {
             if (resultCode == PackageManager.PERMISSION_DENIED) {
@@ -352,10 +313,8 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         enableBluetoothFeatures();
     }
 
-
     @Override
     public void requestBluetoothPermissions() {
         ActivityCompat.requestPermissions(this, Util.getStringArrayWithBleutoothPermissions(), BT_PERM_REQ_CODE);
     }
-
 }

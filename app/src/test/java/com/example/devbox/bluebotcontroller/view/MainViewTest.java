@@ -13,6 +13,7 @@ import com.example.devbox.bluebotcontroller.Util;
 import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
 import com.example.devbox.bluebotcontroller.view.joystick.JoystickHandlerThread;
 
+import org.junit.After;
 import org.junit.Assert;
 
 import org.junit.Before;
@@ -545,13 +546,15 @@ public class MainViewTest {
     }
 
     @Test
-    public void joystickThreadStopTest(){
+    public void joystickThreadStopTest() throws InterruptedException {
         // given initialized MainViewActivity and MainPresenter
         createActivityControllerAndMockPresenterInitializedAtOnCreate();
         PowerMockito.when(mMockMainPresenter.isConnected()).thenReturn(false);
 
         // when activity is paused
         mClassUnderTestController.start().resume().pause();
+        // give enough time to clean up
+        Thread.sleep(200);
 
         // joystick thread is not null and stopped
         JoystickHandlerThread joystickHandlerThread =
