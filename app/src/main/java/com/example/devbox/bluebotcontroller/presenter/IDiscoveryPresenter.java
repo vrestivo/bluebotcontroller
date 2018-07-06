@@ -14,7 +14,6 @@ public interface IDiscoveryPresenter {
     void sendMessageToUI(String messageToUI);
     void onBluetoothOff();
     void lifecycleCleanup();
-
 }
 
 

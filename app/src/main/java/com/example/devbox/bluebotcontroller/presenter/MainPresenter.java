@@ -18,8 +18,7 @@ public class MainPresenter implements IMainPresenter {
         mMainView = mainView;
         mModel = Model.getInstance(applicationContext, this);
     }
-
-
+    
     @Override
     public boolean isBluetoothSupported() {
         if(mModel!=null){
@@ -27,7 +26,6 @@ public class MainPresenter implements IMainPresenter {
         }
         return false;
     }
-
 
     @Override
     public boolean bluetoothPermissionsGranted() {
@@ -37,14 +35,12 @@ public class MainPresenter implements IMainPresenter {
         return false;
     }
 
-
     @Override
     public void requestBluetoothPermissions() {
         if(mMainView != null){
             mMainView.requestBluetoothPermissions();
         }
     }
-
 
     @Override
     public void sendMessageToUI(String messageToUI) {
@@ -53,14 +49,12 @@ public class MainPresenter implements IMainPresenter {
         }
     }
 
-
     @Override
     public void sendMessageToRemoteDevice(String messageToDevice) {
         if(mModel!=null){
             mModel.sendMessageToRemoteDevice(messageToDevice);
         }
     }
-
 
     @Override
     public void updateDeviceStatus(String status) {
@@ -70,14 +64,12 @@ public class MainPresenter implements IMainPresenter {
         }
     }
 
-
     @Override
     public void enableBluetooth() {
         if(mModel!=null){
             mModel.enableBluetooth();
         }
     }
-
 
     @Override
     public void disableBluetooth() {
@@ -86,7 +78,6 @@ public class MainPresenter implements IMainPresenter {
         }
     }
 
-
     @Override
     public void onBluetoothOn() {
         if(mMainView!=null){
@@ -94,14 +85,12 @@ public class MainPresenter implements IMainPresenter {
         }
     }
 
-
     @Override
     public void onBluetoothOff() {
         if(mMainView!=null){
             mMainView.onBluetoothOff();
         }
     }
-
 
     @Override
     public boolean isBluetoothEnabled() {
@@ -126,14 +115,12 @@ public class MainPresenter implements IMainPresenter {
         }
     }
 
-
     @Override
     public void disconnect() {
         if(mModel!=null) {
             mModel.disconnect();
         }
     }
-
 
     @Override
     public void cleanup() {
