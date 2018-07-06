@@ -27,6 +27,7 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
         intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
         intentFilter.addAction(BluetoothBroadcastReceiver.ACTION_SELF_UNREGISTER);
         intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         return intentFilter;
     }
 
@@ -59,6 +60,10 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
                         int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_ON);
                         handleOnOffState(state);
                     }
+                    break;
+                }
+                case BluetoothDevice.ACTION_ACL_DISCONNECTED: {
+                    if(mBluetoothConnection!=null) mBluetoothConnection.disconnect();
                     break;
                 }
             }
