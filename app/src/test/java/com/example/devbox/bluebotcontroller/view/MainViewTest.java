@@ -11,9 +11,10 @@ import com.example.devbox.bluebotcontroller.BuildConfig;
 import com.example.devbox.bluebotcontroller.R;
 import com.example.devbox.bluebotcontroller.Util;
 import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
-import com.example.devbox.bluebotcontroller.view.joystick.JoystickHandlerThread;
+import com.example.devbox.bluebotcontroller.view.discovery.DiscoveryViewActivity;
+import com.example.devbox.bluebotcontroller.view.main.MainViewActivity;
+import com.example.devbox.bluebotcontroller.view.main.joystick.JoystickHandlerThread;
 
-import org.junit.After;
 import org.junit.Assert;
 
 import org.junit.Before;

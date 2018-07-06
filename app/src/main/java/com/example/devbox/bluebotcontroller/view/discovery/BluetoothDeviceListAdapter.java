@@ -1,4 +1,4 @@
-package com.example.devbox.bluebotcontroller.view;
+package com.example.devbox.bluebotcontroller.view.discovery;
 
 
 import android.bluetooth.BluetoothDevice;
@@ -17,21 +17,14 @@ import java.util.List;
 import java.util.Set;
 
 public class BluetoothDeviceListAdapter extends RecyclerView.Adapter<BluetoothDeviceListAdapter.BluetoothDeviceViewHolder> {
-
-    interface OnDeviceSelected{
-        void onDeviceClick(BluetoothDevice device);
-    }
-
     private List<BluetoothDevice> mDeviceList;
     private OnDeviceSelected mDeviceClickListener;
-
 
 
     public BluetoothDeviceListAdapter(OnDeviceSelected listener) {
         mDeviceList = new ArrayList<>();
         mDeviceClickListener = listener;
     }
-
 
     public void updateDeviceDataSet(Set<BluetoothDevice> newDevices){
         if(newDevices!=null && newDevices.size()>0){
@@ -41,6 +34,9 @@ public class BluetoothDeviceListAdapter extends RecyclerView.Adapter<BluetoothDe
         notifyDataSetChanged();
     }
 
+    public interface OnDeviceSelected{
+        void onDeviceClick(BluetoothDevice device);
+    }
 
     @NonNull
     @Override
@@ -53,13 +49,11 @@ public class BluetoothDeviceListAdapter extends RecyclerView.Adapter<BluetoothDe
         return viewHolder;
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull BluetoothDeviceListAdapter.BluetoothDeviceViewHolder holder, int position) {
         holder.mmDeviceName.setText(mDeviceList.get(position).getAddress()+ " " + mDeviceList.get(position).getName());
         holder.mmId = position;
     }
-
 
     @Override
     public int getItemCount() {
@@ -69,7 +63,6 @@ public class BluetoothDeviceListAdapter extends RecyclerView.Adapter<BluetoothDe
 
 
     public class BluetoothDeviceViewHolder extends RecyclerView.ViewHolder {
-
         public int mmId;
         public TextView mmDeviceName;
 

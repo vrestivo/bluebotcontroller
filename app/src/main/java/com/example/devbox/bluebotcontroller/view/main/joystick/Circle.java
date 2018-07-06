@@ -1,4 +1,4 @@
-package com.example.devbox.bluebotcontroller.view.joystick;
+package com.example.devbox.bluebotcontroller.view.main.joystick;
 
 /**
  * Object to store circle data

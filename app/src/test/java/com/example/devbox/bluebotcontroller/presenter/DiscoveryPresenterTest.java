@@ -7,8 +7,8 @@ import android.content.Context;
 import com.example.devbox.bluebotcontroller.TestObjectGenerator;
 import com.example.devbox.bluebotcontroller.model.IModel;
 import com.example.devbox.bluebotcontroller.model.Model;
-import com.example.devbox.bluebotcontroller.view.DiscoveryViewActivity;
-import com.example.devbox.bluebotcontroller.view.IDiscoveryView;
+import com.example.devbox.bluebotcontroller.view.discovery.DiscoveryViewActivity;
+import com.example.devbox.bluebotcontroller.view.discovery.IDiscoveryView;
 
 import org.junit.Assert;
 import org.junit.Before;

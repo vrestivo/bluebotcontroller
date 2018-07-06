@@ -5,7 +5,7 @@ import android.os.Process;
 
 import com.example.devbox.bluebotcontroller.model.Bluetooth.BluetoothBroadcastReceiver;
 import com.example.devbox.bluebotcontroller.model.Model;
-import com.example.devbox.bluebotcontroller.view.IMainView;
+import com.example.devbox.bluebotcontroller.view.main.IMainView;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import com.example.devbox.bluebotcontroller.model.IModel;
-import com.example.devbox.bluebotcontroller.view.MainViewActivity;
+import com.example.devbox.bluebotcontroller.view.main.MainViewActivity;
 
 import junit.framework.Assert;
 

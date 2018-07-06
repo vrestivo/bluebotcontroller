@@ -5,6 +5,8 @@ import android.bluetooth.BluetoothDevice;
 
 import com.example.devbox.bluebotcontroller.BuildConfig;
 import com.example.devbox.bluebotcontroller.TestObjectGenerator;
+import com.example.devbox.bluebotcontroller.view.discovery.BluetoothDeviceListAdapter;
+import com.example.devbox.bluebotcontroller.view.discovery.BluetoothDeviceListAdapter.OnDeviceSelected;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,7 +26,7 @@ import java.util.Set;
 public class BluetoothDeviceListAdapterTest {
 
     private BluetoothDeviceListAdapter mClassUnderTest;
-    private BluetoothDeviceListAdapter.OnDeviceSelected mMockCallback;
+    private OnDeviceSelected mMockCallback;
 
 
     @Before
@@ -33,12 +35,12 @@ public class BluetoothDeviceListAdapterTest {
     }
 
     private void initializeAdapterWithMockCallback() {
-        mMockCallback = PowerMockito.mock(BluetoothDeviceListAdapter.OnDeviceSelected.class);
+        mMockCallback = PowerMockito.mock(OnDeviceSelected.class);
         mClassUnderTest = new BluetoothDeviceListAdapter(mMockCallback);
     }
 
     private void initializeAdapterWithMockCallbackAndOneDevice() {
-        mMockCallback = PowerMockito.mock(BluetoothDeviceListAdapter.OnDeviceSelected.class);
+        mMockCallback = PowerMockito.mock(OnDeviceSelected.class);
         mClassUnderTest = new BluetoothDeviceListAdapter(mMockCallback);
         Set<BluetoothDevice> singleDeviceSet = new HashSet<>();
         singleDeviceSet.add(TestObjectGenerator.generateASingleMockBluetoothDevice());

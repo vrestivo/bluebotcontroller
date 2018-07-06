@@ -9,6 +9,8 @@ import com.example.devbox.bluebotcontroller.BuildConfig;
 import com.example.devbox.bluebotcontroller.R;
 import com.example.devbox.bluebotcontroller.TestObjectGenerator;
 import com.example.devbox.bluebotcontroller.presenter.DiscoveryPresenter;
+import com.example.devbox.bluebotcontroller.view.discovery.BluetoothDeviceListAdapter;
+import com.example.devbox.bluebotcontroller.view.discovery.DiscoveryViewActivity;
 
 import org.junit.Assert;
 import org.junit.Before;

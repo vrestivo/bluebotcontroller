@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 
 import com.example.devbox.bluebotcontroller.model.IModel;
 import com.example.devbox.bluebotcontroller.model.Model;
-import com.example.devbox.bluebotcontroller.view.IDiscoveryView;
+import com.example.devbox.bluebotcontroller.view.discovery.IDiscoveryView;
 
 import java.util.Set;
 

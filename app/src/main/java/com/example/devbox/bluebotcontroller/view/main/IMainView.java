@@ -1,4 +1,4 @@
-package com.example.devbox.bluebotcontroller.view;
+package com.example.devbox.bluebotcontroller.view.main;
 
 public interface IMainView {
     void startBluetoothDiscovery();

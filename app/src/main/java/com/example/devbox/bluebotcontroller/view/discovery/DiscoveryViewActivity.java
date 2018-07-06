@@ -1,4 +1,4 @@
-package com.example.devbox.bluebotcontroller.view;
+package com.example.devbox.bluebotcontroller.view.discovery;
 
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
@@ -15,7 +15,7 @@ import com.example.devbox.bluebotcontroller.presenter.DiscoveryPresenter;
 
 import java.util.Set;
 
-public class DiscoveryViewActivity extends AppCompatActivity implements IDiscoveryView, BluetoothDeviceListAdapter.OnDeviceSelected{
+public class DiscoveryViewActivity extends AppCompatActivity implements IDiscoveryView, BluetoothDeviceListAdapter.OnDeviceSelected {
 
     private DiscoveryPresenter mDiscoveryPresenter;
     private Button mScanButton;

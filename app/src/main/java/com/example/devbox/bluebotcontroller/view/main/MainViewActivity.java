@@ -1,4 +1,4 @@
-package com.example.devbox.bluebotcontroller.view;
+package com.example.devbox.bluebotcontroller.view.main;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,8 +18,9 @@ import com.example.devbox.bluebotcontroller.R;
 import com.example.devbox.bluebotcontroller.Util;
 import com.example.devbox.bluebotcontroller.presenter.IMainPresenter;
 import com.example.devbox.bluebotcontroller.presenter.MainPresenter;
-import com.example.devbox.bluebotcontroller.view.joystick.JoystickHandlerThread;
-import com.example.devbox.bluebotcontroller.view.joystick.JoystickView;
+import com.example.devbox.bluebotcontroller.view.discovery.DiscoveryViewActivity;
+import com.example.devbox.bluebotcontroller.view.main.joystick.JoystickHandlerThread;
+import com.example.devbox.bluebotcontroller.view.main.joystick.JoystickView;
 
 public class MainViewActivity extends AppCompatActivity implements IMainView {
 

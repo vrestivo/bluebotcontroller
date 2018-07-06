@@ -1,12 +1,11 @@
-package com.example.devbox.bluebotcontroller.view.joystick;
+package com.example.devbox.bluebotcontroller.view.main.joystick;
 
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
 
-import com.example.devbox.bluebotcontroller.model.BluetoothThread;
-import com.example.devbox.bluebotcontroller.view.IMainView;
+import com.example.devbox.bluebotcontroller.view.main.IMainView;
 
 /**
  * Class to handle continuous press input

@@ -89,7 +89,7 @@
         android:layout_weight="1"
         />
 
-    <com.example.devbox.bluebotcontroller.view.joystick.JoystickView
+    <com.example.devbox.bluebotcontroller.view.main.joystick.JoystickView
         android:id="@+id/joystick_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
