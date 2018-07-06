@@ -49,7 +49,6 @@ public class Model implements IModel {
         }
     }
 
-
     @Override
     public boolean isBluetoothSupported() {
         if(sBluetoothConnection!=null){
@@ -233,14 +232,12 @@ public class Model implements IModel {
         return true;
     }
 
-
     @Override
     public void disableBluetoothFeatures() {
         if(sMainPresenter!=null){
             sMainPresenter.disableBluetoothFeatures();
         }
     }
-
 
     @Override
     public void disconnect() {
@@ -260,11 +257,4 @@ public class Model implements IModel {
         sDiscoveryPresenter = null;
     }
 
-    @Override
-    public void cleanup() {
-
-        sMainPresenter = null;
-        sDiscoveryPresenter = null;
-        //TODO cleanup Bluetooth resources
-    }
 }

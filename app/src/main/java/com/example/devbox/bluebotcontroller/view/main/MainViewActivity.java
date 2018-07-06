@@ -158,7 +158,6 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         }
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -317,6 +316,6 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     @Override
     public void requestBluetoothPermissions() {
-        ActivityCompat.requestPermissions(this, Util.getStringArrayWithBleutoothPermissions(), BT_PERM_REQ_CODE);
+        ActivityCompat.requestPermissions(this, Util.getStringArrayWithBluetoothPermissions(), BT_PERM_REQ_CODE);
     }
 }

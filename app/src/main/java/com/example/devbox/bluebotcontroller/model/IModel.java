@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothDevice;
 import java.util.Set;
 
 public interface IModel {
-
     boolean isBluetoothSupported();
     boolean bluetoothPermissionsGranted();
     boolean isBluetoothEnabled();
@@ -30,6 +29,4 @@ public interface IModel {
     void disconnect();
     void cleanupMainPresenter();
     void cleanupDiscoveryPresenter();
-    void cleanup();
-
 }
