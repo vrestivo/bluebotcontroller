@@ -37,6 +37,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.schedulers.ExecutorScheduler;
 import io.reactivex.plugins.RxJavaPlugins;
 
+import static com.example.devbox.bluebotcontroller.Constants.*;
 import static org.mockito.Matchers.anySet;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
@@ -147,7 +148,7 @@ public class BluetoothConnectionTest {
 
         try {
             PowerMockito.when(mMockSelectedBTRemoteDevice
-                    .createRfcommSocketToServiceRecord(BluetoothConnection.SPP_UUID))
+                    .createRfcommSocketToServiceRecord(SPP_UUID))
                     .thenReturn(mMockBluetoothSocket);
 
             PowerMockito.when(mMockBluetoothSocket.getInputStream())
@@ -164,8 +165,8 @@ public class BluetoothConnectionTest {
 
     private void verifyUnsupportedDeviceIsHandledCorrectly() {
         verify(mMockModel, atLeastOnce()).disableBluetoothFeatures();
-        verify(mMockModel, atLeastOnce()).notifyMainPresenter(BluetoothConnection.MSG_BT_NOT_SUPPORTED);
-        verify(mMockModel, atLeastOnce()).updateDeviceStatus(BluetoothConnection.STATUS_NOT_SUPPORTED);
+        verify(mMockModel, atLeastOnce()).notifyMainPresenter(MSG_BT_NOT_SUPPORTED);
+        verify(mMockModel, atLeastOnce()).updateDeviceStatus(STATUS_NOT_SUPPORTED);
     }
 
 
@@ -252,7 +253,7 @@ public class BluetoothConnectionTest {
             Mockito.verify(mMockAdapter, atLeastOnce()).cancelDiscovery();
 
             Mockito.verify(mMockSelectedBTRemoteDevice, atLeastOnce())
-                    .createRfcommSocketToServiceRecord(BluetoothConnection.SPP_UUID);
+                    .createRfcommSocketToServiceRecord(SPP_UUID);
 
             Mockito.verify(mMockBluetoothSocket, atLeastOnce()).getInputStream();
             Mockito.verify(mMockBluetoothSocket, atLeastOnce()).getOutputStream();
@@ -275,7 +276,7 @@ public class BluetoothConnectionTest {
 
         // the createRfcommSocketToServiceRecord() is called
         Mockito.verify(mMockSelectedBTRemoteDevice, atLeastOnce())
-                .createRfcommSocketToServiceRecord(BluetoothConnection.SPP_UUID);
+                .createRfcommSocketToServiceRecord(SPP_UUID);
         // the connect() is called on the returned socket
         Mockito.verify(mMockBluetoothSocket, atLeastOnce()).connect();
     }

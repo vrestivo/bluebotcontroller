@@ -7,13 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
-
 import com.example.devbox.bluebotcontroller.BuildConfig;
 import com.example.devbox.bluebotcontroller.model.Bluetooth.BluetoothBroadcastReceiver;
 import com.example.devbox.bluebotcontroller.model.Bluetooth.BluetoothConnection;
-
 import junit.framework.Assert;
-
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,8 +24,8 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
-
 import java.util.List;
+import static com.example.devbox.bluebotcontroller.Constants.*;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -199,8 +196,8 @@ public class BroadCastReceiverTest {
 
         // Model.updateDeviceStatus() is called
         InOrder inOrder = Mockito.inOrder(mMockModel);
-        inOrder.verify(mMockModel, Mockito.atLeastOnce()).updateDeviceStatus(BluetoothConnection.STATUS_CONNECTED);
-        inOrder.verify(mMockModel, Mockito.atLeastOnce()).updateDeviceStatus(BluetoothConnection.STATUS_DISCONNECTED);
+        inOrder.verify(mMockModel, Mockito.atLeastOnce()).updateDeviceStatus(STATUS_CONNECTED);
+        inOrder.verify(mMockModel, Mockito.atLeastOnce()).updateDeviceStatus(STATUS_DISCONNECTED);
     }
 
 

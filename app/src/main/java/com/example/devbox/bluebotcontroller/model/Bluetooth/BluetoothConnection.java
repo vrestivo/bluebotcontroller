@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
@@ -21,22 +20,9 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
+import static com.example.devbox.bluebotcontroller.Constants.*;
+
 public class BluetoothConnection implements IBluetoothConnection {
-    //NOTE this is SPP (Serial Port Profile) UUID
-    //see the link below
-    //https://developer.android.com/reference/android/bluetooth/BluetoothDevice.html#createRfcommSocketToServiceRecord%28java.util.UUID%29
-    public static final UUID SPP_UUID =
-            UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    //                           ^^^^
-    // UUID section marked by a "^" points to the device type, in this case
-    // a serial device
-    public static final String STATUS_DISCONNECTED = "Disconnected";
-    public static final String STATUS_CONNECTED = "Connected";
-    public static final String STATUS_ERROR = "Connection Error";
-    public static final String STATUS_NOT_SUPPORTED = "Not supported";
-    public static final String MSG_BT_NOT_SUPPORTED = "Bluetooth not supported";
-
-
     private BluetoothSocket mBluetoothSocket;
     private BluetoothAdapter mBluetoothAdapter;
     private IModel mModel;
