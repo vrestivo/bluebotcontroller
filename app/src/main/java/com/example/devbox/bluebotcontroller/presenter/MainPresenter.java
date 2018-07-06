@@ -18,7 +18,7 @@ public class MainPresenter implements IMainPresenter {
         mMainView = mainView;
         mModel = Model.getInstance(applicationContext, this);
     }
-    
+
     @Override
     public boolean isBluetoothSupported() {
         if(mModel!=null){

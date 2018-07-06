@@ -173,7 +173,6 @@ public class JoystickView extends View {
         return distance < circleRadius;
     }
 
-
     public void normalizeOffsets(float x, float y) {
         //need to multiply S value by -1 IOT reflect traditional
         //cartesian X coordinate values
@@ -194,7 +193,6 @@ public class JoystickView extends View {
         calculateNormalizedResultant();
     }
 
-
     public void calculateNormalizedResultant() {
         float distanceSquared = (mXDistanceToCenter * mXDistanceToCenter) + (mYDistanceToCenter * mYDistanceToCenter);
         float actualResultant = (float) (Math.sqrt((double) distanceSquared));
@@ -203,8 +201,6 @@ public class JoystickView extends View {
 
 
     class MyScrollListener extends GestureDetector.SimpleOnGestureListener {
-
-
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             if (mIsActive) {
