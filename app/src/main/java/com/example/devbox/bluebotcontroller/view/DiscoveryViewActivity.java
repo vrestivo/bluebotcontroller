@@ -15,14 +15,14 @@ import com.example.devbox.bluebotcontroller.presenter.DiscoveryPresenter;
 
 import java.util.Set;
 
-public class DiscoveryViewActivity extends AppCompatActivity implements IDiscoveryView, BluetoothDeviceAdapter.OnDeviceSelected{
+public class DiscoveryViewActivity extends AppCompatActivity implements IDiscoveryView, BluetoothDeviceListAdapter.OnDeviceSelected{
 
     private DiscoveryPresenter mDiscoveryPresenter;
     private Button mScanButton;
     private RecyclerView mPairedDevices;
     private RecyclerView mAvailableDevices;
-    private BluetoothDeviceAdapter mPairedDevicesAdapter;
-    private BluetoothDeviceAdapter mAvailableDevicesAdapter;
+    private BluetoothDeviceListAdapter mPairedDevicesAdapter;
+    private BluetoothDeviceListAdapter mAvailableDevicesAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,11 +45,11 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
     private void initializeRecyclerViewsAndAdapters(){
         mPairedDevices = findViewById(R.id.devices_paired_rv);
         mPairedDevices.setLayoutManager(new LinearLayoutManager(this));
-        mPairedDevicesAdapter = new BluetoothDeviceAdapter(this);
+        mPairedDevicesAdapter = new BluetoothDeviceListAdapter(this);
         mPairedDevices.setAdapter(mPairedDevicesAdapter);
         mAvailableDevices = findViewById(R.id.devices_available_rv);
         mAvailableDevices.setLayoutManager(new LinearLayoutManager(this));
-        mAvailableDevicesAdapter = new BluetoothDeviceAdapter(this);
+        mAvailableDevicesAdapter = new BluetoothDeviceListAdapter(this);
         mAvailableDevices.setAdapter(mAvailableDevicesAdapter);
     }
 

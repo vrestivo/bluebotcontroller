@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDeviceAdapter.BluetoothDeviceViewHolder> {
+public class BluetoothDeviceListAdapter extends RecyclerView.Adapter<BluetoothDeviceListAdapter.BluetoothDeviceViewHolder> {
 
     interface OnDeviceSelected{
         void onDeviceClick(BluetoothDevice device);
@@ -27,7 +27,7 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDevice
 
 
 
-    public BluetoothDeviceAdapter(OnDeviceSelected listener) {
+    public BluetoothDeviceListAdapter(OnDeviceSelected listener) {
         mDeviceList = new ArrayList<>();
         mDeviceClickListener = listener;
     }
@@ -44,7 +44,7 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDevice
 
     @NonNull
     @Override
-    public BluetoothDeviceAdapter.BluetoothDeviceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public BluetoothDeviceListAdapter.BluetoothDeviceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         TextView deviceItem = (TextView) LayoutInflater.from(context).inflate(R.layout.device_list_item, parent, false);
 
@@ -55,7 +55,7 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDevice
 
 
     @Override
-    public void onBindViewHolder(@NonNull BluetoothDeviceAdapter.BluetoothDeviceViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull BluetoothDeviceListAdapter.BluetoothDeviceViewHolder holder, int position) {
         holder.mmDeviceName.setText(mDeviceList.get(position).getAddress()+ " " + mDeviceList.get(position).getName());
         holder.mmId = position;
     }

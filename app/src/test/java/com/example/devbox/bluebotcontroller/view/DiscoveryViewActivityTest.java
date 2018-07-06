@@ -207,7 +207,7 @@ public class DiscoveryViewActivityTest {
         Assert.assertNotNull(mClassUnderTest.get().findViewById(R.id.devices_paired_rv));
 
         // paired devices adapter is not null
-        BluetoothDeviceAdapter adapter = Whitebox.getInternalState(mClassUnderTest.get(), "mPairedDevicesAdapter");
+        BluetoothDeviceListAdapter adapter = Whitebox.getInternalState(mClassUnderTest.get(), "mPairedDevicesAdapter");
         Assert.assertNotNull(adapter);
 
         // adapter returns device count of zero
@@ -224,7 +224,7 @@ public class DiscoveryViewActivityTest {
         mClassUnderTest.get().loadPairedDevices(mockDeviceSet);
 
         // device count is correct
-        BluetoothDeviceAdapter adapter = Whitebox.getInternalState(mClassUnderTest.get(), "mPairedDevicesAdapter");
+        BluetoothDeviceListAdapter adapter = Whitebox.getInternalState(mClassUnderTest.get(), "mPairedDevicesAdapter");
         Assert.assertEquals(mockDeviceSet.size(), adapter.getItemCount());
     }
 
@@ -239,7 +239,7 @@ public class DiscoveryViewActivityTest {
         Assert.assertNotNull(mClassUnderTest.get().findViewById(R.id.devices_available_rv));
 
         // available devices adapter is not null
-        BluetoothDeviceAdapter adapter = Whitebox.getInternalState(mClassUnderTest.get(), "mAvailableDevicesAdapter");
+        BluetoothDeviceListAdapter adapter = Whitebox.getInternalState(mClassUnderTest.get(), "mAvailableDevicesAdapter");
         Assert.assertNotNull(adapter);
 
         // adapter returns device count of zero
@@ -256,7 +256,7 @@ public class DiscoveryViewActivityTest {
         mClassUnderTest.get().loadAvailableDevices(mockDeviceSet);
 
         // device count is correct
-        BluetoothDeviceAdapter adapter = Whitebox.getInternalState(mClassUnderTest.get(), "mAvailableDevicesAdapter");
+        BluetoothDeviceListAdapter adapter = Whitebox.getInternalState(mClassUnderTest.get(), "mAvailableDevicesAdapter");
         Assert.assertEquals(mockDeviceSet.size(), adapter.getItemCount());
     }
 

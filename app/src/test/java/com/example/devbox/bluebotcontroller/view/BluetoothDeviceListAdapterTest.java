@@ -21,10 +21,10 @@ import java.util.Set;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
-public class BluetoothDeviceAdapterTest {
+public class BluetoothDeviceListAdapterTest {
 
-    private BluetoothDeviceAdapter mClassUnderTest;
-    private BluetoothDeviceAdapter.OnDeviceSelected mMockCallback;
+    private BluetoothDeviceListAdapter mClassUnderTest;
+    private BluetoothDeviceListAdapter.OnDeviceSelected mMockCallback;
 
 
     @Before
@@ -33,13 +33,13 @@ public class BluetoothDeviceAdapterTest {
     }
 
     private void initializeAdapterWithMockCallback() {
-        mMockCallback = PowerMockito.mock(BluetoothDeviceAdapter.OnDeviceSelected.class);
-        mClassUnderTest = new BluetoothDeviceAdapter(mMockCallback);
+        mMockCallback = PowerMockito.mock(BluetoothDeviceListAdapter.OnDeviceSelected.class);
+        mClassUnderTest = new BluetoothDeviceListAdapter(mMockCallback);
     }
 
     private void initializeAdapterWithMockCallbackAndOneDevice() {
-        mMockCallback = PowerMockito.mock(BluetoothDeviceAdapter.OnDeviceSelected.class);
-        mClassUnderTest = new BluetoothDeviceAdapter(mMockCallback);
+        mMockCallback = PowerMockito.mock(BluetoothDeviceListAdapter.OnDeviceSelected.class);
+        mClassUnderTest = new BluetoothDeviceListAdapter(mMockCallback);
         Set<BluetoothDevice> singleDeviceSet = new HashSet<>();
         singleDeviceSet.add(TestObjectGenerator.generateASingleMockBluetoothDevice());
         mClassUnderTest.updateDeviceDataSet(singleDeviceSet);
