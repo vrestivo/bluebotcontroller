@@ -132,10 +132,10 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     @Override
     protected void onStart() {
         super.onStart();
+        System.out.println("DEBUG:  onStop");
         initializeMainPresenter();
         initializeBluetoothFeatures();
-        mJoystickThread = new JoystickHandlerThread(JoystickHandlerThread.NAME, this);
-        setupJoystickCallbacks();
+
     }
 
     private void initializeMainPresenter() {
@@ -163,6 +163,9 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     @Override
     protected void onResume() {
         super.onResume();
+        mJoystickThread = new JoystickHandlerThread(JoystickHandlerThread.NAME, this);
+        setupJoystickCallbacks();
+        System.out.println("DEBUG:  onResume");
         setConnectionIndicator();
         if (mJoystickThread != null) mJoystickThread.start();
     }
@@ -180,12 +183,14 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
     @Override
     protected void onPause() {
         super.onPause();
+        System.out.println("DEBUG:  onPause");
         if (mJoystickThread != null) mJoystickThread.quit();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        System.out.println("DEBUG:  onStop");
         cleanup();
     }
 
