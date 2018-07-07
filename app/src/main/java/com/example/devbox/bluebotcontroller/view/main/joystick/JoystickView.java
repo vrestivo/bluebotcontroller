@@ -10,7 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 /**
- * Joystic object to be used as a controller
+ * Joystick object to be used as a controller
  */
 
 public class JoystickView extends View {
@@ -39,13 +39,13 @@ public class JoystickView extends View {
     private GestureDetector mScrollDetector;
 
     private OnJoystickDragListener mJoystickDragListener;
-    private StopSendingJoysticDataListener mStopSendingListener;
+    private StopSendingJoystickDataListener mStopSendingListener;
 
     public interface OnJoystickDragListener {
         void onJoystickUpdate(float x, float y, float resultant, boolean keepSending);
     }
 
-    public interface StopSendingJoysticDataListener {
+    public interface StopSendingJoystickDataListener {
         void onStopSending();
     }
 
@@ -82,7 +82,7 @@ public class JoystickView extends View {
         mJoystickDragListener = listener;
     }
 
-    public void setStopSendingListener(StopSendingJoysticDataListener listener) {
+    public void setStopSendingListener(StopSendingJoystickDataListener listener) {
         mStopSendingListener = listener;
     }
 

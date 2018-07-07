@@ -93,7 +93,7 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
                 }
             });
 
-            mJoystickView.setStopSendingListener(new JoystickView.StopSendingJoysticDataListener() {
+            mJoystickView.setStopSendingListener(new JoystickView.StopSendingJoystickDataListener() {
                 @Override
                 public void onStopSending() {
                     if (mJoystickThread != null && mJoystickThread.isAlive()) {
