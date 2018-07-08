@@ -33,7 +33,7 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/devices_paired_rv"
                 style="@style/DeviceListView"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/paired_devices_tv"
                 />

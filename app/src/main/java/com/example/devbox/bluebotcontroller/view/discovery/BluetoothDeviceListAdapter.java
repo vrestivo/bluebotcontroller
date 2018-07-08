@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.devbox.bluebotcontroller.R;
@@ -42,12 +43,9 @@ public class BluetoothDeviceListAdapter extends RecyclerView.Adapter<BluetoothDe
     @Override
     public BluetoothDeviceListAdapter.BluetoothDeviceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        TextView deviceItem = (TextView) LayoutInflater.from(context).inflate(R.layout.device_list_item, parent, false);
-
-        BluetoothDeviceViewHolder viewHolder = new BluetoothDeviceViewHolder(deviceItem);
-
-        return viewHolder;
-    }
+        View itemRootView = LayoutInflater.from(context).inflate(R.layout.device_list_item, parent, false);
+        return new BluetoothDeviceViewHolder(itemRootView);
+        }
 
     @Override
     public void onBindViewHolder(@NonNull BluetoothDeviceListAdapter.BluetoothDeviceViewHolder holder, int position) {
@@ -68,7 +66,7 @@ public class BluetoothDeviceListAdapter extends RecyclerView.Adapter<BluetoothDe
 
         public BluetoothDeviceViewHolder(View itemView) {
             super(itemView);
-            mmDeviceName = (TextView) itemView;
+            mmDeviceName = (TextView) itemView.findViewById(R.id.device_list_item_device_info_tv);
             mmDeviceName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -43,14 +44,19 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
     }
 
     private void initializeRecyclerViewsAndAdapters(){
+        DividerItemDecoration divider = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+
         mPairedDevices = findViewById(R.id.devices_paired_rv);
         mPairedDevices.setLayoutManager(new LinearLayoutManager(this));
         mPairedDevicesAdapter = new BluetoothDeviceListAdapter(this);
         mPairedDevices.setAdapter(mPairedDevicesAdapter);
+        mPairedDevices.addItemDecoration(divider);
+
         mAvailableDevices = findViewById(R.id.devices_available_rv);
         mAvailableDevices.setLayoutManager(new LinearLayoutManager(this));
         mAvailableDevicesAdapter = new BluetoothDeviceListAdapter(this);
         mAvailableDevices.setAdapter(mAvailableDevicesAdapter);
+        mAvailableDevices.addItemDecoration(divider);
     }
 
     @Override
