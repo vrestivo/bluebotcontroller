@@ -9,6 +9,8 @@
     <dimen name="device_list_view_item_margin">16dp</dimen>
     <dimen name="device_list_view_margin">16dp</dimen>
 
+    <dimen name="scan_button_size">24dp</dimen>
+    <dimen name="scan_button_margin">16dp</dimen>
 
     <!-- device list headers -->
     <dimen name="device_list_header_margin">16dp</dimen>
