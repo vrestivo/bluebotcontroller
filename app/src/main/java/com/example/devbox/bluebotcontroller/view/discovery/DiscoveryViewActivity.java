@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -33,7 +34,11 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
     }
 
     private void initializeUI(){
-        mScanButton = findViewById(R.id.button_scan);
+        Toolbar toolbar = findViewById(R.id.discovery_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mScanButton = toolbar.findViewById(R.id.button_scan);
         mScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,6 +46,12 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
             }
         });
         initializeRecyclerViewsAndAdapters();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private void initializeRecyclerViewsAndAdapters(){
@@ -76,6 +87,7 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
 
     @Override
     protected void onStop() {
+        System.out.println("DEBUG: in onStop()");
         super.onStop();
         lifecycleCleanup();
     }
