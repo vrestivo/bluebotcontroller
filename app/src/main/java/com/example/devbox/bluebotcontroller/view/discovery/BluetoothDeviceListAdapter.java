@@ -49,7 +49,10 @@ public class BluetoothDeviceListAdapter extends RecyclerView.Adapter<BluetoothDe
 
     @Override
     public void onBindViewHolder(@NonNull BluetoothDeviceListAdapter.BluetoothDeviceViewHolder holder, int position) {
-        holder.mmDeviceName.setText(mDeviceList.get(position).getAddress()+ " " + mDeviceList.get(position).getName());
+        String deviceDescription = mDeviceList.get(position).getAddress();
+        String device_name = mDeviceList.get(position).getName();
+        if(device_name!=null) deviceDescription = deviceDescription + " " +  device_name;
+        holder.mmDeviceName.setText(deviceDescription);
         holder.mmId = position;
     }
 
