@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/con_status_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/status_title"
+        app:layout_constraintStart_toStartOf="@id/bt_discover"
+        app:layout_constraintBottom_toTopOf="@id/con_status"
+        />
+
+    <TextView
+        android:id="@+id/con_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/status_default"
+        app:layout_constraintStart_toStartOf="@id/bt_discover"
+        app:layout_constraintEnd_toStartOf="@id/vertical_guideline"
+        app:layout_constraintBottom_toTopOf="@id/bt_on"
+        />
+
+    <Button
+        android:id="@+id/bt_on"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/button_bt_on"
+        app:layout_constraintBottom_toTopOf="@id/bt_discover"
+        app:layout_constraintStart_toStartOf="@id/bt_disconnect"
+        app:layout_constraintEnd_toEndOf="@id/bt_discover"
+        />
+
+    <Button
+        android:id="@+id/bt_discover"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/button_bt_discover"
+        app:layout_constraintBottom_toTopOf="@id/bt_disconnect"
+        app:layout_constraintStart_toStartOf="@id/bt_disconnect"
+        app:layout_constraintEnd_toEndOf="@id/bt_disconnect"
+        />
+
+    <Button
+        android:id="@+id/bt_disconnect"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/button_bt_disconnect"
+        app:layout_constraintStart_toStartOf="@id/edit_text"
+        app:layout_constraintEnd_toEndOf="@id/bt_send"
+        app:layout_constraintBottom_toTopOf="@id/bt_send"
+        />
+
+    <EditText
+        android:id="@+id/edit_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/command_edit_text_hint"
+        android:inputType="text"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/bt_send"
+        app:layout_constraintBottom_toBottomOf="@id/bt_send"
+        />
+
+    <Button
+        android:id="@+id/bt_send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_send"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/edit_text"
+        app:layout_constraintEnd_toStartOf="@id/vertical_guideline"
+        app:layout_constraintBottom_toBottomOf="@id/joystick_view"
+        />
+
+    <com.example.devbox.bluebotcontroller.view.main.joystick.JoystickView
+        android:id="@+id/joystick_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/vertical_guideline"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5"
+        />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/vertical_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible"
+        app:layout_constraintGuide_percent="0.5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/horizontal_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="visible"
+        app:layout_constraintGuide_percent="0.5"
+        />
+
+</android.support.constraint.ConstraintLayout>

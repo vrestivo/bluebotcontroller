@@ -36,7 +36,7 @@
                 android:text="@string/status_default" />
 
             <EditText
-                android:id="@+id/exit_text"
+                android:id="@+id/edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
@@ -92,7 +92,7 @@
         android:layout_weight="1" />
 
 
-    <com.example.devbox.bluebotcontroller.joystick.JoystickView
+    <com.example.devbox.bluebotcontroller.view.main.joystick.JoystickView
         android:id="@+id/joystick_view"
         android:layout_width="0dp"
         android:layout_height="match_parent"

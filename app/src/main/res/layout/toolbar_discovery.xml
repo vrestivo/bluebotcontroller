@@ -4,17 +4,17 @@
     android:layout_height="?attr/actionBarSize"
     android:elevation="4dp"
     android:background="@color/colorPrimary"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     >
-
 
     <Button
         android:id="@+id/button_scan"
+        android:layout_margin="@dimen/scan_button_margin"
         android:layout_gravity="end"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/device_list_item_height"
-        android:text="@string/button_bt_scan"
+        android:layout_width="@dimen/scan_button_size"
+        android:layout_height="@dimen/scan_button_size"
+        android:minHeight="@dimen/scan_button_size"
+        android:background="@drawable/ic_bluetooth_searching_white_24dp"
         />
-
 
 </android.support.v7.widget.Toolbar>
