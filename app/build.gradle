@@ -38,6 +38,7 @@ ext {
     rxAndroidVersion = '2.0.2'
     roboelectricVersion = '3.8'
     constraintLayoutVersion = '1.1.2'
+    butterKnifeVersion = '8.8.1'
 }
 
 dependencies {
@@ -50,7 +51,12 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
     implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
     implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
-
+    implementation "com.jakewharton:butterknife:$butterKnifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
+    
+    testAnnotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
+    testImplementation "com.jakewharton:butterknife:$butterKnifeVersion"
+    testAnnotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "org.hamcrest:hamcrest-all:$hamcrestVersion"

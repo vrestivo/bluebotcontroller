@@ -22,17 +22,20 @@ import com.example.devbox.bluebotcontroller.view.discovery.DiscoveryViewActivity
 import com.example.devbox.bluebotcontroller.view.main.joystick.JoystickHandlerThread;
 import com.example.devbox.bluebotcontroller.view.main.joystick.JoystickView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainViewActivity extends AppCompatActivity implements IMainView {
 
     public static final int BT_PERM_REQ_CODE = 87;
     private IMainPresenter mMainPresenter;
-    private Button mBluetoothOnOffButton;
-    private Button mStartDiscoveryButton;
-    private Button mSendButton;
-    private Button mDisconnectButton;
-    private TextView mConnectionStatus;
-    private EditText mExitText;
-    private JoystickView mJoystickView;
+    @BindView(R.id.bt_on) Button mBluetoothOnOffButton;
+    @BindView(R.id.bt_discover) Button mStartDiscoveryButton;
+    @BindView(R.id.bt_send) Button mSendButton;
+    @BindView(R.id.bt_disconnect) Button mDisconnectButton;
+    @BindView(R.id.con_status) TextView mConnectionStatus;
+    @BindView(R.id.edit_text) EditText mExitText;
+    @BindView(R.id.joystick_view) JoystickView mJoystickView;
     private JoystickHandlerThread mJoystickThread;
     private String mTextBuffer;
     private String mMessageFormatString;
@@ -43,23 +46,13 @@ public class MainViewActivity extends AppCompatActivity implements IMainView {
         mMainHandler = new Handler();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_view);
+        ButterKnife.bind(this);
         initializeUIElements();
         mMessageFormatString = getString(R.string.message_format_string);
     }
 
     private void initializeUIElements() {
-        findViews();
         setInputListeners();
-    }
-
-    private void findViews(){
-        mConnectionStatus = findViewById(R.id.con_status);
-        mBluetoothOnOffButton = findViewById(R.id.bt_on);
-        mStartDiscoveryButton = findViewById(R.id.bt_discover);
-        mDisconnectButton = findViewById(R.id.bt_disconnect);
-        mExitText = findViewById(R.id.edit_text);
-        mSendButton = findViewById(R.id.bt_send);
-        mJoystickView = findViewById(R.id.joystick_view);
     }
 
     private void setInputListeners(){
