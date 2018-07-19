@@ -47,7 +47,6 @@ public class DiscoveryViewActivityTest {
 
     private void initializeDiscoveryViewActivityWithMockPresenter(){
         mMockPresenter = PowerMockito.mock(DiscoveryPresenter.class);
-
         mClassUnderTest = Robolectric.buildActivity(DiscoveryViewActivity.class);
         mClassUnderTest.create().restoreInstanceState(getNewBundle()).start();
 

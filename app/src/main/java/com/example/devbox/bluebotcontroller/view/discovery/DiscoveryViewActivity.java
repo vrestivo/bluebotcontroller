@@ -17,12 +17,15 @@ import com.example.devbox.bluebotcontroller.presenter.DiscoveryPresenter;
 
 import java.util.Set;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class DiscoveryViewActivity extends AppCompatActivity implements IDiscoveryView, BluetoothDeviceListAdapter.OnDeviceSelected {
 
     private DiscoveryPresenter mDiscoveryPresenter;
-    private Button mScanButton;
-    private RecyclerView mPairedDevices;
-    private RecyclerView mAvailableDevices;
+    @BindView(R.id.button_scan) Button mScanButton;
+    @BindView(R.id.devices_paired_rv) RecyclerView mPairedDevices;
+    @BindView(R.id.devices_available_rv) RecyclerView mAvailableDevices;
     private BluetoothDeviceListAdapter mPairedDevicesAdapter;
     private BluetoothDeviceListAdapter mAvailableDevicesAdapter;
 
@@ -30,6 +33,7 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discovery);
+        ButterKnife.bind(this);
         initializeUI();
     }
 
@@ -38,7 +42,6 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mScanButton = toolbar.findViewById(R.id.button_scan);
         mScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,13 +60,11 @@ public class DiscoveryViewActivity extends AppCompatActivity implements IDiscove
     private void initializeRecyclerViewsAndAdapters(){
         DividerItemDecoration divider = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
 
-        mPairedDevices = findViewById(R.id.devices_paired_rv);
         mPairedDevices.setLayoutManager(new LinearLayoutManager(this));
         mPairedDevicesAdapter = new BluetoothDeviceListAdapter(this);
         mPairedDevices.setAdapter(mPairedDevicesAdapter);
         mPairedDevices.addItemDecoration(divider);
 
-        mAvailableDevices = findViewById(R.id.devices_available_rv);
         mAvailableDevices.setLayoutManager(new LinearLayoutManager(this));
         mAvailableDevicesAdapter = new BluetoothDeviceListAdapter(this);
         mAvailableDevices.setAdapter(mAvailableDevicesAdapter);
